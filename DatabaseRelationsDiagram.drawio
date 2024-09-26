@@ -14,13 +14,13 @@
           <mxGeometry x="310" y="556.96" width="160" height="103.04" as="geometry" />
         </mxCell>
         <mxCell id="26" value="&lt;p style=&quot;margin: 0px; margin-top: 4px; text-align: center; text-decoration: underline;&quot;&gt;&lt;b&gt;Offers&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;SeatId&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;EventId&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;PriceId&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;strokeColor=#003366;shadow=1;fillColor=#D4E1F5;fontColor=#003366" parent="1" vertex="1">
-          <mxGeometry x="1170" y="953.04" width="160" height="90" as="geometry" />
+          <mxGeometry x="1170" y="958.26" width="160" height="90" as="geometry" />
         </mxCell>
         <mxCell id="27" value="&lt;p style=&quot;margin: 0px; margin-top: 4px; text-align: center; text-decoration: underline;&quot;&gt;&lt;b&gt;Prices&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;PriceId&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;Name&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;br&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;strokeColor=#003366;shadow=1;fillColor=#D4E1F5;fontColor=#003366" parent="1" vertex="1">
           <mxGeometry x="1170" y="435" width="160" height="100" as="geometry" />
         </mxCell>
         <mxCell id="29" value="&lt;p style=&quot;margin: 0px; margin-top: 4px; text-align: center; text-decoration: underline;&quot;&gt;&lt;b&gt;Event&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;Id&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Name&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;Description&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;StartDate&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;EndDate&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;ManagerId&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;ManifestId&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;strokeColor=#003366;shadow=1;fillColor=#D4E1F5;fontColor=#003366" parent="1" vertex="1">
-          <mxGeometry x="591.0800000000003" y="531.9600000000007" width="160" height="200" as="geometry" />
+          <mxGeometry x="591.08" y="531.96" width="160" height="148.04" as="geometry" />
         </mxCell>
         <mxCell id="45" value="" style="endArrow=open;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0" parent="1" source="23" target="22" edge="1">
           <mxGeometry x="519.3599999999999" y="180" as="geometry">
@@ -151,7 +151,7 @@
           <mxGeometry x="751.08" y="110" width="610" height="30" as="geometry" />
         </mxCell>
         <mxCell id="HDoNM3nlqneU1leC1J0N-125" value="&lt;p style=&quot;margin: 0px; margin-top: 4px; text-align: center; text-decoration: underline;&quot;&gt;&lt;b&gt;Manifests&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;ManifestId&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;VenueId&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;br&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;strokeColor=#003366;shadow=1;fillColor=#D4E1F5;fontColor=#003366" vertex="1" parent="1">
-          <mxGeometry x="310" y="770" width="160" height="103.04" as="geometry" />
+          <mxGeometry x="310" y="770" width="160" height="70" as="geometry" />
         </mxCell>
         <mxCell id="HDoNM3nlqneU1leC1J0N-126" value="The seating arrangement applicable to a&lt;div&gt;particular venue (complete seat map)&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="10" y="720" width="240" height="40" as="geometry" />
@@ -166,7 +166,7 @@
           <mxGeometry x="400" y="740.0000000000002" as="geometry" />
         </mxCell>
         <mxCell id="HDoNM3nlqneU1leC1J0N-132" value="&lt;p style=&quot;margin: 0px; margin-top: 4px; text-align: center; text-decoration: underline;&quot;&gt;&lt;b&gt;Seats&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;SeatId&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;ManifestId&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;Section&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;Row&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;Seat&lt;/p&gt;&lt;p style=&quot;margin: 0px; margin-left: 8px;&quot;&gt;&lt;br&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;strokeColor=#003366;shadow=1;fillColor=#D4E1F5;fontColor=#003366" vertex="1" parent="1">
-          <mxGeometry x="310" y="946.52" width="160" height="103.04" as="geometry" />
+          <mxGeometry x="310" y="946.52" width="160" height="113.48" as="geometry" />
         </mxCell>
         <mxCell id="HDoNM3nlqneU1leC1J0N-133" value="1" style="resizable=0;align=right;verticalAlign=top;labelBackgroundColor=#ffffff;fontSize=10;strokeColor=#003366;shadow=1;fillColor=#D4E1F5;fontColor=#003366" connectable="0" vertex="1" parent="1">
           <mxGeometry x="489.9999825287864" y="820.0049106127047" as="geometry" />
