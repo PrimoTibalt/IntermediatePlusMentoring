@@ -5,8 +5,8 @@
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public int ManifestId { get; set; }
-		public Manifest Manifest { get; set; }
+		public int VenueId { get; set; }
+		public Venue.Venue Venue { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 	}

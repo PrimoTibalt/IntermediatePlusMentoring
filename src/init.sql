@@ -3,81 +3,32 @@
 BEGIN;
 
 
-CREATE TABLE IF NOT EXISTS public."Users"
-(
-    "Id" serial NOT NULL,
-    "Name" text NOT NULL,
-    "Email" text NOT NULL,
-    PRIMARY KEY ("Id"),
-    CONSTRAINT "Emain_Unique_Constraint" UNIQUE ("Email")
-);
-
-CREATE TABLE IF NOT EXISTS public."Carts"
-(
-    "Id" uuid NOT NULL,
-    "UserId" integer,
-    PRIMARY KEY ("Id")
-);
-
-CREATE TABLE IF NOT EXISTS public."Payments"
-(
-    "Id" bigserial NOT NULL,
-    "CartId" uuid NOT NULL,
-    "Status" text NOT NULL,
-    PRIMARY KEY ("Id")
-);
-
-CREATE TABLE IF NOT EXISTS public."CartItems"
-(
-    "Id" bigint NOT NULL,
-    "CartId" uuid NOT NULL,
-    "EventSeatId" bigint NOT NULL,
-    "PriceId" integer NOT NULL,
-    PRIMARY KEY ("Id"),
-    CONSTRAINT "CartItems_CartId_EventSeatId_UNIQUE" UNIQUE ("CartId", "EventSeatId")
-);
-
-CREATE TABLE IF NOT EXISTS public."Prices"
-(
-    "Id" serial NOT NULL,
-    "Type" text NOT NULL,
-    "Price" money NOT NULL,
-    PRIMARY KEY ("Id")
-);
-
 CREATE TABLE IF NOT EXISTS public."Events"
 (
     "Id" serial NOT NULL,
-    "ManifestId" integer NOT NULL,
-    "Name" text NOT NULL,
-    "Description" text,
+    "VenueId" integer NOT NULL,
+    "Name" text COLLATE pg_catalog."default" NOT NULL,
+    "Description" text COLLATE pg_catalog."default",
     "StartDate" date NOT NULL,
     "EndDate" date NOT NULL,
-    PRIMARY KEY ("Id")
+    CONSTRAINT "Events_pkey" PRIMARY KEY ("Id")
 );
 
 CREATE TABLE IF NOT EXISTS public."Venues"
 (
     "Id" serial NOT NULL,
-    "Name" text NOT NULL,
-    "Description" text,
-    "Address" text,
-    PRIMARY KEY ("Id")
-);
-
-CREATE TABLE IF NOT EXISTS public."Manifests"
-(
-    "Id" serial NOT NULL,
-    "VenueId" integer NOT NULL,
-    PRIMARY KEY ("Id")
+    "Name" text COLLATE pg_catalog."default" NOT NULL,
+    "Description" text COLLATE pg_catalog."default",
+    "Address" text COLLATE pg_catalog."default",
+    CONSTRAINT "Venues_pkey" PRIMARY KEY ("Id")
 );
 
 CREATE TABLE IF NOT EXISTS public."Sections"
 (
     "Id" serial NOT NULL,
     "VenueId" integer NOT NULL,
-    "Name" text NOT NULL,
-    PRIMARY KEY ("Id"),
+    "Name" text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Sections_pkey" PRIMARY KEY ("Id"),
     CONSTRAINT "Sections_VenueId_Name_UNIQUE" UNIQUE ("VenueId", "Name")
 );
 
@@ -86,7 +37,7 @@ CREATE TABLE IF NOT EXISTS public."Rows"
     "Id" serial NOT NULL,
     "SectionId" integer NOT NULL,
     "Number" smallint NOT NULL,
-    PRIMARY KEY ("Id"),
+    CONSTRAINT "Rows_pkey" PRIMARY KEY ("Id"),
     CONSTRAINT "Rows_SectionId_Number_UNIQUE" UNIQUE ("SectionId", "Number")
 );
 
@@ -95,7 +46,7 @@ CREATE TABLE IF NOT EXISTS public."Seats"
     "Id" serial NOT NULL,
     "RowId" integer,
     "Number" integer NOT NULL,
-    PRIMARY KEY ("Id"),
+    CONSTRAINT "Seats_pkey" PRIMARY KEY ("Id"),
     CONSTRAINT "Seats_Number_RowId_UNIQUE" UNIQUE ("Number", "RowId")
 );
 
@@ -105,61 +56,55 @@ CREATE TABLE IF NOT EXISTS public."EventSeats"
     "EventId" integer NOT NULL,
     "SeatId" integer NOT NULL,
     "PriceId" integer NOT NULL,
-    "Status" text NOT NULL,
-    PRIMARY KEY ("Id"),
+    "Status" text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "EventSeats_pkey" PRIMARY KEY ("Id"),
     CONSTRAINT "EventSeats_EventId_SeatId_UNIQUE" UNIQUE ("EventId", "SeatId")
 );
 
-ALTER TABLE IF EXISTS public."Carts"
-    ADD CONSTRAINT "Carts_UserId_Users_Id_FOREIGN_KEY" FOREIGN KEY ("UserId")
-    REFERENCES public."Users" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+CREATE TABLE IF NOT EXISTS public."Prices"
+(
+    "Id" serial NOT NULL,
+    "Type" text COLLATE pg_catalog."default" NOT NULL,
+    "Price" money NOT NULL,
+    CONSTRAINT "Prices_pkey" PRIMARY KEY ("Id")
+);
 
+CREATE TABLE IF NOT EXISTS public."CartItems"
+(
+    "Id" bigint NOT NULL,
+    "CartId" uuid NOT NULL,
+    "EventSeatId" bigint NOT NULL,
+    "PriceId" integer NOT NULL,
+    CONSTRAINT "CartItems_pkey" PRIMARY KEY ("Id"),
+    CONSTRAINT "CartItems_CartId_EventSeatId_UNIQUE" UNIQUE ("CartId", "EventSeatId")
+);
 
-ALTER TABLE IF EXISTS public."Payments"
-    ADD CONSTRAINT "Payments_CartId_Carts_Id_FOREIGN_KEY" FOREIGN KEY ("CartId")
-    REFERENCES public."Carts" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+CREATE TABLE IF NOT EXISTS public."Carts"
+(
+    "Id" uuid NOT NULL,
+    "UserId" integer,
+    CONSTRAINT "Carts_pkey" PRIMARY KEY ("Id")
+);
 
+CREATE TABLE IF NOT EXISTS public."Users"
+(
+    "Id" serial NOT NULL,
+    "Name" text COLLATE pg_catalog."default" NOT NULL,
+    "Email" text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Users_pkey" PRIMARY KEY ("Id"),
+    CONSTRAINT "Emain_Unique_Constraint" UNIQUE ("Email")
+);
 
-ALTER TABLE IF EXISTS public."CartItems"
-    ADD CONSTRAINT "CartItems_CartId_Carts_Id_FOREIGN_KEY" FOREIGN KEY ("CartId")
-    REFERENCES public."Carts" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."CartItems"
-    ADD CONSTRAINT "CartItems_PriceId_Prices_Id_FOREIGN_KEY" FOREIGN KEY ("PriceId")
-    REFERENCES public."Prices" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."CartItems"
-    ADD CONSTRAINT "CartItems_EventSeatId_EventSeats_Id_FOREIGN_KEY" FOREIGN KEY ("EventSeatId")
-    REFERENCES public."EventSeats" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
+CREATE TABLE IF NOT EXISTS public."Payments"
+(
+    "Id" bigserial NOT NULL,
+    "CartId" uuid NOT NULL,
+    "Status" text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Payments_pkey" PRIMARY KEY ("Id")
+);
 
 ALTER TABLE IF EXISTS public."Events"
-    ADD CONSTRAINT "Events_ManifestId_Manifests_Id_FOREIGN_KEY" FOREIGN KEY ("ManifestId")
-    REFERENCES public."Manifests" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."Manifests"
-    ADD CONSTRAINT "Manifests_VenueId_Venues_Id_FOREIGN_KEY" FOREIGN KEY ("VenueId")
+    ADD CONSTRAINT "Events_VenueId_Venues_Id_FOREIGN_KEY" FOREIGN KEY ("VenueId")
     REFERENCES public."Venues" ("Id") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
@@ -191,14 +136,6 @@ ALTER TABLE IF EXISTS public."Seats"
 
 
 ALTER TABLE IF EXISTS public."EventSeats"
-    ADD CONSTRAINT "EventSeats_SeatId_Seats_Id_FOREIGN_KEY" FOREIGN KEY ("SeatId")
-    REFERENCES public."Seats" ("Id") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."EventSeats"
     ADD CONSTRAINT "EventSeats_EventId_Events_Id_FOREIGN_KEY" FOREIGN KEY ("EventId")
     REFERENCES public."Events" ("Id") MATCH SIMPLE
     ON UPDATE NO ACTION
@@ -209,6 +146,54 @@ ALTER TABLE IF EXISTS public."EventSeats"
 ALTER TABLE IF EXISTS public."EventSeats"
     ADD CONSTRAINT "EventSeats_PriceId_Prices_Id_FOREIGN_KEY" FOREIGN KEY ("PriceId")
     REFERENCES public."Prices" ("Id") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."EventSeats"
+    ADD CONSTRAINT "EventSeats_SeatId_Seats_Id_FOREIGN_KEY" FOREIGN KEY ("SeatId")
+    REFERENCES public."Seats" ("Id") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."CartItems"
+    ADD CONSTRAINT "CartItems_CartId_Carts_Id_FOREIGN_KEY" FOREIGN KEY ("CartId")
+    REFERENCES public."Carts" ("Id") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."CartItems"
+    ADD CONSTRAINT "CartItems_EventSeatId_EventSeats_Id_FOREIGN_KEY" FOREIGN KEY ("EventSeatId")
+    REFERENCES public."EventSeats" ("Id") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."CartItems"
+    ADD CONSTRAINT "CartItems_PriceId_Prices_Id_FOREIGN_KEY" FOREIGN KEY ("PriceId")
+    REFERENCES public."Prices" ("Id") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Carts"
+    ADD CONSTRAINT "Carts_UserId_Users_Id_FOREIGN_KEY" FOREIGN KEY ("UserId")
+    REFERENCES public."Users" ("Id") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Payments"
+    ADD CONSTRAINT "Payments_CartId_Carts_Id_FOREIGN_KEY" FOREIGN KEY ("CartId")
+    REFERENCES public."Carts" ("Id") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;

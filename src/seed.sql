@@ -4,13 +4,7 @@ INSERT INTO public."Venues" ("Name", "Description", "Address") VALUES
 ('Venue 2', 'Description for Venue 2', 'Address for Venue 2'),
 ('Venue 3', 'Description for Venue 3', 'Address for Venue 3');
 
-INSERT INTO public."Manifests" ("VenueId")
-VALUES 
-    (1),
-    (2),
-    (3);
-
-INSERT INTO public."Events" ("ManifestId", "Name", "Description", "StartDate", "EndDate")
+INSERT INTO public."Events" ("VenueId", "Name", "Description", "StartDate", "EndDate")
 VALUES 
     (1, 'Tokyo Marathon 2025', 'One of the largest marathons in the world, held annually in Tokyo.', '2025-03-01', '2025-03-01'),
     (2, 'Coachella Valley Music and Arts Festival 2025', 'A famous music and arts festival held in California.', '2025-04-11', '2025-04-20'),

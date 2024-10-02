@@ -23,7 +23,6 @@ namespace DAL
 		{
 			services.TryAddScoped<IGenericRepository<Event>, EventRepository>();
 			services.TryAddScoped<IGenericRepository<EventSeat>, EventSeatRepository>();
-			services.TryAddScoped<IGenericRepository<Manifest>, ManifestRepository>();
 			services.TryAddScoped<IGenericRepository<Price>, PriceRepository>();
 		}
 
