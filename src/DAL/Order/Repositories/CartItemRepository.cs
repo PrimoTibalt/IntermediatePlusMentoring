@@ -2,7 +2,7 @@
 
 namespace DAL.Order.Repositories
 {
-	sealed class CartItemRepository : IGenericRepository<CartItem>
+	sealed class CartItemRepository : IGenericRepository<CartItem, long>
 	{
 		private readonly OrderContext _context;
 
@@ -16,7 +16,7 @@ namespace DAL.Order.Repositories
 			_context.CartItems.Add(entity);
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(long id)
 		{
 			var entity = await GetById(id);
 			_context.CartItems.Remove(entity);
@@ -27,7 +27,7 @@ namespace DAL.Order.Repositories
 			return await _context.CartItems.ToListAsync();
 		}
 
-		public async Task<CartItem> GetById(int id)
+		public async Task<CartItem> GetById(long id)
 		{
 			return await _context.CartItems.FindAsync(id);
 		}

@@ -6,7 +6,7 @@ namespace DAL.Events
 	{
 		public int Id { get; set; }
 		public string Type { get; set; }
-		[Column("price")]
+		[Column("Price")]
 		public decimal Sum { get; set; }
 	}
 }

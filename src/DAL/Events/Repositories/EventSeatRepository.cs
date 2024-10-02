@@ -2,7 +2,7 @@
 
 namespace DAL.Events.Repositories
 {
-	sealed class EventSeatRepository : IGenericRepository<EventSeat>
+	sealed class EventSeatRepository : IGenericRepository<EventSeat, long>
 	{
 		private readonly EventContext _context;
 
@@ -16,7 +16,7 @@ namespace DAL.Events.Repositories
 			_context.EventSeats.Add(entity);
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(long id)
 		{
 			var entity = await GetById(id);
 			_context.EventSeats.Remove(entity);
@@ -27,7 +27,7 @@ namespace DAL.Events.Repositories
 			return await _context.EventSeats.ToListAsync();
 		}
 
-		public async Task<EventSeat> GetById(int id)
+		public async Task<EventSeat> GetById(long id)
 		{
 			return await _context.EventSeats.FindAsync(id);
 		}

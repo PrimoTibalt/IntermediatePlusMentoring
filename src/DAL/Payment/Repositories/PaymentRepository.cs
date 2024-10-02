@@ -2,7 +2,7 @@
 
 namespace DAL.Payment.Repositories
 {
-	sealed class PaymentRepository : IGenericRepository<Payment>
+	sealed class PaymentRepository : IGenericRepository<Payment, long>
 	{
 		private readonly PaymentContext _context;
 
@@ -16,7 +16,7 @@ namespace DAL.Payment.Repositories
 			_context.Payments.Add(entity);
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(long id)
 		{
 			var entity = await GetById(id);
 			_context.Payments.Remove(entity);
@@ -27,7 +27,7 @@ namespace DAL.Payment.Repositories
 			return await _context.Payments.ToListAsync();
 		}
 
-		public async Task<Payment> GetById(int id)
+		public async Task<Payment> GetById(long id)
 		{
 			return await _context.Payments.FindAsync(id);
 		}

@@ -2,7 +2,7 @@
 
 namespace DAL.Order.Repositories
 {
-	sealed class CartRepository : ICartRepository
+	sealed class CartRepository : IGenericRepository<Cart, Guid>
 	{
 		private readonly OrderContext _context;
 
@@ -16,7 +16,7 @@ namespace DAL.Order.Repositories
 			_context.Carts.Add(entity);
 		}
 
-		public async Task Delete(int id)
+		public async Task Delete(Guid id)
 		{
 			var entity = await GetById(id);
 			_context.Carts.Remove(entity);
@@ -25,12 +25,6 @@ namespace DAL.Order.Repositories
 		public async Task<IList<Cart>> GetAll()
 		{
 			return await _context.Carts.ToListAsync();
-		}
-
-		[Obsolete("Use GetById(Guid)")]
-		public async Task<Cart> GetById(int id)
-		{
-			throw new NotImplementedException("Use GetById(Guid).");
 		}
 
 		public async Task<Cart> GetById(Guid id)

@@ -2,7 +2,7 @@
 
 namespace DAL.Order.Repositories
 {
-	sealed class UserRepository : IGenericRepository<User>
+	sealed class UserRepository : IGenericRepository<User, int>
 	{
 		private readonly OrderContext _context;
 
@@ -13,17 +13,19 @@ namespace DAL.Order.Repositories
 
 		public void Create(User entity)
 		{
-			throw new NotImplementedException();
+			_context.Users.Add(entity);
 		}
 
-		public Task Delete(int id)
+		public async Task Delete(int id)
 		{
-			throw new NotImplementedException();
+			var entity = await GetById(id);
+
+			_context.Users.Remove(entity);
 		}
 
-		public Task<IList<User>> GetAll()
+		public async Task<IList<User>> GetAll()
 		{
-			throw new NotImplementedException();
+			return await _context.Users.ToListAsync();
 		}
 
 		public async Task<User> GetById(int id)

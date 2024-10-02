@@ -13,29 +13,29 @@ namespace DAL
 	{
 		public static void AddVenuesRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Venue.Venue>, VenuesRepository>();
-			services.TryAddScoped<IGenericRepository<Venue.Section>, SectionsRepository>();
-			services.TryAddScoped<IGenericRepository<Venue.Row>, RowsRepository>();
-			services.TryAddScoped<IGenericRepository<Venue.Seat>, SeatsRepository>();
+			services.TryAddScoped<IGenericRepository<Venue.Venue, int>, VenuesRepository>();
+			services.TryAddScoped<IGenericRepository<Venue.Section, int>, SectionsRepository>();
+			services.TryAddScoped<IGenericRepository<Venue.Row, int>, RowsRepository>();
+			services.TryAddScoped<IGenericRepository<Venue.Seat, int>, SeatsRepository>();
 		}
 
 		public static void AddEventsRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Event>, EventRepository>();
-			services.TryAddScoped<IGenericRepository<EventSeat>, EventSeatRepository>();
-			services.TryAddScoped<IGenericRepository<Price>, PriceRepository>();
+			services.TryAddScoped<IGenericRepository<Event, int>, EventRepository>();
+			services.TryAddScoped<IGenericRepository<EventSeat, long>, EventSeatRepository>();
+			services.TryAddScoped<IGenericRepository<Price, int>, PriceRepository>();
 		}
 
 		public static void AddOrderRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<ICartRepository, CartRepository>();
-			services.TryAddScoped<IGenericRepository<CartItem>, CartItemRepository>();
-			services.TryAddScoped<IGenericRepository<User>, UserRepository>();
+			services.TryAddScoped<IGenericRepository<Cart, Guid>, CartRepository>();
+			services.TryAddScoped<IGenericRepository<CartItem, long>, CartItemRepository>();
+			services.TryAddScoped<IGenericRepository<User, int>, UserRepository>();
 		}
 
 		public static void AddPaymentRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Payment.Payment>, PaymentRepository>();
+			services.TryAddScoped<IGenericRepository<Payment.Payment, long>, PaymentRepository>();
 		}
 	}
 }

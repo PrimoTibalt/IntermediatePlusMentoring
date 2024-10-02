@@ -2,7 +2,7 @@
 
 namespace DAL.Events.Repositories
 {
-	sealed class EventRepository : IGenericRepository<Event>
+	sealed class EventRepository : IGenericRepository<Event, int>
 	{
 		private readonly EventContext _context;
 

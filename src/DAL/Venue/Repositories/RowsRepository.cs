@@ -2,7 +2,7 @@
 
 namespace DAL.Venue.Repositories
 {
-	sealed class RowsRepository : IGenericRepository<Row>
+	sealed class RowsRepository : IGenericRepository<Row, int>
 	{
 		private readonly VenueContext _context;
 

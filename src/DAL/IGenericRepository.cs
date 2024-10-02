@@ -1,12 +1,14 @@
 ﻿namespace DAL
 {
-	public interface IGenericRepository<TEntity> where TEntity : class
+	public interface IGenericRepository<TEntity, TKey>
+		where TEntity : class
+		where TKey : struct
 	{
 		Task<IList<TEntity>> GetAll();
-		Task<TEntity> GetById(int id);
+		Task<TEntity> GetById(TKey id);
 		void Create(TEntity entity);
 		void Update(TEntity entity);
-		Task Delete(int id);
+		Task Delete(TKey id);
 		Task<int> Save();
 	}
 }
