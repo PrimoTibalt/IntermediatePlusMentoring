@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS public."EventSeats"
     "SeatId" integer NOT NULL,
     "PriceId" integer NOT NULL,
     "Status" text COLLATE pg_catalog."default" NOT NULL,
+    "Version" smallint NOT NULL DEFAULT 0,
     CONSTRAINT "EventSeats_pkey" PRIMARY KEY ("Id"),
     CONSTRAINT "EventSeats_EventId_SeatId_UNIQUE" UNIQUE ("EventId", "SeatId")
 );
