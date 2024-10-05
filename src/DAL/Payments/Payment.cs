@@ -1,6 +1,6 @@
 ﻿using DAL.Order;
 
-namespace DAL.Payment
+namespace DAL.Payments
 {
 	public sealed class Payment
 	{

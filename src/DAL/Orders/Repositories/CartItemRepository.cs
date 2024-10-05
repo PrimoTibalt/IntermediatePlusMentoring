@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Order.Repositories
+namespace DAL.Orders.Repositories
 {
 	sealed class CartItemRepository : IGenericRepository<CartItem, long>
 	{

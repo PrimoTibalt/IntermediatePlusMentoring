@@ -1,9 +1,11 @@
 ﻿using DAL.Events;
 using DAL.Events.Repositories;
-using DAL.Order;
-using DAL.Order.Repositories;
-using DAL.Payment.Repositories;
-using DAL.Venue.Repositories;
+using DAL.Orders;
+using DAL.Orders.Repositories;
+using DAL.Payments;
+using DAL.Payments.Repositories;
+using DAL.Venues;
+using DAL.Venues.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -13,10 +15,10 @@ namespace DAL
 	{
 		public static void AddVenuesRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Venue.Venue, int>, VenuesRepository>();
-			services.TryAddScoped<IGenericRepository<Venue.Section, int>, SectionsRepository>();
-			services.TryAddScoped<IGenericRepository<Venue.Row, int>, RowsRepository>();
-			services.TryAddScoped<IGenericRepository<Venue.Seat, int>, SeatsRepository>();
+			services.TryAddScoped<IGenericRepository<Venue, int>, VenuesRepository>();
+			services.TryAddScoped<IGenericRepository<Section, int>, SectionsRepository>();
+			services.TryAddScoped<IGenericRepository<Row, int>, RowsRepository>();
+			services.TryAddScoped<IGenericRepository<Seat, int>, SeatsRepository>();
 		}
 
 		public static void AddEventsRepositories(this IServiceCollection services)
@@ -35,7 +37,7 @@ namespace DAL
 
 		public static void AddPaymentRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Payment.Payment, long>, PaymentRepository>();
+			services.TryAddScoped<IGenericRepository<Payment, long>, PaymentRepository>();
 		}
 	}
 }

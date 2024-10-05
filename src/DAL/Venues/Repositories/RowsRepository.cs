@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Venue.Repositories
+namespace DAL.Venues.Repositories
 {
 	sealed class RowsRepository : IGenericRepository<Row, int>
 	{

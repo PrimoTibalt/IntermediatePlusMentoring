@@ -1,4 +1,4 @@
-﻿namespace DAL.Order
+﻿namespace DAL.Orders
 {
 	public sealed class User
 	{

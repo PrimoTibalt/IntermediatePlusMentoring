@@ -1,6 +1,6 @@
 ﻿using DAL.Events;
 
-namespace DAL.Order
+namespace DAL.Orders
 {
 	public sealed class CartItem
 	{

@@ -2,7 +2,7 @@
 using DAL.Order;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Payment
+namespace DAL.Payments
 {
 	public sealed class PaymentContext : DbContext
 	{

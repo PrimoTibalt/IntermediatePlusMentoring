@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Payment.Repositories
+namespace DAL.Payments.Repositories
 {
 	sealed class PaymentRepository : IGenericRepository<Payment, long>
 	{

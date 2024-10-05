@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Venue
+namespace DAL.Venues
 {
 	public sealed class VenueContext : DbContext
 	{

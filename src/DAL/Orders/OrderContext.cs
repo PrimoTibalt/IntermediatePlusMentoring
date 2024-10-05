@@ -1,7 +1,7 @@
 ﻿using DAL.Events;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Order
+namespace DAL.Orders
 {
 	public sealed class OrderContext : DbContext
 	{

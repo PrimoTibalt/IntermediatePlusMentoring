@@ -1,4 +1,4 @@
-﻿using DAL.Venue;
+﻿using DAL.Venues;
 
 namespace DAL.Events
 {
