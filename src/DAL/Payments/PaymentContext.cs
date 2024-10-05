@@ -1,5 +1,5 @@
 ﻿using DAL.Events;
-using DAL.Order;
+using DAL.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Payments
