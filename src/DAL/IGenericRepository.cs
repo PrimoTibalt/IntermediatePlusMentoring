@@ -6,7 +6,7 @@
 	{
 		Task<IList<TEntity>> GetAll();
 		Task<TEntity> GetById(TKey id);
-		void Create(TEntity entity);
+		Task Create(TEntity entity);
 		void Update(TEntity entity);
 		Task Delete(TKey id);
 		Task<int> Save();

@@ -16,9 +16,9 @@ namespace DAL
 			_collectionName = collectionName;
 		}
 
-		public void Create(TEntity entity)
+		public async Task Create(TEntity entity)
 		{
-			_context.Add(entity);
+			await _context.AddAsync(entity);
 		}
 
 		public async Task Delete(TKey id)
