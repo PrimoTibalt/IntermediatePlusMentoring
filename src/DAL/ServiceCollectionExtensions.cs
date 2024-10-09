@@ -2,6 +2,7 @@
 using DAL.Orders;
 using DAL.Payments;
 using DAL.Venues;
+using DAL.Venues.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -11,8 +12,8 @@ namespace DAL
 	{
 		public static void AddVenuesRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Venue, int>, GenericRepository<Venue, int, VenueContext>>();
-			services.TryAddScoped<IGenericRepository<Section, int>, GenericRepository<Section, int, VenueContext>>();
+			services.TryAddScoped<IVenueRepository, VenueRepository>();
+			services.TryAddScoped<ISectionRepository, SectionRepository>();
 			services.TryAddScoped<IGenericRepository<Row, int>, GenericRepository<Row, int, VenueContext>>();
 			services.TryAddScoped<IGenericRepository<Seat, int>, GenericRepository<Seat, int, VenueContext>>();
 		}
