@@ -1,10 +1,10 @@
 ﻿using DAL.Venues;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using VenueAPI.Helpers;
 using VenueApplication.Entities;
 using Venues = VenueApplication.Venues;
 using Sections = VenueApplication.Sections;
+using API.Abstraction.Helpers;
 
 namespace VenueAPI.Controllers
 {

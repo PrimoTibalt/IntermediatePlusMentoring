@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VenueApplication.Core;
+using VenueApplication.Entities;
 
 namespace VenueApplication
 {
@@ -17,6 +18,8 @@ namespace VenueApplication
 				options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
 			});
 			services.AddVenuesRepositories();
+
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(VenueDetails).Assembly));
 		}
 	}
 }
