@@ -23,7 +23,7 @@ namespace VenueAPI.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(typeof(IList<Venue>), 200)]
+		[ProducesResponseType(typeof(Resource<IList<Venue>>), 200)]
 		public async Task<IActionResult> GetAllVenues(CancellationToken token)
 		{
 			var result = await _mediator.Send(new Venues.List.Query(), token);
@@ -37,7 +37,7 @@ namespace VenueAPI.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(VenueDetails), 200)]
+		[ProducesResponseType(typeof(Resource<VenueDetails>), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetById(int id)
 		{
@@ -56,6 +56,7 @@ namespace VenueAPI.Controllers
 		}
 
 		[HttpGet("{venueId}/sections")]
+		[ProducesResponseType(typeof(Resource<IList<Section>>), 200)]
 		public async Task<IActionResult> GetSectionsOfVenue(int venueId)
 		{
 			var result = await _mediator.Send(new Sections.List.Query { VenueId = venueId });
