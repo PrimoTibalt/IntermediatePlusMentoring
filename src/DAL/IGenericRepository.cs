@@ -4,7 +4,7 @@
 		where TEntity : class
 		where TKey : struct
 	{
-		Task<IList<TEntity>> GetAll();
+		Task<IList<TEntity>> GetAll(CancellationToken token = default);
 		Task<TEntity> GetById(TKey id);
 		Task Create(TEntity entity);
 		Task Delete(TKey id);

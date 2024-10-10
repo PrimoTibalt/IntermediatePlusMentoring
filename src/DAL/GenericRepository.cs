@@ -7,7 +7,7 @@ namespace DAL
 		where TKey : struct
 		where TContext : DbContext
 	{
-		private readonly DbSet<TEntity> _collection;
+		protected readonly DbSet<TEntity> _collection;
 
 		public GenericRepository(TContext context) : base(context)
 		{
@@ -25,9 +25,9 @@ namespace DAL
 			_collection.Remove(entity);
 		}
 
-		public async Task<IList<TEntity>> GetAll()
+		public async Task<IList<TEntity>> GetAll(CancellationToken token = default)
 		{
-			return await _collection.ToListAsync();
+			return await _collection.ToListAsync(token);
 		}
 
 		public async Task<TEntity> GetById(TKey id)
