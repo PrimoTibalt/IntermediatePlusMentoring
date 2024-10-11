@@ -1,4 +1,5 @@
 ﻿using DAL.Events;
+using DAL.Events.Repository;
 using DAL.Orders;
 using DAL.Payments;
 using DAL.Venues;
@@ -20,7 +21,7 @@ namespace DAL
 
 		public static void AddEventsRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Event, int>, GenericRepository<Event, int, EventContext>>();
+			services.TryAddScoped<IEventRepository, EventRepository>();
 			services.TryAddScoped<IGenericRepository<EventSeat, long>, GenericRepository<EventSeat, long, EventContext>>();
 			services.TryAddScoped<IGenericRepository<Price, int>, GenericRepository<Price, int, EventContext>>();
 		}
