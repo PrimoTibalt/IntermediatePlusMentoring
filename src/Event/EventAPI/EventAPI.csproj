@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API.Abstraction\API.Abstraction.csproj" />
+    <ProjectReference Include="..\..\API.Abstraction\API.Abstraction.csproj" />
     <ProjectReference Include="..\EventApplication\EventApplication.csproj" />
   </ItemGroup>
 
