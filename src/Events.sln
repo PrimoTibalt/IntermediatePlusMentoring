@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventApplication", "EventApplication\EventApplication.csproj", "{CC7F740D-CEDF-449B-887D-97B10E0D91A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventApplication", "Event\EventApplication\EventApplication.csproj", "{CC7F740D-CEDF-449B-887D-97B10E0D91A1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{6D9C226C-5119-4D4F-8CF5-FF6D00289EDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventAPI", "EventAPI\EventAPI.csproj", "{E16B4617-019D-43DA-AC68-FD6F9B8FC384}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventAPI", "Event\EventAPI\EventAPI.csproj", "{E16B4617-019D-43DA-AC68-FD6F9B8FC384}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Abstraction", "API.Abstraction\API.Abstraction.csproj", "{8B5AB5AE-2D32-4AD7-B537-02F1754D5972}"
 EndProject

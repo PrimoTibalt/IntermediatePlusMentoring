@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{AF702F11-CBA0-48FD-9C96-4B014E1AB94E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VenueAPI", "VenueAPI\VenueAPI.csproj", "{63435BF1-7250-476E-AE48-B1B5EE8CDB53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VenueAPI", "Venue\VenueAPI\VenueAPI.csproj", "{63435BF1-7250-476E-AE48-B1B5EE8CDB53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VenueApplication", "VenueApplication\VenueApplication.csproj", "{5A5529B3-257D-4065-8414-BEAD68F355CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VenueApplication", "Venue\VenueApplication\VenueApplication.csproj", "{5A5529B3-257D-4065-8414-BEAD68F355CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Abstraction", "API.Abstraction\API.Abstraction.csproj", "{38282C2F-83BA-4D0E-B1E3-8B29B334B883}"
 EndProject
