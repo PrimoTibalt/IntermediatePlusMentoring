@@ -53,7 +53,7 @@ namespace EventAPI.Controllers
 		}
 
 		[HttpGet("{id}/sections")]
-		[ProducesResponseType(typeof(Resource<Section>), 200)]
+		[ProducesResponseType(typeof(Resource<IList<Section>>), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetEventSections(int id)
 		{
@@ -64,6 +64,31 @@ namespace EventAPI.Controllers
 			{
 				Value = result,
 				Links = [new Link { Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { id }), Method = "GET" }]
+			};
+			return Ok(resource);
+		}
+
+		[HttpGet("{eventId}/sections/{sectionId}/seats")]
+		[ProducesResponseType(typeof(Resource<IList<SeatDetails>>), 200)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> GetSectionSeats(int eventId, int sectionId)
+		{
+			var result = await _mediator.Send(new Events.ListSeats.Query { EventId = eventId, SectionId = sectionId });
+			if (result is null) return NotFound();
+		
+			var resource = new Resource<IList<SeatDetails>>
+			{
+				Value = result,
+				Links = [
+					new Link {
+						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new {id = eventId}),
+						Method = "GET"
+					},
+					new Link {
+						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetEventSections), values: new { id = eventId }),
+						Method = "GET"
+					}		
+				]
 			};
 			return Ok(resource);
 		}

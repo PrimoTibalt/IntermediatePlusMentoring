@@ -17,6 +17,11 @@ namespace EventApplication.Core
 
 			CreateMap<Section, Section>()
 				.ForMember(s => s.Venue, o => o.Ignore());
+			
+			CreateMap<EventSeat, SeatDetails>()
+				.ForMember(sd => sd.RowId, o => o.MapFrom(es => es.Seat.RowId))
+				.ForMember(sd => sd.SectionId, o => o.MapFrom(es => es.Seat.Row.SectionId))
+				.ForMember(sd => sd.VenueSeatId, o => o.MapFrom(es => es.SeatId));
 		}
 	}
 }
