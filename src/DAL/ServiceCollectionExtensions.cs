@@ -22,7 +22,7 @@ namespace DAL
 		public static void AddEventsRepositories(this IServiceCollection services)
 		{
 			services.TryAddScoped<IEventRepository, EventRepository>();
-			services.TryAddScoped<IGenericRepository<EventSeat, long>, GenericRepository<EventSeat, long, EventContext>>();
+			services.TryAddScoped<IEventSeatRepository, EventSeatRepository>();
 			services.TryAddScoped<IGenericRepository<Price, int>, GenericRepository<Price, int, EventContext>>();
 		}
 
