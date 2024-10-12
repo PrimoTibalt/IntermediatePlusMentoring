@@ -4,6 +4,8 @@ using DAL.Venues;
 using EventApplication.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Seats = EventApplication.Seats;
+using Sections = EventApplication.Sections;
 using Events = EventApplication.Events;
 
 namespace EventAPI.Controllers
@@ -57,7 +59,7 @@ namespace EventAPI.Controllers
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetEventSections(int id)
 		{
-			var result = await _mediator.Send(new Events.ListSections.Query { Id = id });
+			var result = await _mediator.Send(new Sections.List.Query { Id = id });
 			if (result is null) return NotFound();
 
 			var resource = new Resource<IList<Section>>
@@ -73,7 +75,7 @@ namespace EventAPI.Controllers
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetSectionSeats(int eventId, int sectionId)
 		{
-			var result = await _mediator.Send(new Events.ListSeats.Query { EventId = eventId, SectionId = sectionId });
+			var result = await _mediator.Send(new Seats.List.Query { EventId = eventId, SectionId = sectionId });
 			if (result is null) return NotFound();
 		
 			var resource = new Resource<IList<SeatDetails>>
