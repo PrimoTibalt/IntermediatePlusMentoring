@@ -1,6 +1,7 @@
 ﻿using DAL.Events;
 using DAL.Events.Repository;
 using DAL.Orders;
+using DAL.Orders.Repository;
 using DAL.Payments;
 using DAL.Venues;
 using DAL.Venues.Repository;
@@ -28,7 +29,8 @@ namespace DAL
 
 		public static void AddOrderRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IGenericRepository<Cart, Guid>, GenericRepository<Cart, Guid, OrderContext>>();
+			services.TryAddScoped<ICartRepository, CartRepository>();
+			services.TryAddScoped<IGenericRepository<EventSeat, long>, GenericRepository<EventSeat, long, OrderContext>>();
 			services.TryAddScoped<IGenericRepository<CartItem, long>, GenericRepository<CartItem, long, OrderContext>>();
 			services.TryAddScoped<IGenericRepository<User, int>, GenericRepository<User, int, OrderContext>>();
 		}
