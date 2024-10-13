@@ -1,5 +1,4 @@
 using DAL.Events;
-using EventApplication.Core;
 
 namespace EventApplication.Entities
 {

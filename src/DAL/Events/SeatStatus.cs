@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace EventApplication.Core
+namespace DAL.Events
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SeatStatus
