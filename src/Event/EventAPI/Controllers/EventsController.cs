@@ -1,11 +1,9 @@
 ﻿using API.Abstraction.Helpers;
 using DAL.Events;
 using EventApplication.Entities;
+using EventApplication.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Seats = EventApplication.Seats;
-using Sections = EventApplication.Sections;
-using Events = EventApplication.Events;
 
 namespace EventAPI.Controllers
 {
@@ -27,47 +25,11 @@ namespace EventAPI.Controllers
 		[ProducesResponseType(typeof(Resource<IList<Event>>), 200)]
 		public async Task<IActionResult> GetAll(CancellationToken token)
 		{
-			var result = await _mediator.Send(new Events.List.Query(), token);
+			var result = await _mediator.Send(new GetAllEventsQuery(), token);
 			var resource = new Resource<IList<Event>>
 			{
 				Value = result,
-				Links = GenerateLinks(result)
-			};
-			return Ok(resource);
-		}
-
-		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(Resource<EventDetails>), 200)]
-		[ProducesResponseType(404)]
-		public async Task<IActionResult> GetById(int id)
-		{
-			var result = await _mediator.Send(new Events.Details.Query { Id = id });
-			if (result is null)
-				return NotFound();
-
-			var resource = new Resource<EventDetails>
-			{
-				Value = result,
 				Links = []
-			};
-			return Ok(resource);
-		}
-
-		[HttpGet("{id}/sections")]
-		[ProducesResponseType(typeof(Resource<IList<SectionDetails>>), 200)]
-		[ProducesResponseType(404)]
-		public async Task<IActionResult> GetEventSections(int id)
-		{
-			var result = await _mediator.Send(new Sections.List.Query { Id = id });
-			if (result is null) return NotFound();
-
-			var resource = new Resource<IList<SectionDetails>>
-			{
-				Value = result,
-				Links = [
-					new Link { Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { id }), Method = "GET" },
-					.. GenerateLinks(result, id)
-				]
 			};
 			return Ok(resource);
 		}
@@ -77,7 +39,7 @@ namespace EventAPI.Controllers
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetSectionSeats(int eventId, int sectionId)
 		{
-			var result = await _mediator.Send(new Seats.List.Query { EventId = eventId, SectionId = sectionId });
+			var result = await _mediator.Send(new GetEventSectionSeatsQuery { EventId = eventId, SectionId = sectionId });
 			if (result is null) return NotFound();
 		
 			var resource = new Resource<IList<SeatDetails>>
@@ -85,62 +47,12 @@ namespace EventAPI.Controllers
 				Value = result,
 				Links = [
 					new Link {
-						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new {id = eventId}),
+						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetAll), values: new {id = eventId}),
 						Method = "GET"
-					},
-					new Link {
-						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetEventSections), values: new { id = eventId }),
-						Method = "GET"
-					}		
+					}
 				]
 			};
 			return Ok(resource);
-		}
-
-		private IList<Link> GenerateLinks(IList<Event> result)
-		{
-			var links = new List<Link>();
-			foreach (var item in result)
-			{
-				links.Add(new Link
-				{
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { id = item.Id }),
-					Method = "GET"
-				});
-			}
-			return links;
-		}
-
-		private IList<Link> GenerateLinks(EventDetails result)
-		{
-			var links = new List<Link>
-			{
-				new Link
-				{
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetAll)),
-					Method = "GET"
-				},
-				new Link
-				{
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetEventSections), values: new { id = result.Id }),
-					Method = "GET"
-				}
-			};
-
-			return links;
-		}
-
-		private IList<Link> GenerateLinks(IList<SectionDetails> result, int eventId)
-		{
-			var links = new List<Link>();
-			foreach (var section in result)
-			{
-				links.Add(new Link {
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetSectionSeats), values: new { eventId, sectionId = section.Id }),
-					Method = "GET"
-				});
-			}
-			return links;
 		}
 	}
 }

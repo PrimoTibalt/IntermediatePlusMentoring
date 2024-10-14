@@ -1,6 +1,7 @@
 ﻿using DAL;
 using DAL.Events;
 using EventApplication.Core;
+using EventApplication.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,7 @@ namespace EventApplication
 			});
 			services.AddEventsRepositories();
 
-			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Events.List).Assembly));
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllEventsHandler).Assembly));
 		}
 	}
 }

@@ -1,30 +1,23 @@
 using AutoMapper;
 using DAL.Events.Repository;
 using EventApplication.Entities;
+using EventApplication.Queries;
 using MediatR;
 
-namespace EventApplication.Seats;
-
-public class List
+namespace EventApplication.Handlers
 {
-    public class Query : IRequest<IList<SeatDetails>> 
-    {
-        public int EventId { get; set; }
-        public int SectionId { get; set; }
-    }
-
-    public class RequestHandler : IRequestHandler<Query, IList<SeatDetails>>
+    public class GetEventSectionSeatsHandler : IRequestHandler<GetEventSectionSeatsQuery, IList<SeatDetails>>
     {
         private readonly IEventSeatRepository _repository;
         private readonly IMapper _mapper;
 
-        public RequestHandler(IEventSeatRepository repository, IMapper mapper)
+        public GetEventSectionSeatsHandler(IEventSeatRepository repository, IMapper mapper)
         {
             this._repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<IList<SeatDetails>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<IList<SeatDetails>> Handle(GetEventSectionSeatsQuery request, CancellationToken cancellationToken)
         {
             var result = await _repository.GetEventSectionSeats(request.EventId, request.SectionId);
             return _mapper.Map<IList<SeatDetails>>(result);
