@@ -1,6 +1,5 @@
 ﻿using API.Abstraction.Helpers;
 using DAL.Events;
-using DAL.Venues;
 using EventApplication.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -55,17 +54,20 @@ namespace EventAPI.Controllers
 		}
 
 		[HttpGet("{id}/sections")]
-		[ProducesResponseType(typeof(Resource<IList<Section>>), 200)]
+		[ProducesResponseType(typeof(Resource<IList<SectionDetails>>), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetEventSections(int id)
 		{
 			var result = await _mediator.Send(new Sections.List.Query { Id = id });
 			if (result is null) return NotFound();
 
-			var resource = new Resource<IList<Section>>
+			var resource = new Resource<IList<SectionDetails>>
 			{
 				Value = result,
-				Links = [new Link { Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { id }), Method = "GET" }]
+				Links = [
+					new Link { Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { id }), Method = "GET" },
+					.. GenerateLinks(result, id)
+				]
 			};
 			return Ok(resource);
 		}
@@ -125,6 +127,19 @@ namespace EventAPI.Controllers
 				}
 			};
 
+			return links;
+		}
+
+		private IList<Link> GenerateLinks(IList<SectionDetails> result, int eventId)
+		{
+			var links = new List<Link>();
+			foreach (var section in result)
+			{
+				links.Add(new Link {
+					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetSectionSeats), values: new { eventId, sectionId = section.Id }),
+					Method = "GET"
+				});
+			}
 			return links;
 		}
 	}

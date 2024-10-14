@@ -9,9 +9,12 @@ namespace DAL.Events.Repository
 
 		public async Task<IList<Section>> GetSections(int eventId)
 		{
-			var item = await GetWithVenueAndSections(eventId);
+			var item = await _collection.Include(e => e.Venue)
+				.ThenInclude(v => v.Sections)
+				.ThenInclude(s => s.Rows)
+				.FirstOrDefaultAsync(e => e.Id == eventId);
 			if (item is null) return null;
-			return (IList<Section>)(item.Venue?.Sections ?? []);
+			return item.Venue?.Sections.ToList() ?? [];
 		}
 
 		public async Task<Event> GetWithVenueAndSections(int eventId)

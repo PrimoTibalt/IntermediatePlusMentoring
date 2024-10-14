@@ -15,8 +15,8 @@ namespace EventApplication.Core
 				.ForMember(ed => ed.VenueDescription, o => o.MapFrom(e => e.Venue.Description))
 				.ForMember(ed => ed.Sections, o => o.MapFrom(e => e.Venue.Sections.Select(s => s.Id).ToList()));
 
-			CreateMap<Section, Section>()
-				.ForMember(s => s.Venue, o => o.Ignore());
+			CreateMap<Section, SectionDetails>()
+				.ForMember(sd => sd.Rows, o => o.MapFrom(s => s.Rows.Select(r => r.Id)));
 			
 			CreateMap<EventSeat, SeatDetails>()
 				.ForMember(sd => sd.RowId, o => o.MapFrom(es => es.Seat.RowId))
