@@ -3,8 +3,9 @@ using DAL.Orders;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.DTOs;
+using OrderApplication.Commands;
 using OrderApplication.Entities;
-using Carts = OrderApplication.Carts;
+using OrderApplication.Queries;
 
 namespace OrderAPI.Controllers
 {
@@ -26,7 +27,7 @@ namespace OrderAPI.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetDetails(Guid id)
         {
-            var details = await _mediator.Send(new Carts.Details.Query { Id = id });
+            var details = await _mediator.Send(new GetCartQuery { Id = id });
             if (details is null) return NotFound();
             var resource = GetResource(details, id);
             return Ok(resource);
@@ -38,7 +39,7 @@ namespace OrderAPI.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> BookCartItems(Guid id)
         {
-            var result = await _mediator.Send(new Carts.Book.Command { Id = id });
+            var result = await _mediator.Send(new BookCartItemsCommand { Id = id });
             if (result is null) return NotFound($"Cart with id '{id}' doesn't exist.");
             if (result.Error) return BadRequest(result.ErrorMessage);
             
@@ -56,10 +57,10 @@ namespace OrderAPI.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> AddToCart(CartItemInputModel item, [FromRoute] Guid id)
         {
-            var result = await _mediator.Send(new Carts.AddItem.Command { CartId = id, EventId = item.EventId, SeatId = item.SeatId, UserId = item.UserId });
+            var result = await _mediator.Send(new AddItemToCartCommand { CartId = id, EventId = item.EventId, SeatId = item.SeatId, UserId = item.UserId });
             if (result is null) return NotFound("Seat not found");
             if (result.Error) return BadRequest(result.ErrorMessage);
-            var details = await _mediator.Send(new Carts.Details.Query { Id = id });
+            var details = await _mediator.Send(new GetCartQuery { Id = id });
             var resource = GetResource(details, id);
             return Ok(resource);
         }
@@ -68,7 +69,7 @@ namespace OrderAPI.Controllers
         [ProducesResponseType(typeof(Resource<string>), 200)]
         public async Task<IActionResult> DeleteFromCart(Guid cartId, int eventId, long seatId)
         {
-            var result = await _mediator.Send(new Carts.DeleteItem.Command { CartId = cartId, EventId = eventId, SeatId = seatId });
+            var result = await _mediator.Send(new DeleteItemFromCartCommand { CartId = cartId, EventId = eventId, SeatId = seatId });
             var resource = new Resource<string>();
             if (result.Error)
                 resource.Value = result.ErrorMessage;

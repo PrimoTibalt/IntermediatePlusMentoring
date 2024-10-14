@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrderApplication.Core;
+using OrderApplication.Queries;
 
 namespace OrderApplication
 {
@@ -18,7 +19,7 @@ namespace OrderApplication
 			});
 			services.AddOrderRepositories();
 
-			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Carts.Details).Assembly));
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCartQuery).Assembly));
         }
     }
 }
