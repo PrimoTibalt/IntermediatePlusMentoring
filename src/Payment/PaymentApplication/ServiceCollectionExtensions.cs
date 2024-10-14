@@ -3,6 +3,7 @@ using DAL.Payments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PaymentApplication.Handlers;
 
 namespace PaymentApplication
 {
@@ -16,7 +17,7 @@ namespace PaymentApplication
 			});
 			services.AddPaymentRepositories();
 
-			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Payments.Details).Assembly));
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetPaymentHandler).Assembly));
         }
     }
 }
