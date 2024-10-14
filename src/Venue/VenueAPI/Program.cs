@@ -8,11 +8,8 @@ builder.Services.AddControllers()
 	{
 		options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 	});
-
 builder.Services.AddVenueApplicaiton(builder.Configuration);
 
 var app = builder.Build();
-
-app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

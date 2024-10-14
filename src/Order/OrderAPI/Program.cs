@@ -11,7 +11,6 @@ builder.Services.AddControllers()
 builder.Services.AddOrderApplication(builder.Configuration);
 
 var app = builder.Build();
-app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
 
