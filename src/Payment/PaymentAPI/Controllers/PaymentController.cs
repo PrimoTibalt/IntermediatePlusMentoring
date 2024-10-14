@@ -1,7 +1,7 @@
 using DAL.Payments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using PaymentApplication.Payments;
+using Payments = PaymentApplication.Payments;
 
 namespace PaymentAPI.Controllers
 {
@@ -21,7 +21,7 @@ namespace PaymentAPI.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetById(long id)
         {
-            var result = await _mediator.Send(new Details.Query { Id = id });
+            var result = await _mediator.Send(new Payments.Details.Query { Id = id });
             if (result is null) return NotFound();
             return Ok(result);
         }
@@ -48,8 +48,7 @@ namespace PaymentAPI.Controllers
             bool result;
             try 
             {
-                result = complete ? await _mediator.Send(new Complete.Command { Id = id })
-                                  : await _mediator.Send(new Fail.Command { Id = id });
+                result = await _mediator.Send(new Payments.Operate.Command { Id = id, Complete = complete });
             }
             catch (Exception e)
             {
@@ -57,7 +56,7 @@ namespace PaymentAPI.Controllers
             }
 
             if (result) return Ok();
-            return BadRequest($"Payment with id '{id}' doesn't exist.");
+            return BadRequest($"Payment with id '{id}' doesn't exist or operation can't be performed on it.");
         }
     }
 }

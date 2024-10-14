@@ -4,11 +4,12 @@ using MediatR;
 
 namespace PaymentApplication.Payments
 {
-    public class Fail
+    public class Operate
     {
         public class Command : IRequest<bool>
         {
             public long Id { get; set; }
+            public bool Complete { get; set; }
         }
 
         public class RequestHandler : IRequestHandler<Command, bool>
@@ -26,7 +27,8 @@ namespace PaymentApplication.Payments
                 if (payment is null || payment.Status != PaymentStatus.InProgress.ToString().ToLowerInvariant())
                     return false;
 
-                return await _paymentRepository.FailPayment(request.Id);
+                return request.Complete ? await _paymentRepository.CompletePayment(request.Id)
+                                        : await _paymentRepository.FailPayment(request.Id);
             }
         }
     }
