@@ -3,6 +3,7 @@ using DAL.Orders;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.DTOs;
+using OrderApplication.Entities;
 using Carts = OrderApplication.Carts;
 
 namespace OrderAPI.Controllers
@@ -20,37 +21,108 @@ namespace OrderAPI.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(Resource<IList<CartItem>>), 200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetItems(Guid id)
+        public async Task<IActionResult> GetDetails(Guid id)
         {
-            var items = await _mediator.Send(new Carts.Items.Query { Id = id });
-            if (items is null) return NotFound();
-            var resource = new Resource<IList<CartItem>>
+            var details = await _mediator.Send(new Carts.Details.Query { Id = id });
+            if (details is null) return NotFound();
+            var resource = GetResource(details, id);
+            return Ok(resource);
+        }
+
+        [HttpPut("{id:guid}/book")]
+        [ProducesResponseType(typeof(Resource<long>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> BookCartItems(Guid id)
+        {
+            var result = await _mediator.Send(new Carts.Book.Command { Id = id });
+            if (result is null) return NotFound($"Cart with id '{id}' doesn't exist.");
+            if (result.Error) return BadRequest(result.ErrorMessage);
+            
+            var resource = new Resource<long?>
             {
-                Value = items,
+                Value = result.Value,
+                Links = []
+            };
+            return Ok(resource);
+        }
+
+        [HttpPost("{id:guid}")]
+        [ProducesResponseType(typeof(Resource<CartDetails>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> AddToCart(CartItemInputModel item, [FromRoute] Guid id)
+        {
+            var result = await _mediator.Send(new Carts.AddItem.Command { CartId = id, EventId = item.EventId, SeatId = item.SeatId, UserId = item.UserId });
+            if (result is null) return NotFound("Seat not found");
+            if (result.Error) return BadRequest(result.ErrorMessage);
+            var details = await _mediator.Send(new Carts.Details.Query { Id = id });
+            var resource = GetResource(details, id);
+            return Ok(resource);
+        }
+
+        [HttpDelete("{cartId:guid}/events/{eventId}/seats/{seatId:long}")]
+        [ProducesResponseType(typeof(Resource<string>), 200)]
+        public async Task<IActionResult> DeleteFromCart(Guid cartId, int eventId, long seatId)
+        {
+            var result = await _mediator.Send(new Carts.DeleteItem.Command { CartId = cartId, EventId = eventId, SeatId = seatId });
+            var resource = new Resource<string>();
+            if (result.Error)
+                resource.Value = result.ErrorMessage;
+            else
+                resource.Value = "Deleted.";
+
+            resource.Links = [
+                new Link
+                {
+                    Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetDetails), values: new { id = cartId }),
+                    Method = "GET"
+                },
+                GetLinkToBooking(cartId)
+            ];
+
+            return Ok(resource);
+        }
+
+        private Resource<CartDetails> GetResource(CartDetails details, Guid id)
+        {
+            var resource = new Resource<CartDetails>
+            {
+                Value = details,
                 Links = [
                     new Link 
                     {
                         Href = _linkGenerator.GetUriByAction(HttpContext, nameof(AddToCart), values: new { id }),
                         Method = "POST"
-                    }
+                    },
+                    GetLinkToBooking(id)
                 ]
             }; 
-            return Ok(resource);
+            foreach (var cartItem in details.Items)
+            {
+                resource.Links.Add(
+                    new Link 
+                    {
+                        Href = _linkGenerator.GetUriByAction(HttpContext, nameof(DeleteFromCart), values: new { cartId = id, eventId = cartItem.EventSeat.EventId, seatId = cartItem.EventSeatId }),
+                        Method = "DELETE"
+                    }
+                );
+            }
+
+            return resource;
         }
 
-        [HttpPost("{id}")]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> AddToCart(CartItemInputModel item, [FromQuery] Guid id)
+        private Link GetLinkToBooking(Guid id)
         {
-            var result = await _mediator.Send(new Carts.Add.Command { CartId = id, EventId = item.EventId, SeatId = item.SeatId, UserId = item.UserId });
-            if (result is null) return NotFound("Seat not found");
-            if (result.Error) return BadRequest(result.ErrorMessage);
-            return CreatedAtAction(nameof(GetItems), new { id });
+            var link = new Link
+            {
+                Href = _linkGenerator.GetUriByAction(HttpContext, nameof(BookCartItems), values: new { id }),
+                Method = "PUT"
+            };
+            return link;
         }
     }
 }

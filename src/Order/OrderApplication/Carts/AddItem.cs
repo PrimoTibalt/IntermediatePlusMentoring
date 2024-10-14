@@ -1,5 +1,4 @@
 using API.Abstraction.Helpers;
-using DAL;
 using DAL.Events;
 using DAL.Orders;
 using DAL.Orders.Repository;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace OrderApplication.Carts
 {
-    public class Add
+    public class AddItem
     {
         public class Command : IRequest<Result<Unit>>
         {
@@ -21,10 +20,10 @@ namespace OrderApplication.Carts
         public class RequestHandler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly ICartRepository _cartRepository;
-            private readonly IGenericRepository<CartItem, long> _cartItemRepository;
-            private readonly IGenericRepository<EventSeat, long> _seatRepository;
+            private readonly ICartItemRepository _cartItemRepository;
+            private readonly IEventSeatRepository _seatRepository;
 
-            public RequestHandler(ICartRepository repository, IGenericRepository<EventSeat, long> seatRepository, IGenericRepository<CartItem, long> cartItemRepository)
+            public RequestHandler(ICartRepository repository, IEventSeatRepository seatRepository, ICartItemRepository cartItemRepository)
             {
                 _cartRepository = repository;
                 _seatRepository = seatRepository;
@@ -51,9 +50,10 @@ namespace OrderApplication.Carts
                         return Result<Unit>.Failure($"User with id '{request.UserId}' doesn't exist.");
                     }
                 }
-                var seat = await _seatRepository.GetById(request.SeatId);
+
+                var seat = await _seatRepository.GetBy(request.EventId, request.SeatId);
                 if (seat is null)
-                    return Result<Unit>.Failure($"Seat with id '{request.SeatId}' doesn't exist.");
+                    return Result<Unit>.Failure($"Seat with id '{request.SeatId}' for event id '{request.EventId}' doesn't exist.");
                 if (Enum.Parse<SeatStatus>(seat.Status, true) != SeatStatus.Available)
                     return Result<Unit>.Failure($"Can't add seat with id '{request.SeatId}' to cart because it is already booked or sold.");
 
@@ -63,11 +63,21 @@ namespace OrderApplication.Carts
                     EventSeatId = request.SeatId,
                     PriceId = seat.PriceId
                 };
-                await _cartItemRepository.Create(cartItem);
-                var result = await _cartItemRepository.Save();
+
+                int result;
+                try
+                {
+                    await _cartItemRepository.Create(cartItem);
+                    result = await _cartItemRepository.Save();
+                }
+                catch (DbUpdateException)
+                {
+                    return Result<Unit>.Failure("Seat is already in the cart");
+                }
+
                 if (result == 1) return Result<Unit>.Success(Unit.Value);
 
-                return Result<Unit>.Failure("Cart was not created.");
+                return Result<Unit>.Failure("Cart item was not created.");
             }
         }
     }
