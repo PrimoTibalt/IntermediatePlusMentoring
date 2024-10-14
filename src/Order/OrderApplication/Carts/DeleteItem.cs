@@ -1,6 +1,5 @@
 using API.Abstraction.Helpers;
-using DAL;
-using DAL.Orders;
+using DAL.Events;
 using DAL.Orders.Repository;
 using MediatR;
 
@@ -30,10 +29,17 @@ namespace OrderApplication.Carts
                 if (cartItem is null)
                     return Result<Unit>.Failure($"Did not find item in cart '{request.CartId}' with event id '{request.EventId}' and seat id '{request.SeatId}'.");
                 await _cartItemsRepository.Delete(cartItem.Id);
+
                 var result = await _cartItemsRepository.Save();
                 if (result == 0)
                     return Result<Unit>.Failure("Delete did not succeed");
                 
+                if (cartItem.EventSeat.Status != SeatStatus.Sold.ToString().ToLowerInvariant())
+                {
+                    cartItem.EventSeat.Status = SeatStatus.Available.ToString().ToLowerInvariant();
+                    await _cartItemsRepository.Save();
+                }
+
                 return Result<Unit>.Success(Unit.Value);
             }
         }

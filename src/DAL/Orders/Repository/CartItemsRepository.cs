@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Orders.Repository
@@ -9,7 +8,7 @@ namespace DAL.Orders.Repository
 
         public Task<CartItem> GetBy(Guid cartId, int eventId, long seatId)
         {
-            return _collection.SingleOrDefaultAsync(ci => ci.CartId == cartId && ci.EventSeat.EventId == eventId && ci.EventSeatId == seatId);
+            return _collection.Include(ci => ci.EventSeat).SingleOrDefaultAsync(ci => ci.CartId == cartId && ci.EventSeat.EventId == eventId && ci.EventSeatId == seatId);
         }
     }
 }

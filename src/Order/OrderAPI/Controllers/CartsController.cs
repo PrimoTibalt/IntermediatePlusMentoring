@@ -33,7 +33,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPut("{id:guid}/book")]
-        [ProducesResponseType(typeof(Resource<long>), 200)]
+        [ProducesResponseType(typeof(Resource<string>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> BookCartItems(Guid id)
@@ -42,9 +42,9 @@ namespace OrderAPI.Controllers
             if (result is null) return NotFound($"Cart with id '{id}' doesn't exist.");
             if (result.Error) return BadRequest(result.ErrorMessage);
             
-            var resource = new Resource<long?>
+            var resource = new Resource<string>
             {
-                Value = result.Value,
+                Value = $"Payment with id '{result.Value}' was created",
                 Links = []
             };
             return Ok(resource);
