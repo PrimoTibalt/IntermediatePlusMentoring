@@ -3,21 +3,22 @@ using DAL.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OrderApplication.Core;
 
 namespace OrderApplication
 {
-    public static class ServiceCollectionExtension
+    public static class ServiceCollectionExtensions
     {
         public static void AddOrderApplication(this IServiceCollection services, IConfiguration configuration)
         {
-			// services.AddAutoMapper(typeof().Assembly);
+			services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 			services.AddDbContext<OrderContext>(options =>
 			{
 				options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 			});
 			services.AddOrderRepositories();
 
-			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Carts.Items).Assembly));
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Carts.Details).Assembly));
         }
     }
 }
