@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VenueApplication.Core;
-using VenueApplication.Entities;
+using VenueApplication.Handlers;
 
 namespace VenueApplication
 {
@@ -19,7 +19,7 @@ namespace VenueApplication
 			});
 			services.AddVenuesRepositories();
 
-			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(VenueDetails).Assembly));
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllVenuesHandler).Assembly));
 		}
 	}
 }

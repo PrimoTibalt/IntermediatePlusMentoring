@@ -2,9 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VenueApplication.Entities;
-using Venues = VenueApplication.Venues;
-using Sections = VenueApplication.Sections;
 using API.Abstraction.Helpers;
+using VenueApplication.Queries;
 
 namespace VenueAPI.Controllers
 {
@@ -26,7 +25,7 @@ namespace VenueAPI.Controllers
 		[ProducesResponseType(typeof(Resource<IList<Venue>>), 200)]
 		public async Task<IActionResult> GetAllVenues(CancellationToken token)
 		{
-			var result = await _mediator.Send(new Venues.List.Query(), token);
+			var result = await _mediator.Send(new GetAllVenuesQuery(), token);
 			var resource = new Resource<IList<Venue>>
 			{
 				Value = result,
@@ -36,34 +35,22 @@ namespace VenueAPI.Controllers
 			return Ok(resource);
 		}
 
-		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(Resource<VenueDetails>), 200)]
-		[ProducesResponseType(404)]
-		public async Task<IActionResult> GetById(int id)
-		{
-			var result = await _mediator.Send(new Venues.Details.Query { Id = id });
-			if (result is not null)
-			{
-				var resource = new Resource<VenueDetails>
-				{
-					Value = result,
-					Links = GenerateLinks(result)
-				};
-				return Ok(resource);
-			}
-
-			return NotFound();
-		}
-
 		[HttpGet("{venueId}/sections")]
 		[ProducesResponseType(typeof(Resource<IList<Section>>), 200)]
 		public async Task<IActionResult> GetSectionsOfVenue(int venueId)
 		{
-			var result = await _mediator.Send(new Sections.List.Query { VenueId = venueId });
+			var result = await _mediator.Send(new GetVenueSectionsQuery { VenueId = venueId });
 			var resource = new Resource<IList<Section>>
 			{
 				Value = result,
-				Links = GenerateLinks(result)
+				Links = 
+				[
+					new Link 
+					{
+						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetAllVenues)),
+						Method = "GET"
+					}
+				]
 			};
 
 			return Ok(resource);
@@ -76,36 +63,7 @@ namespace VenueAPI.Controllers
 			{
 				links.Add(new Link
 				{
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { item.Id }),
-					Method = "GET"
-				});
-			}
-			return links;
-		}
-
-		private IList<Link> GenerateLinks(VenueDetails details)
-		{
-			var links = new List<Link>
-			{
-				new Link
-				{
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetSectionsOfVenue), values: new { venueId = details.Id }),
-					Method = "GET"
-				}
-			};
-			return links;
-		}
-
-
-		private IList<Link> GenerateLinks(IList<Section> sections)
-		{
-			var links = new List<Link>();
-			var venues = sections.Select(s => s.VenueId).ToHashSet();
-			foreach (var venueId in venues)
-			{
-				links.Add(new Link
-				{
-					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetById), values: new { id = venueId }),
+					Href = _linkGenerator.GetUriByAction(HttpContext, nameof(GetSectionsOfVenue), values: new { venueId = item.Id }),
 					Method = "GET"
 				});
 			}
