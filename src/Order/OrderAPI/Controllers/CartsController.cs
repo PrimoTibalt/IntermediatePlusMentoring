@@ -35,7 +35,7 @@ namespace OrderAPI.Controllers
         [HttpPut("{id:guid}/book")]
         [ProducesResponseType(typeof(Resource<long>), 200)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(403)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> BookCartItems(Guid id)
         {
             var result = await _mediator.Send(new Carts.Book.Command { Id = id });
@@ -53,7 +53,7 @@ namespace OrderAPI.Controllers
         [HttpPost("{id:guid}")]
         [ProducesResponseType(typeof(Resource<CartDetails>), 200)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(403)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> AddToCart(CartItemInputModel item, [FromRoute] Guid id)
         {
             var result = await _mediator.Send(new Carts.AddItem.Command { CartId = id, EventId = item.EventId, SeatId = item.SeatId, UserId = item.UserId });
