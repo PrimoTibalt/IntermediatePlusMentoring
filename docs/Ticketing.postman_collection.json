@@ -15,13 +15,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{orders}}/carts/0957006c-fa93-4d95-944e-59f2a511b8db",
+							"raw": "{{orders}}/carts/a1a72dac-e7f8-4715-8f67-79f23769ebf1",
 							"host": [
 								"{{orders}}"
 							],
 							"path": [
 								"carts",
-								"0957006c-fa93-4d95-944e-59f2a511b8db"
+								"a1a72dac-e7f8-4715-8f67-79f23769ebf1"
 							],
 							"query": [
 								{
@@ -47,7 +47,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"eventId\": 1,\r\n    \"seatId\": 3,\r\n    \"userId\": 3\r\n}",
+							"raw": "{\r\n    \"eventId\": 1,\r\n    \"seatId\": 11,\r\n    \"userId\": 4\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -80,7 +80,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"eventId\": 1,\r\n    \"seatId\": 4,\r\n    \"userId\": 2\r\n}",
+							"raw": "{\r\n    \"eventId\": 1,\r\n    \"seatId\": 12,\r\n    \"userId\": 4\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -88,13 +88,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{orders}}/carts/0957006c-fa93-4d95-944e-59f2a511b8db",
+							"raw": "{{orders}}/carts/a1a72dac-e7f8-4715-8f67-79f23769ebf1",
 							"host": [
 								"{{orders}}"
 							],
 							"path": [
 								"carts",
-								"0957006c-fa93-4d95-944e-59f2a511b8db"
+								"a1a72dac-e7f8-4715-8f67-79f23769ebf1"
 							]
 						}
 					},
@@ -128,13 +128,13 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{orders}}/carts/0957006c-fa93-4d95-944e-59f2a511b8db/book",
+							"raw": "{{orders}}/carts/a1a72dac-e7f8-4715-8f67-79f23769ebf1/book",
 							"host": [
 								"{{orders}}"
 							],
 							"path": [
 								"carts",
-								"0957006c-fa93-4d95-944e-59f2a511b8db",
+								"a1a72dac-e7f8-4715-8f67-79f23769ebf1",
 								"book"
 							]
 						}
@@ -155,23 +155,6 @@
 							"raw": "{{venues}}",
 							"host": [
 								"{{venues}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetVenueById",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{venues}}/1",
-							"host": [
-								"{{venues}}"
-							],
-							"path": [
-								"1"
 							]
 						}
 					},
@@ -215,41 +198,6 @@
 					"response": []
 				},
 				{
-					"name": "GetEventById",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{events}}/1",
-							"host": [
-								"{{events}}"
-							],
-							"path": [
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetEventSections",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{events}}/1/sections",
-							"host": [
-								"{{events}}"
-							],
-							"path": [
-								"1",
-								"sections"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "GetEventSectionSeats",
 					"request": {
 						"method": "GET",
@@ -280,12 +228,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{payments}}/3",
+							"raw": "{{payments}}/6",
 							"host": [
 								"{{payments}}"
 							],
 							"path": [
-								"3"
+								"6"
 							]
 						}
 					},
@@ -297,12 +245,12 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{payments}}/2/failed",
+							"raw": "{{payments}}/6/failed",
 							"host": [
 								"{{payments}}"
 							],
 							"path": [
-								"2",
+								"6",
 								"failed"
 							]
 						}
@@ -315,12 +263,12 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{payments}}/3/complete",
+							"raw": "{{payments}}/5/complete",
 							"host": [
 								"{{payments}}"
 							],
 							"path": [
-								"3",
+								"5",
 								"complete"
 							]
 						}
