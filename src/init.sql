@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public."Prices"
 
 CREATE TABLE IF NOT EXISTS public."CartItems"
 (
-    "Id" bigint NOT NULL,
+    "Id" bigserial NOT NULL,
     "CartId" uuid NOT NULL,
     "EventSeatId" bigint NOT NULL,
     "PriceId" integer NOT NULL,

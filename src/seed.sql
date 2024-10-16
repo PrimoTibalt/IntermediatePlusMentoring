@@ -77,9 +77,8 @@ DECLARE
     seat RECORD;
 BEGIN
     FOR evt IN 
-        SELECT e."Id" AS "EventId", m."VenueId"
+        SELECT e."Id" AS "EventId", e."VenueId"
         FROM public."Events" e
-        JOIN public."Manifests" m ON e."ManifestId" = m."Id"
     LOOP
         FOR seat IN 
             SELECT s."Id" AS "SeatId"

@@ -1,0 +1,325 @@
+{
+	"info": {
+		"_postman_id": "236cd8c7-5e8b-48ef-822a-3f07c580536b",
+		"name": "Ticketing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10277738"
+	},
+	"item": [
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "GetCartItems",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{orders}}/carts/a1a72dac-e7f8-4715-8f67-79f23769ebf1",
+							"host": [
+								"{{orders}}"
+							],
+							"path": [
+								"carts",
+								"a1a72dac-e7f8-4715-8f67-79f23769ebf1"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddCartItem(new Guid)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\": 1,\r\n    \"seatId\": 11,\r\n    \"userId\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{orders}}/carts/{{$guid}}",
+							"host": [
+								"{{orders}}"
+							],
+							"path": [
+								"carts",
+								"{{$guid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddCartItem(existing Guid)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\": 1,\r\n    \"seatId\": 12,\r\n    \"userId\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{orders}}/carts/a1a72dac-e7f8-4715-8f67-79f23769ebf1",
+							"host": [
+								"{{orders}}"
+							],
+							"path": [
+								"carts",
+								"a1a72dac-e7f8-4715-8f67-79f23769ebf1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteItemFromCart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{orders}}/carts/0957006c-fa93-4d95-944e-59f2a511b8db/events/1/seats/4",
+							"host": [
+								"{{orders}}"
+							],
+							"path": [
+								"carts",
+								"0957006c-fa93-4d95-944e-59f2a511b8db",
+								"events",
+								"1",
+								"seats",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "book cart items",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{orders}}/carts/a1a72dac-e7f8-4715-8f67-79f23769ebf1/book",
+							"host": [
+								"{{orders}}"
+							],
+							"path": [
+								"carts",
+								"a1a72dac-e7f8-4715-8f67-79f23769ebf1",
+								"book"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Venues",
+			"item": [
+				{
+					"name": "GetAllVenues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{venues}}",
+							"host": [
+								"{{venues}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVenueSections",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{venues}}/1/sections",
+							"host": [
+								"{{venues}}"
+							],
+							"path": [
+								"1",
+								"sections"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "GetAllEvents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{events}}",
+							"host": [
+								"{{events}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetEventSectionSeats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{events}}/1/sections/1/seats",
+							"host": [
+								"{{events}}"
+							],
+							"path": [
+								"1",
+								"sections",
+								"1",
+								"seats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "GetPaymentById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{payments}}/6",
+							"host": [
+								"{{payments}}"
+							],
+							"path": [
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{payments}}/6/failed",
+							"host": [
+								"{{payments}}"
+							],
+							"path": [
+								"6",
+								"failed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{payments}}/5/complete",
+							"host": [
+								"{{payments}}"
+							],
+							"path": [
+								"5",
+								"complete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "orders",
+			"value": "http://localhost:8082/orders",
+			"type": "string"
+		},
+		{
+			"key": "events",
+			"value": "http://localhost:8081/events",
+			"type": "string"
+		},
+		{
+			"key": "venues",
+			"value": "http://localhost:8080/venues",
+			"type": "string"
+		},
+		{
+			"key": "payments",
+			"value": "http://localhost:8083/payments",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /App
+EXPOSE 8080
+
+COPY "Payment.sln" "Payment.sln"
+COPY "Payment/PaymentAPI/PaymentAPI.csproj" "Payment/PaymentAPI/PaymentAPI.csproj"
+COPY "Payment/PaymentApplication/PaymentApplication.csproj" "Payment/PaymentApplication/PaymentApplication.csproj"
+COPY "DAL/DAL.csproj" "DAL/DAL.csproj"
+
+RUN dotnet restore "Payment.sln"
+# well, following step is a huge overkill but it's 2am I'm exhausted
+COPY . .
+RUN dotnet publish Payment.sln -c Release -o out
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /App
+COPY --from=build-env /App/out .
+ENTRYPOINT ["dotnet", "PaymentAPI.dll"]

@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /App
+EXPOSE 8080
+
+COPY "Venues.sln" "Venues.sln"
+COPY "Venue/VenueAPI/VenueAPI.csproj" "Venue/VenueAPI/VenueAPI.csproj"
+COPY "Venue/VenueApplication/VenueApplication.csproj" "Venue/VenueApplication/VenueApplication.csproj"
+COPY "DAL/DAL.csproj" "DAL/DAL.csproj"
+COPY "API.Abstraction/API.Abstraction.csproj" "API.Abstraction/API.Abstraction.csproj"
+
+RUN dotnet restore "Venues.sln"
+# well, following step is a huge overkill but it's 2am I'm exhausted
+COPY . .
+RUN dotnet publish Venues.sln -c Release -o out
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /App
+COPY --from=build-env /App/out .
+ENTRYPOINT ["dotnet", "VenueAPI.dll"]
