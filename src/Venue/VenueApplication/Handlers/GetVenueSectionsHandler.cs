@@ -8,15 +8,21 @@ namespace VenueApplication.Handlers
     public class GetVenueSectionsHandler : IRequestHandler<GetVenueSectionsQuery, IList<Section>>
     {
         private readonly ISectionRepository _sectionRepository;
+        private readonly IVenueRepository _venueRepository;
 
-        public GetVenueSectionsHandler(ISectionRepository sectionRepository)
+        public GetVenueSectionsHandler(ISectionRepository sectionRepository, IVenueRepository venueRepository)
         {
             _sectionRepository = sectionRepository;
+            _venueRepository = venueRepository;
         }
 
         public async Task<IList<Section>> Handle(GetVenueSectionsQuery request, CancellationToken cancellationToken)
         {
-            return await _sectionRepository.GetByVenueId(request.VenueId, cancellationToken);
+            var venue = await _venueRepository.GetById(request.VenueId);
+            if (venue == null)
+              return null;
+
+            return await _sectionRepository.GetByVenueId(request.VenueId);
         }
     }
 

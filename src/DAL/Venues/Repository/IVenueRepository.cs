@@ -2,6 +2,5 @@
 {
 	public interface IVenueRepository : IGenericRepository<Venue, int>
 	{
-		Task<Venue> GetDetailed(int id);
 	}
 }
