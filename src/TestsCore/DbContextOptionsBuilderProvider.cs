@@ -7,7 +7,7 @@ namespace TestsCore
 		public static DbContextOptionsBuilder Get()
 		{
 			var builder = new DbContextOptionsBuilder<T>()
-				.UseInMemoryDatabase(databaseName: nameof(T));
+				.UseInMemoryDatabase(databaseName: nameof(T) + Guid.NewGuid().ToString());
 			return builder;
 		}
 	}
