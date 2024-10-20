@@ -11,7 +11,7 @@ namespace VenueTests
 		[Fact]
 		public async Task VenueRepository_Empty_AddedExist()
 		{
-			var serviceProvider = ConfigureServiceProvider();
+			var serviceProvider = ServiceConfigurationProvider.Get<VenueContext>(services => services.AddVenuesRepositories());
 			var venueRepository = serviceProvider.GetService<IVenueRepository>();
 			var venue = new Venue { Name = "1" };
 			await venueRepository.Create(venue);
@@ -27,7 +27,7 @@ namespace VenueTests
 		[Fact]
 		public async Task SectionRepository_WithExistingVenue_AddedExist()
 		{
-			var serviceProvider = ConfigureServiceProvider();
+			var serviceProvider = ServiceConfigurationProvider.Get<VenueContext>(services => services.AddVenuesRepositories());
 			var venueRepository = serviceProvider.GetService<IVenueRepository>();
 			var sectionRepository = serviceProvider.GetService<ISectionRepository>();
 			var venue = new Venue { Name = "1" };
@@ -45,17 +45,8 @@ namespace VenueTests
 			var result = await sectionRepository.GetByVenueId(venue.Id);
 
 			Assert.NotNull(result);
-			Assert.Equal(2, result.Count);
+			Assert.Equal(sections.Count, result.Count);
 			Assert.DoesNotContain(result, s => s.Name != "1" && s.Name != "2");
-		}
-
-		private static IServiceProvider ConfigureServiceProvider()
-		{
-			var builder = DbContextOptionsBuilderProvider<VenueContext>.Get();
-			var serviceCollection = new ServiceCollection();
-			serviceCollection.AddScoped<VenueContext>(provider => new VenueContext(builder.Options));
-			serviceCollection.AddVenuesRepositories();
-			return serviceCollection.BuildServiceProvider();
 		}
 	}
 }

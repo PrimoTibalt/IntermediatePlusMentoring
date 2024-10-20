@@ -17,7 +17,7 @@ namespace VenueTests
 		[InlineData(GetValuesSuites.OneValue)]
 		[InlineData(GetValuesSuites.ThreeValues)]
 		[InlineData(GetValuesSuites.ManyValues)]
-		public async Task Controller_GetAllVenues_ReturnsAllData(GetValuesSuites suite)
+		public async Task GetAllVenues_ResultNotEmpty_ReturnsAllData(GetValuesSuites suite)
 		{
 			var venues = Suites.GetVenues(suite);
 			var mediator = new Mock<IMediator>();
@@ -36,7 +36,7 @@ namespace VenueTests
 		[InlineData(GetValuesSuites.Empty)]
 		[InlineData(GetValuesSuites.OneValue)]
 		[InlineData(GetValuesSuites.ThreeValues)]
-		public async Task Controller_GetVenueSectionsQuery_ReturnsCorrectSections(GetValuesSuites suite)
+		public async Task GetVenueSectionsQuery_ResultNotNull_ReturnsCorrectSections(GetValuesSuites suite)
 		{
 			var sections = Suites.GetSections(suite);
 			var mediator = new Mock<IMediator>();
@@ -52,11 +52,12 @@ namespace VenueTests
 		}
 
 		[Fact]
-		public async Task Controller_GetvenueSectionsQuery_ReturnsNotFound()
+		public async Task GetVenueSectionsQuery_ResultNull_ReturnsNotFound()
 		{
 			var sections = Suites.GetSections(GetValuesSuites.Null);
 			var mediator = new Mock<IMediator>();
-			mediator.Setup(m => m.Send(It.IsAny<GetVenueSectionsQuery>(), CancellationToken.None)).ReturnsAsync(sections);
+			mediator.Setup(m => m.Send(It.IsAny<GetVenueSectionsQuery>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(sections);
 			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
 			var controller = GetController(mediator.Object, linkGenerator.Object);
 
