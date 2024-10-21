@@ -5,7 +5,7 @@ namespace VenueTests
 {
 	public static class Suites
 	{
-		public static Dictionary<GetValuesSuites, List<Venue>> suiteVenuesMap = new ()
+		private static Dictionary<GetValuesSuites, List<Venue>> suiteVenuesMap => new ()
 		{
 			{ GetValuesSuites.Empty, new List<Venue>() },
 			{ GetValuesSuites.OneValue, new List<Venue> { new() { } } },
@@ -20,7 +20,7 @@ namespace VenueTests
 			}
 		};
 
-		public static Dictionary<GetValuesSuites, List<Section>> suiteSectionsMap = new()
+		private static Dictionary<GetValuesSuites, List<Section>> suiteSectionsMap => new()
 		{
 			{ GetValuesSuites.Empty, new List<Section>() },
 			{ GetValuesSuites.Null, null },

@@ -17,7 +17,7 @@ namespace VenueTests
 		[InlineData(GetValuesSuites.OneValue)]
 		[InlineData(GetValuesSuites.ThreeValues)]
 		[InlineData(GetValuesSuites.ManyValues)]
-		public async Task GetAllVenues_ResultNotEmpty_ReturnsAllData(GetValuesSuites suite)
+		public async Task GetAllVenues_ResultNotNull_ReturnsAllData(GetValuesSuites suite)
 		{
 			var venues = Suites.GetVenues(suite);
 			var mediator = new Mock<IMediator>();
