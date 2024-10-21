@@ -21,13 +21,13 @@ namespace OrderTests.DAL
 			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<ICartRepository>();
 			var cartId = Guid.NewGuid();
+
 			var cart = new Cart
 			{
 				Id = cartId,
 				UserId = userId
 			};
 			await repository.Create(cart);
-
 			var result = await repository.GetById(cartId);
 
 			Assert.NotNull(result);

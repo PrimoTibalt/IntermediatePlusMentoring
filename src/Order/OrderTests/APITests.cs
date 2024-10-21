@@ -12,7 +12,7 @@ using TestsCore;
 
 namespace OrderTests.API
 {
-	public class API
+	public class APITests
 	{
 		[Fact]
 		public async Task GetDetails_ResultNull_NotFound()
