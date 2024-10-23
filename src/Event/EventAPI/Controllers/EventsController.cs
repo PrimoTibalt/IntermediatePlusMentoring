@@ -23,6 +23,7 @@ namespace EventAPI.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(typeof(Resource<IList<Event>>), 200)]
+		[ResponseCache(Duration = 15, Location = ResponseCacheLocation.Client)]
 		public async Task<IActionResult> GetAll(CancellationToken token)
 		{
 			var result = await _mediator.Send(new GetAllEventsQuery(), token);
@@ -37,6 +38,7 @@ namespace EventAPI.Controllers
 		[HttpGet("{eventId}/sections/{sectionId}/seats")]
 		[ProducesResponseType(typeof(Resource<IList<SeatDetails>>), 200)]
 		[ProducesResponseType(404)]
+		[ResponseCache(Duration = 15, Location = ResponseCacheLocation.Client)]
 		public async Task<IActionResult> GetSectionSeats(int eventId, int sectionId)
 		{
 			var result = await _mediator.Send(new GetEventSectionSeatsQuery { EventId = eventId, SectionId = sectionId });
