@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace TestsCore
 {
@@ -7,7 +8,8 @@ namespace TestsCore
 		public static DbContextOptionsBuilder Get()
 		{
 			var builder = new DbContextOptionsBuilder<T>()
-				.UseInMemoryDatabase(databaseName: nameof(T) + Guid.NewGuid().ToString());
+				.UseInMemoryDatabase(databaseName: nameof(T) + Guid.NewGuid().ToString())
+				.ConfigureWarnings(builder => builder.Ignore(InMemoryEventId.TransactionIgnoredWarning));
 			return builder;
 		}
 	}
