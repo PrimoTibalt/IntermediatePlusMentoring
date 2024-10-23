@@ -1,5 +1,6 @@
 ﻿using DAL.Venues;
 using TestsCore;
+using VenueApplication.Entities;
 
 namespace VenueTests
 {
@@ -20,9 +21,9 @@ namespace VenueTests
 			}
 		};
 
-		private static Dictionary<GetValuesSuites, List<Section>> suiteSectionsMap => new()
+		private static Dictionary<GetValuesSuites, List<SectionDetails>> suiteSectionsMap => new()
 		{
-			{ GetValuesSuites.Empty, new List<Section>() },
+			{ GetValuesSuites.Empty, new List<SectionDetails>() },
 			{ GetValuesSuites.Null, null },
 			{ GetValuesSuites.OneValue, new() { new() } },
 			{ GetValuesSuites.ThreeValues, new() { new(), new(), new() } },
@@ -33,7 +34,7 @@ namespace VenueTests
 			return suiteVenuesMap[suite];
 		}
 
-		public static IList<Section> GetSections(GetValuesSuites suite)
+		public static IList<SectionDetails> GetSections(GetValuesSuites suite)
 		{
 			return suiteSectionsMap[suite];
 		}

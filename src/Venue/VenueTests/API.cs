@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Moq;
 using TestsCore;
 using VenueAPI.Controllers;
+using VenueApplication.Entities;
 using VenueApplication.Queries;
 
 namespace VenueTests
@@ -45,7 +46,7 @@ namespace VenueTests
 			var controller = GetController(mediator.Object, linkGenerator.Object);
 
 			var result = await controller.GetSectionsOfVenue(1);
-			var value = (result as OkObjectResult).Value as Resource<IList<Section>>;
+			var value = (result as OkObjectResult).Value as Resource<IList<SectionDetails>>;
 
 			Assert.NotNull(value);
 			Assert.Equal(sections.Count, value.Value.Count);
