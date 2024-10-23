@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using API.Abstraction.Helpers;
 using VenueApplication.Queries;
+using VenueApplication.Entities;
 
 namespace VenueAPI.Controllers
 {
@@ -35,7 +36,7 @@ namespace VenueAPI.Controllers
 		}
 
 		[HttpGet("{venueId}/sections")]
-		[ProducesResponseType(typeof(Resource<IList<Section>>), 200)]
+		[ProducesResponseType(typeof(Resource<IList<SectionDetails>>), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetSectionsOfVenue(int venueId)
 		{
@@ -43,7 +44,7 @@ namespace VenueAPI.Controllers
 			if (result is null)
 				return NotFound($"Venue with id '{venueId}' doesn't exist.");
 
-			var resource = new Resource<IList<Section>>
+			var resource = new Resource<IList<SectionDetails>>
 			{
 				Value = result,
 				Links = 
