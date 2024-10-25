@@ -15,8 +15,8 @@ namespace EventTest.DALTests
 		public async Task GetEventSectionSeats_ExistingValues_EmptyIfInputIncorrect()
 		{
 			var repository = serviceProvider.GetService<IEventSeatRepository>();
-			var incorrectEventId = 3453;
 			var seatCount = 100;
+			var incorrectEventId = seatCount+1;
 			foreach (var index in Enumerable.Range(1, seatCount))
 			{
 				if (index == incorrectEventId) continue;

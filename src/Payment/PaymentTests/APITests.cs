@@ -39,50 +39,51 @@ namespace PaymentTests
 		[Fact]
 		public async Task Fail_SuccessResult_Ok()
 		{
-			await ProcessPaymentCommandTestOk(false);
+			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(true);
+			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
+
+			var result = await controller.Fail(123);
+
+			Assert.NotNull(result);
+			Assert.IsType<OkResult>(result);
 		}
 
 		[Fact]
 		public async Task Fail_FailedResult_BadRequestWithMessage()
 		{
-			await ProcessPaymentCommandTestBadRequest(false);
-		}
-
-		[Fact]
-		public async Task Complete_SuccessResult_Ok()
-		{
-			await ProcessPaymentCommandTestOk(true);
-		}
-
-		[Fact]
-		public async Task Complete_FailedResult_BadRequestWithMessage()
-		{
-			await ProcessPaymentCommandTestBadRequest(true);
-		}
-
-		private static async Task ProcessPaymentCommandTestBadRequest(bool complete)
-		{
 			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(false);
 			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
 
-			var result = complete ? await controller.Complete(123)
-				: await controller.Fail(123);
+			var result =  await controller.Fail(123);
 			var message = (result as BadRequestObjectResult).Value as string;
 
 			Assert.NotNull(message);
 			Assert.NotEmpty(message);
 		}
 
-		private static async Task ProcessPaymentCommandTestOk(bool complete)
+		[Fact]
+		public async Task Complete_SuccessResult_Ok()
 		{
 			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(true);
 			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
 
-			var result = complete ? await controller.Complete(123)
-				: await controller.Fail(123);
+			var result = await controller.Complete(123);
 
 			Assert.NotNull(result);
 			Assert.IsType<OkResult>(result);
+		}
+
+		[Fact]
+		public async Task Complete_FailedResult_BadRequestWithMessage()
+		{
+			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(false);
+			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
+
+			var result = await controller.Complete(123);
+			var message = (result as BadRequestObjectResult).Value as string;
+
+			Assert.NotNull(message);
+			Assert.NotEmpty(message);
 		}
 	}
 }

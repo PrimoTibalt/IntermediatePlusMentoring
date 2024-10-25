@@ -19,10 +19,21 @@ namespace PaymentTests.DALTests
 		[InlineData(GetValuesSuites.ManyValues)]
 		public async Task FailPayment_ExistingValues_SeatsAvailable(GetValuesSuites suite)
 		{
-			await ProcessPayment_ExistingValues_Status(suite,
-				complete: false,
-				PaymentStatus.Failed.ToString().ToLowerInvariant(),
-				SeatStatus.Available.ToString().ToLowerInvariant());
+			var payment = Suites.GetPayment(suite, SeatStatus.Booked);
+			var paymentId = 1;
+			payment.Id = paymentId;
+			var repository = serviceProvider.GetService<IPaymentRepository>();
+			await repository.Create(payment);
+			await repository.Save();
+
+			var result = await repository.FailPayment(paymentId);
+
+			Assert.True(result);
+			Assert.Equal(PaymentStatus.Failed.ToString().ToLowerInvariant(), payment.Status);
+			Assert.All(payment.Cart.CartItems, item =>
+			{
+				Assert.Equal(SeatStatus.Available.ToString().ToLowerInvariant(), item.EventSeat.Status);
+			});
 		}
 
 		[Theory]
@@ -31,10 +42,21 @@ namespace PaymentTests.DALTests
 		[InlineData(GetValuesSuites.ManyValues)]
 		public async Task CompletePayment_ExistingValues_SeatsSold(GetValuesSuites suite)
 		{
-			await ProcessPayment_ExistingValues_Status(suite,
-				complete: true,
-				PaymentStatus.Completed.ToString().ToLowerInvariant(),
-				SeatStatus.Sold.ToString().ToLowerInvariant());
+			var payment = Suites.GetPayment(suite, SeatStatus.Booked);
+			var paymentId = 1;
+			payment.Id = paymentId;
+			var repository = serviceProvider.GetService<IPaymentRepository>();
+			await repository.Create(payment);
+			await repository.Save();
+
+			var result = await repository.CompletePayment(paymentId);
+
+			Assert.True(result);
+			Assert.Equal(PaymentStatus.Completed.ToString().ToLowerInvariant(), payment.Status);
+			Assert.All(payment.Cart.CartItems, item =>
+			{
+				Assert.Equal(SeatStatus.Sold.ToString().ToLowerInvariant(), item.EventSeat.Status);
+			});
 		}
 
 		[Theory]
@@ -98,26 +120,6 @@ namespace PaymentTests.DALTests
 			Assert.All(payment.Cart.CartItems, item =>
 			{
 				Assert.Equal(seatIdStatusMap[item.EventSeat.Id], item.EventSeat.Status);
-			});
-		}
-
-		private async Task ProcessPayment_ExistingValues_Status(GetValuesSuites suite, bool complete, string paymentStatus, string seatStatus)
-		{
-			var payment = Suites.GetPayment(suite, SeatStatus.Booked);
-			var paymentId = 1;
-			payment.Id = paymentId;
-			var repository = serviceProvider.GetService<IPaymentRepository>();
-			await repository.Create(payment);
-			await repository.Save();
-
-			var result = complete ? await repository.CompletePayment(paymentId)
-				: await repository.FailPayment(paymentId);
-
-			Assert.True(result);
-			Assert.Equal(paymentStatus, payment.Status);
-			Assert.All(payment.Cart.CartItems, item =>
-			{
-				Assert.Equal(seatStatus, item.EventSeat.Status);
 			});
 		}
 	}
