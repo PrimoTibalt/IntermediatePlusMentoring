@@ -13,9 +13,6 @@ namespace VenueApplication.Core
 
 			CreateMap<Section, SectionDetails>()
 				.ForMember(sd => sd.Rows, o => o.MapFrom(s => s.Rows.Select(r => r.Id)));
-
-			CreateMap<Row, RowDetails>()
-				.ForMember(rd => rd.Seats, o => o.MapFrom(r => r.Seats.Select(s => s.Id)));
 		}
 	}
 }

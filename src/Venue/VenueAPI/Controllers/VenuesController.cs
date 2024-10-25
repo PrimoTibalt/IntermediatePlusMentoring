@@ -1,9 +1,9 @@
 ﻿using DAL.Venues;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using VenueApplication.Entities;
 using API.Abstraction.Helpers;
 using VenueApplication.Queries;
+using VenueApplication.Entities;
 
 namespace VenueAPI.Controllers
 {
@@ -36,11 +36,15 @@ namespace VenueAPI.Controllers
 		}
 
 		[HttpGet("{venueId}/sections")]
-		[ProducesResponseType(typeof(Resource<IList<Section>>), 200)]
+		[ProducesResponseType(typeof(Resource<IList<SectionDetails>>), 200)]
+		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetSectionsOfVenue(int venueId)
 		{
 			var result = await _mediator.Send(new GetVenueSectionsQuery { VenueId = venueId });
-			var resource = new Resource<IList<Section>>
+			if (result is null)
+				return NotFound($"Venue with id '{venueId}' doesn't exist.");
+
+			var resource = new Resource<IList<SectionDetails>>
 			{
 				Value = result,
 				Links = 

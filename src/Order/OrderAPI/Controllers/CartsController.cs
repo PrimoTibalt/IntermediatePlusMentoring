@@ -1,5 +1,4 @@
 using API.Abstraction.Helpers;
-using DAL.Orders;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.DTOs;
@@ -23,7 +22,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [ProducesResponseType(typeof(Resource<IList<CartItem>>), 200)]
+        [ProducesResponseType(typeof(Resource<CartDetails>), 200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetDetails(Guid id)
         {

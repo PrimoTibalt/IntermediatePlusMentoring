@@ -19,7 +19,9 @@ namespace DAL.Orders.Repository
 
         public async Task<IList<CartItem>> GetItemsWithEventSeat(Guid id)
         {
-            var cart = await _collection.Include(c => c.CartItems).ThenInclude(ci => ci.EventSeat).FirstOrDefaultAsync(c => c.Id == id);
+            var cart = await _collection.Include(c => c.CartItems)
+              .ThenInclude(ci => ci.EventSeat)
+              .FirstOrDefaultAsync(c => c.Id == id);
             if (cart is null) return null;
             return [.. cart.CartItems];
         }
