@@ -23,7 +23,7 @@ namespace PaymentAPI.Controllers
         public async Task<IActionResult> GetById(long id)
         {
             var result = await _mediator.Send(new GetPaymentQuery { Id = id });
-            if (result is null) return NotFound();
+            if (result is null) return NotFound($"Payment with id '{id}' was not found.");
             return Ok(result);
         }
 

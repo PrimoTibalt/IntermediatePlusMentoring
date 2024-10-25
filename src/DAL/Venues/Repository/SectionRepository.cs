@@ -8,7 +8,7 @@ namespace DAL.Venues.Repository
 
 		public async Task<IList<Section>> GetByVenueId(int venueId, CancellationToken token = default)
 		{
-			return await _collection.Where(s => s.VenueId == venueId).ToListAsync(token);
+			return await _collection.Include(s => s.Rows).Where(s => s.VenueId == venueId).ToListAsync(token);
 		}
 	}
 }
