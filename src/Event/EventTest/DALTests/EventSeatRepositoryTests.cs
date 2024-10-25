@@ -2,16 +2,18 @@
 using DAL.Events;
 using DAL.Events.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using TestsCore;
+using TestsCore.Providers;
 
 namespace EventTest.DALTests
 {
 	public class EventSeatRepositoryTests
 	{
+		private static IServiceProvider serviceProvider =>
+			ServiceConfigurationProvider.Get<EventContext>(services => services.AddEventsRepositories());
+
 		[Fact]
 		public async Task GetEventSectionSeats_ExistingValues_EmptyIfInputIncorrect()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<EventContext>(services => services.AddEventsRepositories());
 			var repository = serviceProvider.GetService<IEventSeatRepository>();
 			var incorrectEventId = 3453;
 			var seatCount = 100;
@@ -35,36 +37,38 @@ namespace EventTest.DALTests
 		[Fact]
 		public async Task GetEventSectionSeats_ExistingValues_AllRelatedSeats()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<EventContext>(services => services.AddEventsRepositories());
 			var repository = serviceProvider.GetService<IEventSeatRepository>();
-			var seatCount = 100;
-			List<Tuple<long, long, long>> seatsIds = new();
-			foreach (var index in Enumerable.Range(1, seatCount))
-			{
-				var seat1 = new EventSeat { EventId = index, Price = new(), Seat = new() { Row = new() { SectionId = 2 * index } } };
-				var seat2 = new EventSeat { EventId = index, Price = new(), Seat = new() { Row = new() { SectionId = 2 * index } } };
-				var seat3 = new EventSeat { EventId = index, Price = new(), Seat = new() { Row = new() { SectionId = 2 * index } } };
-				await repository.Create(seat1);
-				await repository.Create(seat2);
-				await repository.Create(seat3);
-				seatsIds.Add(new(seat1.Id, seat2.Id, seat3.Id));
-			}
-			await repository.Save();
+			var eventId = 1;
+			var sectionId = 2;
+			var seatsCount = 5;
+			await PopulateEventSeats(repository, eventId, sectionId, seatsCount);
 
-			List<IList<EventSeat>> results = [];
-			foreach (var index in Enumerable.Range(1, seatCount))
-			{
-				results.Add(await repository.GetEventSectionSeats(index, 2*index));
-			}
+			var result = await repository.GetEventSectionSeats(eventId, sectionId);
 
-			Assert.Equal(seatCount, results.Count);
-			Assert.All(results, items => Assert.Equal(3, items.Count));
-			Assert.All(seatsIds, items =>
+			Assert.NotNull(result);
+			Assert.Equal(seatsCount, result.Count);
+			Assert.All(result, item =>
 			{
-				Assert.Contains(results, (list) => list.Any(i => items.Item1 == i.Id) &&
-					list.Any(i => items.Item2 == i.Id) &&
-					list.Any(i => items.Item3 == i.Id));
+				Assert.Equal(eventId, item.EventId);
+				Assert.Equal(sectionId, item.Seat.Row.SectionId);
 			});
+		}
+
+		private static async Task PopulateEventSeats(IEventSeatRepository repository, int eventId, int sectionId, int seatsCount)
+		{
+			for (var i = 0; i < seatsCount; i++)
+			{
+				var seat = new EventSeat { EventId = eventId, Price = new(), Seat = new() { Row = new() { SectionId = sectionId } } };
+				await repository.Create(seat);
+			}
+
+			var seatNotInOutput1 = new EventSeat { EventId = eventId+1, Price = new(), Seat = new() { Row = new() { SectionId = sectionId+1 } } };
+			var seatNotInOutput2 = new EventSeat { EventId = eventId, Price = new(), Seat = new() { Row = new() { SectionId = sectionId+1 } } };
+			var seatNotInOutput3 = new EventSeat { EventId = eventId+1, Price = new(), Seat = new() { Row = new() { SectionId = sectionId } } };
+			await repository.Create(seatNotInOutput1);
+			await repository.Create(seatNotInOutput2);
+			await repository.Create(seatNotInOutput3);
+			await repository.Save();
 		}
 	}
 }

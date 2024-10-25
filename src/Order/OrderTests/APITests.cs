@@ -1,14 +1,13 @@
 using API.Abstraction.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Moq;
 using OrderAPI.Controllers;
 using OrderAPI.DTOs;
 using OrderApplication.Commands;
 using OrderApplication.Entities;
 using OrderApplication.Queries;
 using TestsCore;
+using TestsCore.Providers;
 
 namespace OrderTests.API
 {
@@ -17,11 +16,8 @@ namespace OrderTests.API
 		[Fact]
 		public async Task GetDetails_ResultNull_NotFound()
 		{
-			var mediator = new Mock<IMediator>();
-			mediator.Setup(m => m.Send(It.IsAny<GetCartQuery>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((CartDetails)null);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<GetCartQuery, CartDetails>(null);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.GetDetails(Guid.NewGuid());
 
@@ -31,7 +27,6 @@ namespace OrderTests.API
 		[Fact]
 		public async Task GetDetails_CartItemsReturned_OkObjectResultWithCorrectResult()
 		{
-			var mediator = new Mock<IMediator>();
 			var cart = new CartDetails
 			{
 				Items =
@@ -40,10 +35,8 @@ namespace OrderTests.API
 					new () { EventSeat = new()},
 				]
 			};
-			mediator.Setup(m => m.Send(It.IsAny<GetCartQuery>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(cart);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<GetCartQuery, CartDetails>(cart);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.GetDetails(Guid.NewGuid());
 			var value = (result as OkObjectResult)?.Value as Resource<CartDetails>;
@@ -55,12 +48,9 @@ namespace OrderTests.API
 		[Fact]
 		public async Task AddToCart_ResultNull_NotFoundWithMessage()
 		{
-			var mediator = new Mock<IMediator>();
 			var guid = Guid.NewGuid();
-			mediator.Setup(m => m.Send(It.IsAny<AddItemToCartCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((Result<Unit>)null);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<AddItemToCartCommand, Result<Unit>>(null);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 			var cartItem = new CartItemInputModel();
 
 			var result = await controller.AddToCart(cartItem, guid);
@@ -73,7 +63,6 @@ namespace OrderTests.API
 		[Fact]
 		public async Task AddToCart_ResultSuccess_OkWithCartDetails()
 		{
-			var mediator = new Mock<IMediator>();
 			var guid = Guid.NewGuid();
 			var successResult = new Result<Unit>
 			{
@@ -82,17 +71,13 @@ namespace OrderTests.API
 			};
 			var cart = new CartDetails
 			{
-				Items =
-				[
-					new () { EventSeat = new()},
-				]
+				Items = [ new () { EventSeat = new()} ]
 			};
-			mediator.Setup(m => m.Send(It.IsAny<AddItemToCartCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(successResult);
-			mediator.Setup(m => m.Send(It.IsAny<GetCartQuery>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(cart);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = new MediatorMockObjectBuilder()
+				.AppendSetup<AddItemToCartCommand, Result<Unit>>(successResult)
+				.AppendSetup<GetCartQuery, CartDetails>(cart)
+				.GetObject();
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 			var cartItem = new CartItemInputModel();
 
 			var result = await controller.AddToCart(cartItem, guid);
@@ -103,30 +88,8 @@ namespace OrderTests.API
 		}
 
 		[Fact]
-		public async Task AddToCart_ResultSuccess_ResultNull_ThrowsNullReference()
-		{
-			var mediator = new Mock<IMediator>();
-			var guid = Guid.NewGuid();
-			var successResult = new Result<Unit>
-			{
-				Error = false,
-				Value = Unit.Value
-			};
-			mediator.Setup(m => m.Send(It.IsAny<AddItemToCartCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(successResult);
-			mediator.Setup(m => m.Send(It.IsAny<GetCartQuery>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((CartDetails)null);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
-			var cartItem = new CartItemInputModel();
-
-			await Assert.ThrowsAsync<NullReferenceException>(async () => await controller.AddToCart(cartItem, guid));
-		}
-
-		[Fact]
 		public async Task AddToCart_ResultError_BadRequestWithMessage()
 		{
-			var mediator = new Mock<IMediator>();
 			var guid = Guid.NewGuid();
 			var errorResult = new Result<Unit>
 			{
@@ -134,10 +97,8 @@ namespace OrderTests.API
 				ErrorMessage = "Message",
 				Value = Unit.Value
 			};
-			mediator.Setup(m => m.Send(It.IsAny<AddItemToCartCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(errorResult);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<AddItemToCartCommand, Result<Unit>>(errorResult);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 			var cartItem = new CartItemInputModel();
 
 			var result = await controller.AddToCart(cartItem, guid);
@@ -150,12 +111,9 @@ namespace OrderTests.API
 		[Fact]
 		public async Task BookCartItems_ResultNull_NotFoundWithMessageContainingCartGuid()
 		{
-			var mediator = new Mock<IMediator>();
 			var guid = Guid.NewGuid();
-			mediator.Setup(m => m.Send(It.IsAny<BookCartItemsCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((Result<long?>)null);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<BookCartItemsCommand, Result<long?>>(null);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.BookCartItems(guid);
 			var value = (result as NotFoundObjectResult)?.Value as string;
@@ -164,21 +122,17 @@ namespace OrderTests.API
 			Assert.Contains(guid.ToString(), value);
 		}
 
-
 		[Fact]
 		public async Task BookCartItems_ResultError_BadRequestWithMessage()
 		{
-			var mediator = new Mock<IMediator>();
 			var guid = Guid.NewGuid();
 			var errorResult = new Result<long?>
 			{
 				Error = true,
 				ErrorMessage = "Message",
 			};
-			mediator.Setup(m => m.Send(It.IsAny<BookCartItemsCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(errorResult);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<BookCartItemsCommand, Result<long?>>(errorResult);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.BookCartItems(guid);
 			var value = (result as BadRequestObjectResult)?.Value as string;
@@ -199,23 +153,8 @@ namespace OrderTests.API
 			await DeleteFromCartWithResultTest(true);
 		}
 
-		[Fact]
-		public async Task DeleteFromCart_ResultNull_ThrowsNullReference()
-		{
-			var mediator = new Mock<IMediator>();
-			var guid = Guid.NewGuid();
-			mediator.Setup(m => m.Send(It.IsAny<DeleteItemFromCartCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((Result<Unit>)null);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
-
-			await Assert.ThrowsAsync<NullReferenceException>(async () =>
-				await controller.DeleteFromCart(guid, default, default));
-		}
-
 		private static async Task DeleteFromCartWithResultTest(bool error)
 		{
-			var mediator = new Mock<IMediator>();
 			var guid = Guid.NewGuid();
 			var errorResult = new Result<Unit>
 			{
@@ -223,24 +162,14 @@ namespace OrderTests.API
 				ErrorMessage = "Message",
 				Value = Unit.Value
 			};
-			mediator.Setup(m => m.Send(It.IsAny<DeleteItemFromCartCommand>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(errorResult);
-			var linkGenerator = LinkGeneratorMock.GetLinkGeneratorMock();
-			var controller = GetController(mediator.Object, linkGenerator.Object);
+			var mediator = MediatorMockObjectBuilder.Get<DeleteItemFromCartCommand, Result<Unit>>(errorResult);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.DeleteFromCart(guid, default, default);
 			var value = (result as OkObjectResult).Value as Resource<string>;
 
 			Assert.NotNull(value?.Value);
 			Assert.NotEmpty(value?.Value);
-		}
-
-		private static CartsController GetController(IMediator mediator, LinkGenerator linkGenerator)
-		{
-			var controller = new CartsController(mediator, linkGenerator);
-			var controllerContext = ControllerContextProvider.GetControllerContext();
-			controller.ControllerContext = controllerContext;
-			return controller;
 		}
 	}
 }

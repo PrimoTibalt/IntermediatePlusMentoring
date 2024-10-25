@@ -2,12 +2,15 @@
 using DAL.Orders;
 using DAL.Orders.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using TestsCore;
+using TestsCore.Providers;
 
 namespace OrderTests.DAL
 {
 	public class CartRepositoryTests
 	{
+		private static IServiceProvider serviceProvider =>
+			ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
+
 		[Theory]
 		[InlineData(0)]
 		[InlineData(1)]
@@ -18,10 +21,8 @@ namespace OrderTests.DAL
 		[InlineData(9999999)]
 		public async Task Create_Empty_AddedRetrieved(int userId)
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<ICartRepository>();
 			var cartId = Guid.NewGuid();
-
 			var cart = new Cart
 			{
 				Id = cartId,
@@ -38,7 +39,6 @@ namespace OrderTests.DAL
 		[Fact]
 		public async Task GetItemsFull_ExistingValues_ReturnNullOnGetWithIncorrectId()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<ICartRepository>();
 			var cartCount = 100;
 			for (int i = 0; i < cartCount; i++)
@@ -63,7 +63,6 @@ namespace OrderTests.DAL
 		[Fact]
 		public async Task GetItemsWithEventSeat_ExistingValues_ReturnsWithEventSeat()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<ICartRepository>();
 			var cartCount = 100;
 			var ids = await CreateCartsWithSeatsAndPrices(cartCount, repository);
@@ -88,7 +87,6 @@ namespace OrderTests.DAL
 		[Fact]
 		public async Task GetItemsFull_ExistingValues_ReturnsFull()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<ICartRepository>();
 			var cartCount = 100;
 			var ids = await CreateCartsWithSeatsAndPrices(cartCount, repository);

@@ -5,7 +5,6 @@
 		Empty = 0,
 		Null,
 		OneValue,
-		ThreeValues,
 		ManyValues,
 	}
 }

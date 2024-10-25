@@ -3,16 +3,18 @@ using DAL.Events;
 using DAL.Orders;
 using DAL.Orders.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using TestsCore;
+using TestsCore.Providers;
 
 namespace OrderTests.DAL
 {
 	public class EventSeatRepositoryTests
 	{
+		private static IServiceProvider serviceProvider =>
+			ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
+
 		[Fact]
 		public async Task GetBy_ExistingValues_ReturnsCorrect()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<IEventSeatRepository>();
 			var seatsCount = 100;
 			var eventIdSeatId = await FillEventSeats(repository, seatsCount);
@@ -33,7 +35,6 @@ namespace OrderTests.DAL
 		[Fact]
 		public async Task GetBy_ExistingValues_ReturnsNullOnGetWithIncorrectId()
 		{
-			var serviceProvider = ServiceConfigurationProvider.Get<OrderContext>(services => services.AddOrderRepositories());
 			var repository = serviceProvider.GetService<IEventSeatRepository>();
 			var seatsCount = 100;
 			var eventIdSeatId = await FillEventSeats(repository, seatsCount);

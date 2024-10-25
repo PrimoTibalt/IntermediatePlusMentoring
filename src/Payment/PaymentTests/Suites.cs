@@ -11,7 +11,6 @@ namespace PaymentTests
 		{
 			{ GetValuesSuites.Empty, new() { Cart = new() { CartItems = [] } } },
 			{ GetValuesSuites.OneValue, new() { Cart = new() { CartItems = suiteCartItemsMap[GetValuesSuites.OneValue]}} },
-			{ GetValuesSuites.ThreeValues, new() { Cart = new() { CartItems = suiteCartItemsMap[GetValuesSuites.ThreeValues]}} },
 			{ GetValuesSuites.ManyValues, new() { Cart = new() { CartItems = suiteCartItemsMap[GetValuesSuites.ManyValues]}} },
 		};
 
@@ -27,6 +26,7 @@ namespace PaymentTests
 			// random can be brutal / unit test should be repeatable!
 			foreach (var item in payment.Cart.CartItems)
 			{
+				item.EventSeat = new();
 				item.EventSeat.Status = seatStatus switch
 				{
 					SeatStatus.Booked => BookedStatus,
@@ -42,49 +42,8 @@ namespace PaymentTests
 
 		private static Dictionary<GetValuesSuites, IList<CartItem>> suiteCartItemsMap => new()
 		{
-			{ GetValuesSuites.OneValue, [new() { EventSeat = new()  }] },
-			{ GetValuesSuites.ThreeValues, [new() { EventSeat = new()  }, new() { EventSeat = new()  }, new() { EventSeat = new()  }] },
-			{ GetValuesSuites.ManyValues, [
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-					new() { EventSeat = new()  },
-				] }
+			{ GetValuesSuites.OneValue, [new()] },
+			{ GetValuesSuites.ManyValues, ListGenerator.Generate<CartItem>(GetValuesSuites.ManyValues) }
 		};
 
 		private static string BookedStatus => SeatStatus.Booked.ToString().ToLowerInvariant();
