@@ -144,21 +144,31 @@ namespace OrderTests.API
 		[Fact]
 		public async Task DeleteFromCart_ResultError_OkWithMessage()
 		{
-			await DeleteFromCartWithResultTest(false);
+			var guid = Guid.NewGuid();
+			var errorResult = new Result<Unit>
+			{
+				Error = false,
+				ErrorMessage = "Message",
+				Value = Unit.Value
+			};
+			var mediator = MediatorMockObjectBuilder.Get<DeleteItemFromCartCommand, Result<Unit>>(errorResult);
+			var controller = ControllerProvider.Get<CartsController>(mediator);
+
+			var result = await controller.DeleteFromCart(guid, default, default);
+			var value = (result as OkObjectResult).Value as Resource<string>;
+
+			Assert.NotNull(value?.Value);
+			Assert.NotEmpty(value?.Value);
+
 		}
 
 		[Fact]
 		public async Task DeleteFromCart_ResultSuccess_OkWithMessage()
 		{
-			await DeleteFromCartWithResultTest(true);
-		}
-
-		private static async Task DeleteFromCartWithResultTest(bool error)
-		{
 			var guid = Guid.NewGuid();
 			var errorResult = new Result<Unit>
 			{
-				Error = error,
+				Error = true,
 				ErrorMessage = "Message",
 				Value = Unit.Value
 			};
