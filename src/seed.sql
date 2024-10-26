@@ -43,7 +43,7 @@ DECLARE
     seat_number integer;
 BEGIN
     FOR row_id IN (SELECT "Id" FROM public."Rows") LOOP
-        FOR seat_number IN 1..(1 + random() * 4)::integer LOOP -- Random number of seats between 1 and 5
+        FOR seat_number IN 1..(1 + random() * 105)::integer LOOP -- Random number of seats between 1 and 5
             INSERT INTO public."Seats" ("RowId", "Number") VALUES (row_id, seat_number);
         END LOOP;
     END LOOP;
