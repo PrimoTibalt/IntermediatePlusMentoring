@@ -1,4 +1,4 @@
-﻿namespace API.Abstraction.Cache
+﻿namespace DAL.Infrastructure.Cache
 {
 	public static class EventCacheKeysTemplates
 	{

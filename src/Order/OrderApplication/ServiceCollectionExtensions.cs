@@ -1,9 +1,9 @@
 using DAL;
 using DAL.Orders;
+using DAL.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OrderApplication.Cache;
 using OrderApplication.Core;
 using OrderApplication.Queries;
 
@@ -19,7 +19,7 @@ namespace OrderApplication
 				options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 			});
 			services.AddOrderRepositories();
-			services.AddScoped<ICacheCleaner, CacheCleaner>();
+			services.AddInfrastructure();
 			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCartQuery).Assembly));
 		}
 	}

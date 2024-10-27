@@ -1,6 +1,7 @@
 ﻿using API.Abstraction.Cache;
 using API.Abstraction.Helpers;
 using DAL.Events;
+using DAL.Infrastructure.Cache;
 using EventApplication.Entities;
 using EventApplication.Queries;
 using MediatR;

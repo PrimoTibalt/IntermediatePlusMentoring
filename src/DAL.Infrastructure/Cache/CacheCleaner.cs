@@ -1,5 +1,5 @@
-﻿using API.Abstraction.Cache;
-using DAL.Events;
+﻿using DAL.Events;
+using DAL.Infrastructure.Cache;
 using StackExchange.Redis;
 
 namespace OrderApplication.Cache
