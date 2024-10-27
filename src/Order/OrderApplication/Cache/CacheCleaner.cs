@@ -18,16 +18,15 @@ namespace OrderApplication.Cache
 			if (seats.Any(s => s?.Seat?.Row is null))
 				return;
 
-			var pairs = new HashSet<EventIdSectionId>();
+			var keys = new HashSet<string>();
 			foreach (var seat in seats)
 			{
-				if (pairs.Add(new(seat.EventId, seat.Seat.Row.SectionId)))
-				{
-					await _database.ExecuteAsync("DEL", string.Format(EventCacheKeysTemplates.EventAppEventSeatsByEventIdSectionIdCacheTemplate, seat.EventId, seat.Seat.Row.SectionId));
-				}
+				keys.Add(string.Format(EventCacheKeysTemplates.EventAppEventSeatsByEventIdSectionIdCacheTemplate,
+					seat.EventId,
+					seat.Seat.Row.SectionId));
 			}
-		}
 
-		private record EventIdSectionId(int eventId, int sectionId);
+			await _database.KeyDeleteAsync(keys.Select(k => new RedisKey(k)).ToArray());
+		}
 	}
 }
