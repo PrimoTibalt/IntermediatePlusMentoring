@@ -6,6 +6,7 @@ namespace API.Abstraction.Cache
 	{
 		public static DistributedCacheEntryOptions DefaultConfiguration => new()
 		{
+//			Better for Event resource but was not requested...
 			SlidingExpiration = TimeSpan.FromSeconds(5),
 			AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15)
 		};

@@ -6,6 +6,10 @@
     <Configurations>Debug;Release;DebugWithTests</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+  </ItemGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\..\API.Abstraction\API.Abstraction.csproj" />
 	  <ProjectReference Include="..\OrderApplication\OrderApplication.csproj" />

@@ -34,7 +34,8 @@ namespace EventAPI.Controllers
 				{
 					return await _mediator.Send(new GetAllEventsQuery(), token);
 				},
-			token);
+				token);
+
 			var resource = new Resource<IList<Event>>
 			{
 				Value = result,
@@ -51,9 +52,12 @@ namespace EventAPI.Controllers
 		{
 			var cacheKey = string.Format(EventCacheKeysTemplates.EventAppEventSeatsByEventIdSectionIdCacheTemplate, eventId, sectionId);
 			var result = await _cache.GetOrCreate(cacheKey, async () =>
-			{
-				return await _mediator.Send(new GetEventSectionSeatsQuery { EventId = eventId, SectionId = sectionId });
-			}, CancellationToken.None);
+				{
+					return await _mediator.Send(new GetEventSectionSeatsQuery { EventId = eventId, SectionId = sectionId });
+				},
+				new(),
+				CancellationToken.None);
+
 			if (result is null) return NotFound();
 		
 			var resource = new Resource<IList<SeatDetails>>
