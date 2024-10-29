@@ -18,21 +18,13 @@ namespace API.Abstraction.Cache
 
 		public static async Task<TResult> GetOrCreate<TResult>(this IDistributedCache cache, string key, Func<Task<TResult>> action, DistributedCacheEntryOptions options = null, CancellationToken token = default)
 		{
-			var cacheResult = await cache.GetAsync(key, token);
-			if (cacheResult is not null)
-			{
-				if (CacheSerializationHelper.TryGetFromBytes<TResult>(cacheResult, out var result))
-					return result;
-
-				throw new InvalidOperationException($"Can't deserialize cache entry with cache key '{key}'.");
-			}
+			var cacheResult = CacheSerializationHelper.TryGetFromBytes<TResult>(await cache.GetAsync(key, token), out var result);
+			if (cacheResult) return result;
 
 			var actionResult = await action();
-			if (actionResult is not null)
-			{
-				var bytes = CacheSerializationHelper.GetBytes(actionResult);
+			var bytes = CacheSerializationHelper.GetBytes(actionResult);
+			if (bytes is not null)
 				await cache.SetAsync(key, bytes, options ?? DefaultConfiguration, token);
-			}
 
 			return actionResult;
 		}

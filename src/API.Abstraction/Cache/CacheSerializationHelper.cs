@@ -7,6 +7,8 @@ namespace API.Abstraction.Cache
 	{
 		public static byte[] GetBytes<T>(T entity)
 		{
+			if (entity is null) return null;
+
 			ValidateType<T>();
 			using var memoryStream = new MemoryStream();
 			Serializer.Serialize(memoryStream, entity);
@@ -16,6 +18,7 @@ namespace API.Abstraction.Cache
 		public static bool TryGetFromBytes<T>(byte[] bytes, out T entity)
 		{
 			entity = default;
+			if (bytes is null) return false;
 			try
 			{
 				ValidateType<T>();
