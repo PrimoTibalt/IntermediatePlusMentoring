@@ -24,7 +24,7 @@ namespace API.Abstraction.Cache
 				entity = result;
 				return true;
 			}
-			catch (Exception)
+			catch
 			{
 				return false;
 			}
