@@ -1,38 +1,43 @@
 using API.Abstraction.Helpers;
 using DAL.Events;
+using DAL.Infrastructure.Cache.Services;
 using DAL.Orders.Repository;
 using MediatR;
 using OrderApplication.Commands;
 
 namespace OrderApplication.Handlers
 {
-    public class DeleteItemFromCartHandler : IRequestHandler<DeleteItemFromCartCommand, Result<Unit>>
-    {
-        private readonly ICartItemRepository _cartItemsRepository;
+	public class DeleteItemFromCartHandler : IRequestHandler<DeleteItemFromCartCommand, Result<Unit>>
+	{
+		private readonly ICartItemRepository _cartItemsRepository;
+		private readonly ICacheService<EventSeat> _seatsCacheService;
 
-        public DeleteItemFromCartHandler(ICartItemRepository cartItemsRepository)
-        {
-            _cartItemsRepository = cartItemsRepository;
-        }
+		public DeleteItemFromCartHandler(ICartItemRepository cartItemsRepository, ICacheService<EventSeat> seatsCacheService)
+		{
+			_cartItemsRepository = cartItemsRepository;
+			_seatsCacheService = seatsCacheService;
+		}
 
-        public async Task<Result<Unit>> Handle(DeleteItemFromCartCommand request, CancellationToken cancellationToken)
-        {
-            var cartItem = await _cartItemsRepository.GetBy(request.CartId, request.EventId, request.SeatId);
-            if (cartItem is null)
-                return Result<Unit>.Failure($"Did not find item in cart '{request.CartId}' with event id '{request.EventId}' and seat id '{request.SeatId}'.");
-            await _cartItemsRepository.Delete(cartItem.Id);
+		public async Task<Result<Unit>> Handle(DeleteItemFromCartCommand request, CancellationToken cancellationToken)
+		{
+			var cartItem = await _cartItemsRepository.GetBy(request.CartId, request.EventId, request.SeatId);
+			if (cartItem is null)
+				return Result<Unit>.Failure($"Did not find item in cart '{request.CartId}' with event id '{request.EventId}' and seat id '{request.SeatId}'.");
 
-            var result = await _cartItemsRepository.Save();
-            if (result == 0)
-                return Result<Unit>.Failure("Delete did not succeed");
+			await _cartItemsRepository.Delete(cartItem.Id);
 
-            if (cartItem.EventSeat.Status != SeatStatus.Sold.ToString().ToLowerInvariant())
-            {
-                cartItem.EventSeat.Status = SeatStatus.Available.ToString().ToLowerInvariant();
-                await _cartItemsRepository.Save();
-            }
+			var result = await _cartItemsRepository.Save();
+			if (result == 0)
+				return Result<Unit>.Failure("Delete did not succeed");
 
-            return Result<Unit>.Success(Unit.Value);
-        }
-    }
+			if (cartItem.EventSeat.Status != SeatStatus.Sold.ToString().ToLowerInvariant())
+			{
+				cartItem.EventSeat.Status = SeatStatus.Available.ToString().ToLowerInvariant();
+				await _cartItemsRepository.Save();
+			}
+
+			await _seatsCacheService.Clean([cartItem.EventSeat]);
+			return Result<Unit>.Success(Unit.Value);
+		}
+	}
 }

@@ -19,7 +19,8 @@ namespace EventTest
 		{
 			var events = ListGenerator.Generate<Event>(suite);
 			var mediator = MediatorMockObjectBuilder.Get<GetAllEventsQuery, IList<Event>>(events);
-			var controller = ControllerProvider.Get<EventsController>(mediator);
+			var cache = DistributedCacheMockObjectProvider.Get();
+			var controller = ControllerProvider.GetWithCache<EventsController>(mediator, cache);
 
 			var result = await controller.GetAll(CancellationToken.None);
 			var value = (result as OkObjectResult).Value as Resource<IList<Event>>;
@@ -32,7 +33,8 @@ namespace EventTest
 		public async Task GetSectionSeats_ResultNull_NotFound()
 		{
 			var mediator = MediatorMockObjectBuilder.Get<GetEventSectionSeatsQuery, IList<SeatDetails>>(null);
-			var controller = ControllerProvider.Get<EventsController>(mediator);
+			var cache = DistributedCacheMockObjectProvider.Get();
+			var controller = ControllerProvider.GetWithCache<EventsController>(mediator, cache);
 
 			var result = await controller.GetSectionSeats(default, default);
 			var value = result as NotFoundResult;
@@ -48,7 +50,8 @@ namespace EventTest
 		{
 			var seats = ListGenerator.Generate<SeatDetails>(suite);
 			var mediator = MediatorMockObjectBuilder.Get<GetEventSectionSeatsQuery, IList<SeatDetails>>(seats);
-			var controller = ControllerProvider.Get<EventsController>(mediator);
+			var cache = DistributedCacheMockObjectProvider.Get();
+			var controller = ControllerProvider.GetWithCache<EventsController>(mediator, cache);
 
 			var result = await controller.GetSectionSeats(default, default);
 			var value = (result as OkObjectResult)?.Value as Resource<IList<SeatDetails>>;

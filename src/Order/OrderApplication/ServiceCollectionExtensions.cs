@@ -1,5 +1,6 @@
 using DAL;
 using DAL.Orders;
+using DAL.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,18 +9,18 @@ using OrderApplication.Queries;
 
 namespace OrderApplication
 {
-    public static class ServiceCollectionExtensions
-    {
-        public static void AddOrderApplication(this IServiceCollection services, IConfiguration configuration)
-        {
+	public static class ServiceCollectionExtensions
+	{
+		public static void AddOrderApplication(this IServiceCollection services, IConfiguration configuration)
+		{
 			services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 			services.AddDbContext<OrderContext>(options =>
 			{
 				options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 			});
 			services.AddOrderRepositories();
-
+			services.AddInfrastructure();
 			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCartQuery).Assembly));
-        }
-    }
+		}
+	}
 }

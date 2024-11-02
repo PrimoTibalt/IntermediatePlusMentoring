@@ -1,5 +1,6 @@
 ﻿using DAL.Events;
 using DAL.Payments;
+using DAL.Venues;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Orders
@@ -14,5 +15,7 @@ namespace DAL.Orders
 		public DbSet<EventSeat> EventSeats { get; set; }
 		public DbSet<Price> Prices { get; set; }
 		public DbSet<Payment> Payments { get; set; }
+		public DbSet<Seat> Seats { get; set; }
+		public DbSet<Row> Rows { get; set; }
 	}
 }

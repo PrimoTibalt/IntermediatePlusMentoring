@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{48A514
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestsCore", "TestsCore\TestsCore.csproj", "{1D07D96F-E9BA-46B0-A1E6-056EB62D9B09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventTest", "Event\EventTest\EventTest.csproj", "{100BBB96-056A-49CA-9D43-A52B135BC990}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventTest", "Event\EventTest\EventTest.csproj", "{100BBB96-056A-49CA-9D43-A52B135BC990}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Infrastructure", "DAL.Infrastructure\DAL.Infrastructure.csproj", "{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,12 @@ Global
 		{100BBB96-056A-49CA-9D43-A52B135BC990}.DebugWithTests|Any CPU.ActiveCfg = Debug|Any CPU
 		{100BBB96-056A-49CA-9D43-A52B135BC990}.DebugWithTests|Any CPU.Build.0 = Debug|Any CPU
 		{100BBB96-056A-49CA-9D43-A52B135BC990}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}.DebugWithTests|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}.DebugWithTests|Any CPU.Build.0 = Debug|Any CPU
+		{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD22B0AA-8B59-46BF-B8C5-FB79EC633250}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

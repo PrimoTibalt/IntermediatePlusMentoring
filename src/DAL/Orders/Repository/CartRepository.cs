@@ -21,6 +21,8 @@ namespace DAL.Orders.Repository
         {
             var cart = await _collection.Include(c => c.CartItems)
               .ThenInclude(ci => ci.EventSeat)
+              .ThenInclude(es => es.Seat)
+              .ThenInclude(s => s.Row)
               .FirstOrDefaultAsync(c => c.Id == id);
             if (cart is null) return null;
             return [.. cart.CartItems];
