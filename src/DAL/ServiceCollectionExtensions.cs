@@ -1,6 +1,7 @@
 ﻿using DAL.Events.Repository;
 using DAL.Orders;
 using DAL.Orders.Repository;
+using DAL.Orders.Strategies;
 using DAL.Payments;
 using DAL.Payments.Repository;
 using DAL.Venues.Repository;
@@ -29,6 +30,9 @@ namespace DAL
 			services.TryAddScoped<ICartItemRepository, CartItemRepository>();
 			services.TryAddScoped<Orders.Repository.IEventSeatRepository, Orders.Repository.EventSeatRepository>();
 			services.TryAddScoped<IGenericRepository<Payment, long>, GenericRepository<Payment, long, OrderContext>>();
+			services.TryAddScoped<OptimisticConcurrencyBookingStrategy>();
+			services.TryAddScoped<PessimisticConcurrencyBookingStrategy>();
+			services.TryAddScoped<IBookCartOperation, BookCartOperation>();
 		}
 
 		public static void AddPaymentRepositories(this IServiceCollection services)

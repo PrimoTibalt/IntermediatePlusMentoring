@@ -7,9 +7,9 @@ namespace DAL.Orders.Repository
 	{
 		public CartRepository(OrderContext context) : base(context) { }
 
-		public async Task BeginTransaction()
+		public async Task BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.RepeatableRead)
 		{
-			await _context.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
+			await _context.Database.BeginTransactionAsync(isolationLevel);
 		}
 
 		public async Task CommitTransaction()
@@ -17,18 +17,13 @@ namespace DAL.Orders.Repository
 			await _context.Database.CommitTransactionAsync();
 		}
 
-		public async Task RollbackTransaction()
-		{
-			await _context.Database.RollbackTransactionAsync();
-		}
-
 		public async Task<IList<CartItem>> GetItemsFull(Guid id)
 		{
 			var cart = await _collection.Include(c => c.CartItems)
-					 .ThenInclude(ci => ci.Price)
-					 .Include(c => c.CartItems)
-					 .ThenInclude(ci => ci.EventSeat)
-					 .FirstOrDefaultAsync(c => c.Id == id);
+				.ThenInclude(ci => ci.Price)
+				.Include(c => c.CartItems)
+				.ThenInclude(ci => ci.EventSeat)
+				.FirstOrDefaultAsync(c => c.Id == id);
 			if (cart is null) return null;
 			return [.. cart.CartItems];
 		}
@@ -36,21 +31,12 @@ namespace DAL.Orders.Repository
 		public async Task<IList<CartItem>> GetItemsWithEventSeat(Guid id)
 		{
 			var cart = await _collection.Include(c => c.CartItems)
-							.ThenInclude(ci => ci.EventSeat)
-							.ThenInclude(es => es.Seat)
-							.ThenInclude(s => s.Row)
-							.FirstOrDefaultAsync(c => c.Id == id);
+				.ThenInclude(ci => ci.EventSeat)
+				.ThenInclude(es => es.Seat)
+				.ThenInclude(s => s.Row)
+				.FirstOrDefaultAsync(c => c.Id == id);
 			if (cart is null) return null;
 			return [.. cart.CartItems];
-		}
-
-		public IQueryable<CartItem> GetItemsWithEventSeatQueryable(Guid id)
-		{
-			var cart = _collection.Include(c => c.CartItems)
-							.ThenInclude(ci => ci.EventSeat)
-							.Where(c => c.Id == id);
-			if (cart is null) return null;
-			return cart.SelectMany(c => c.CartItems);
 		}
 	}
 }
