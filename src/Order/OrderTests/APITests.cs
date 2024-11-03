@@ -115,7 +115,7 @@ namespace OrderTests.API
 			var mediator = MediatorMockObjectBuilder.Get<BookCartItemsCommand, Result<long?>>(null);
 			var controller = ControllerProvider.Get<CartsController>(mediator);
 
-			var result = await controller.BookCartItems(guid);
+			var result = await controller.BookCartItemsPessimistic(guid);
 			var value = (result as NotFoundObjectResult)?.Value as string;
 
 			Assert.NotNull(value);
@@ -134,7 +134,7 @@ namespace OrderTests.API
 			var mediator = MediatorMockObjectBuilder.Get<BookCartItemsCommand, Result<long?>>(errorResult);
 			var controller = ControllerProvider.Get<CartsController>(mediator);
 
-			var result = await controller.BookCartItems(guid);
+			var result = await controller.BookCartItemsPessimistic(guid);
 			var value = (result as BadRequestObjectResult)?.Value as string;
 
 			Assert.NotNull(value);
