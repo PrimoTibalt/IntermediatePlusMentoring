@@ -54,7 +54,7 @@ namespace OrderTests.DAL
 			{
 				CartId = cartId,
 				EventSeatId = seatId,
-				EventSeat = new() { Id = seatId, EventId = eventId, PriceId = 1 },
+				EventSeat = new() { Id = seatId, EventId = eventId, PriceId = 1, Seat = new() { Row = new() } },
 				PriceId = 1,
 			};
 			await repository.Create(cartItem);
