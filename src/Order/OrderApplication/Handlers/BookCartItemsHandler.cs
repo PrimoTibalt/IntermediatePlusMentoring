@@ -30,41 +30,98 @@ namespace OrderApplication.Handlers
 
 		public async Task<Result<long?>> Handle(BookCartItemsCommand request, CancellationToken cancellationToken)
 		{
-			var seats = await _cartRepository.GetItemsWithEventSeat(request.Id);
-			if (seats is null) return null;
-			if (seats.Count == 0) return Result<long?>.Failure($"Cart with id '{request.Id}' is empty.");
-
-			foreach (var seat in seats)
-			{
-				seat.EventSeat.Status = SeatStatus.Booked.ToString().ToLowerInvariant();
-				_seatRepository.Update(seat.EventSeat);
-			}
-
-			var result = await _seatRepository.Save();
-			if (result > 0)
-			{
-				var payment = new Payment
-				{
-					CartId = request.Id,
-					Status = PaymentStatus.InProgress.ToString().ToLowerInvariant(),
-				};
-				try
-				{
-					await _paymentRepository.Create(payment);
-					await _paymentRepository.Save();
-				}
-				catch (DbUpdateException)
-				{
-					return Result<long?>.Failure("Payment already exists");
-				}
-
-				await _seatsCacheService.Clean(seats.Select(s => s.EventSeat).ToList());
-				return Result<long?>.Success(payment.Id);
-			}
-			else
-			{
-				return Result<long?>.Failure($"Seats from cart with id '{request.Id}' are already booked.");
-			}
+			return request.OptimisticExecution ? 
+				await OptimisticExecution(request.Id, cancellationToken) :
+				await PessimisticExecution(request.Id, cancellationToken);
 		}
+
+		private async Task<Result<long?>> OptimisticExecution(Guid id, CancellationToken token)
+		{
+			await _cartRepository.BeginTransaction();
+			var cartItems = await _cartRepository.GetItemsWithEventSeat(id);
+			if (cartItems is null || cartItems.Count == 0) return null;
+			if (cartItems.Any(ci => !string.Equals(ci.EventSeat.Status, SeatStatus.Available.ToString(),
+				StringComparison.OrdinalIgnoreCase)))
+				return FailedUnavailableSeats(id);
+			var seats = _seatRepository.GetByIdsQueryable(cartItems.Select(ci => ci.EventSeatId).ToArray());
+			var failed = false;
+			foreach (var cartItem in cartItems)
+			{
+				var seat = seats.Where(es => es.Id == cartItem.EventSeatId && es.Version == cartItem.EventSeat.Version);
+				var result = await seat.ExecuteUpdateAsync(p =>
+					p.SetProperty(es => es.Status, SeatStatusStrings.Booked)
+					.SetProperty(es => es.Version, cartItem.EventSeat.Version + 1), token);
+				if (result != 1)
+				{
+					failed = true;
+					break;
+				}
+			}
+
+			if (failed)
+			{
+				await _cartRepository.RollbackTransaction();
+				return FailedUnavailableSeats(id);
+			}
+
+			var payment = await CreatePayment(id);
+
+			await _seatRepository.Save();
+			await _cartRepository.CommitTransaction();
+			return Result<long?>.Success(payment.Id);
+		}
+
+		private async Task<Result<long?>> PessimisticExecution(Guid id, CancellationToken token)
+		{
+			Result<long?> result = null;
+			try
+			{
+				await _cartRepository.BeginTransaction();
+				var cartItems = await _cartRepository.GetItemsWithEventSeat(id);
+				if (cartItems is null || cartItems.Count == 0) return null;
+				if (cartItems.Any(ci => !string.Equals(ci.EventSeat.Status, SeatStatus.Available.ToString(),
+					StringComparison.OrdinalIgnoreCase)))
+					return FailedUnavailableSeats(id);
+				var seats = await _seatRepository.GetByIds(cartItems.Select(ci => ci.EventSeatId).ToArray());
+
+				foreach (var seat in seats)
+				{
+					seat.Status = SeatStatusStrings.Booked;
+				}
+
+				var payment = await CreatePayment(id);
+				var updateCount = await _seatRepository.Save();
+
+				if (updateCount < cartItems.Count)
+				{
+					await _cartRepository.RollbackTransaction();
+					return FailedUnavailableSeats(id);
+				}
+
+				await _cartRepository.CommitTransaction();
+				result = Result<long?>.Success(payment.Id);
+				await _seatsCacheService.Clean(cartItems.Select(s => s.EventSeat).ToList());
+			}
+			catch (InvalidOperationException)
+			{
+				await _cartRepository.RollbackTransaction();
+			}
+
+			return result;
+		}
+
+		private async Task<Payment> CreatePayment(Guid id)
+		{
+			var payment = new Payment
+			{
+				CartId = id,
+				Status = PaymentStatus.InProgress.ToString().ToLowerInvariant(),
+			};
+			await _paymentRepository.Create(payment);
+			return payment;
+		}
+
+		private static Result<long?> FailedUnavailableSeats(Guid id) 
+			=> Result<long?>.Failure($"Cart with id '{id}' contains unavailable seats.");
 	}
 }
