@@ -19,7 +19,7 @@ namespace DAL.Payments.Repository
 				var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
 				foreach (var seat in seats)
 				{
-					seat.Status = SeatStatus.Sold.ToString().ToLowerInvariant();
+					seat.Status = SeatStatusStrings.Sold;
 				}
 
 				var result = await _context.SaveChangesAsync();
@@ -50,7 +50,7 @@ namespace DAL.Payments.Repository
 				var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
 				foreach (var seat in seats)
 				{
-					seat.Status = SeatStatus.Available.ToString().ToLowerInvariant();
+					seat.Status = SeatStatusStrings.Available;
 				}
 
 				var result = await _context.SaveChangesAsync();
