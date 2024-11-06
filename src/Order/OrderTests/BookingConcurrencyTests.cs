@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using OrderAPI.DTOs;
 using Refit;
+using System.Collections.Concurrent;
 using System.Net;
 
 namespace OrderTests
@@ -24,8 +25,8 @@ namespace OrderTests
 			await new EndToEndExecutioner().Execute(async () =>
 			{
 				var apiClient = RestService.For<ICartApi>(_factory.CreateClient());
-				List<Guid> guids = [];
-				foreach (var _ in Enumerable.Range(0, 1000))
+				ConcurrentBag<Guid> guids = [];
+				await Parallel.ForEachAsync(Enumerable.Range(0, 1000), async (_, _) =>
 				{
 					var guid = Guid.NewGuid();
 					var cartItemModels = Enumerable.Range(1, 4)
@@ -34,9 +35,9 @@ namespace OrderTests
 					foreach (var cartItem in cartItemModels)
 						await apiClient.AddItemToCart(cartItem, guid);
 					guids.Add(guid);
-				}
+				});
 
-				List<HttpResponseMessage> responses = [];
+				ConcurrentBag<HttpResponseMessage> responses = [];
 				await Parallel.ForEachAsync(guids, async (guid, _) =>
 				{
 					responses.Add(await apiClient.Book(guid, url));
