@@ -120,7 +120,7 @@ namespace OrderAPI.Controllers
 				resource.Links.Add(
 					new Link
 					{
-						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(DeleteFromCart), values: new { cartId = id, eventId = cartItem.EventSeat.EventId, seatId = cartItem.EventSeatId }),
+						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(DeleteFromCart), values: new { cartId = id, eventId = cartItem.EventSeat.EventId, seatId = cartItem.EventSeat.Id }),
 						Method = "DELETE"
 					}
 				);
