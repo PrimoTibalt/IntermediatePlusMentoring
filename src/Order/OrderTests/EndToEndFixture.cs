@@ -1,6 +1,10 @@
-﻿using DotNet.Testcontainers.Builders;
+﻿using Docker.DotNet;
+using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Npgsql;
 using Polly;
+using Polly.Retry;
+using System.Net.Sockets;
 using Testcontainers.PostgreSql;
 
 namespace OrderTests
@@ -30,7 +34,19 @@ namespace OrderTests
 				.WithAutoRemove(true)
 				.Build());
 			_resiliencePipeline = new ResiliencePipelineBuilder()
-				.AddRetry(new() { Delay = TimeSpan.FromSeconds(10), MaxRetryAttempts = 10 })
+				.AddRetry(new() { 
+					Delay = TimeSpan.FromSeconds(10),
+					MaxRetryAttempts = 10,
+					ShouldHandle = new PredicateBuilder()
+						.Handle<DockerContainerNotFoundException>()
+						.Handle<DockerApiException>()
+						.Handle<InvalidOperationException>((e) =>
+						{
+							// Npgsql wrap actual exceptions in InvalidOperationException for some reason
+							return e.InnerException is NpgsqlException
+								&& e.InnerException?.InnerException is IOException;
+						})
+				})
 				.AddTimeout(TimeSpan.FromSeconds(30))
 				.Build();
 		}
