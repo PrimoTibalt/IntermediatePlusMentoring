@@ -93,7 +93,7 @@ BEGIN
                 evt."EventId",
                 seat."SeatId",
                 (random() * 99 + 1)::integer, -- Generates a random integer between 1 and 100
-                'available'
+                0 -- Available
             );
         END LOOP;
     END LOOP;

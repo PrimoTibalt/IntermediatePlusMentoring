@@ -5,66 +5,65 @@ using DAL.Infrastructure.Cache.Services;
 using DAL.Orders.Repository;
 using DAL.Payments;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using OrderApplication.Commands;
+using System.Data;
 
 namespace OrderApplication.Handlers
 {
 	public class BookCartItemsHandler : IRequestHandler<BookCartItemsCommand, Result<long?>>
 	{
-		private readonly IEventSeatRepository _seatRepository;
 		private readonly ICartRepository _cartRepository;
 		private readonly IGenericRepository<Payment, long> _paymentRepository;
 		private readonly ICacheService<EventSeat> _seatsCacheService;
+		private readonly IBookCartOperation _bookCartOperation;
 
 		public BookCartItemsHandler(IEventSeatRepository seatRepository,
 			ICartRepository cartRepository,
 			IGenericRepository<Payment, long> paymentRepository,
-			ICacheService<EventSeat> seatsCacheService)
+			ICacheService<EventSeat> seatsCacheService,
+			IBookCartOperation bookCartOperation)
 		{
-			_seatRepository = seatRepository;
 			_cartRepository = cartRepository;
 			_paymentRepository = paymentRepository;
-			_seatsCacheService= seatsCacheService;
+			_seatsCacheService = seatsCacheService;
+			_bookCartOperation = bookCartOperation;
 		}
 
 		public async Task<Result<long?>> Handle(BookCartItemsCommand request, CancellationToken cancellationToken)
 		{
-			var seats = await _cartRepository.GetItemsWithEventSeat(request.Id);
-			if (seats is null) return null;
-			if (seats.Count == 0) return Result<long?>.Failure($"Cart with id '{request.Id}' is empty.");
+			// We don't actually need whole items here
+			// It is a problem that should be fixed with tagging of cache entries
+			// TODO: Add cache tags, delete request of all cart items
+			var cartItems = await _cartRepository.GetItemsWithEventSeat(request.Id);
+			if (cartItems == null)
+				return null;
 
-			foreach (var seat in seats)
-			{
-				seat.EventSeat.Status = SeatStatus.Booked.ToString().ToLowerInvariant();
-				_seatRepository.Update(seat.EventSeat);
-			}
+			await _cartRepository.BeginTransaction();
 
-			var result = await _seatRepository.Save();
-			if (result > 0)
-			{
-				var payment = new Payment
-				{
-					CartId = request.Id,
-					Status = PaymentStatus.InProgress.ToString().ToLowerInvariant(),
-				};
-				try
-				{
-					await _paymentRepository.Create(payment);
-					await _paymentRepository.Save();
-				}
-				catch (DbUpdateException)
-				{
-					return Result<long?>.Failure("Payment already exists");
-				}
+			var result = await _bookCartOperation.TryBookCart(request.Id, request.OptimisticExecution);
+			if (!result) return FailedUnavailableSeats(request.Id);
+			var payment = await CreatePayment(request.Id);
 
-				await _seatsCacheService.Clean(seats.Select(s => s.EventSeat).ToList());
-				return Result<long?>.Success(payment.Id);
-			}
-			else
-			{
-				return Result<long?>.Failure($"Seats from cart with id '{request.Id}' are already booked.");
-			}
+			await _paymentRepository.Save();
+			await _cartRepository.CommitTransaction();
+
+			await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
+			return Result<long?>.Success(payment.Id);
 		}
+
+		private async Task<Payment> CreatePayment(Guid id)
+		{
+			var payment = new Payment
+			{
+				CartId = id,
+				Status = (int)PaymentStatus.InProgress,
+			};
+			await _paymentRepository.Create(payment);
+			return payment;
+		}
+
+		private static Result<long?> FailedUnavailableSeats(Guid id) 
+			=> Result<long?>.Failure($"Cart with id '{id}' contains unavailable seats.");
 	}
 }

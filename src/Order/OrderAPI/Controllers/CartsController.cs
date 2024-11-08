@@ -32,13 +32,27 @@ namespace OrderAPI.Controllers
 			return Ok(resource);
 		}
 
-		[HttpPut("{id:guid}/book")]
+		[HttpPut("{id:guid}/book-pessimistic")]
 		[ProducesResponseType(typeof(Resource<string>), 200)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(400)]
-		public async Task<IActionResult> BookCartItems(Guid id)
+		public async Task<IActionResult> BookCartItemsPessimistic(Guid id)
 		{
-			var result = await _mediator.Send(new BookCartItemsCommand { Id = id });
+			return await BookCartItems(id, false);
+		}
+
+		[HttpPut("{id:guid}/book-optimistic")]
+		[ProducesResponseType(typeof(Resource<string>), 200)]
+		[ProducesResponseType(404)]
+		[ProducesResponseType(400)]
+		public async Task<IActionResult> BookCartItemsOptimistic(Guid id)
+		{
+			return await BookCartItems(id, true);
+		}
+
+		private async Task<IActionResult> BookCartItems(Guid id, bool optimisticExecution)
+		{
+			var result = await _mediator.Send(new BookCartItemsCommand { Id = id, OptimisticExecution = optimisticExecution });
 			if (result is null) return NotFound($"Cart with id '{id}' doesn't exist.");
 			if (result.Error) return BadRequest(result.ErrorMessage);
 
@@ -106,7 +120,7 @@ namespace OrderAPI.Controllers
 				resource.Links.Add(
 					new Link
 					{
-						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(DeleteFromCart), values: new { cartId = id, eventId = cartItem.EventSeat.EventId, seatId = cartItem.EventSeatId }),
+						Href = _linkGenerator.GetUriByAction(HttpContext, nameof(DeleteFromCart), values: new { cartId = id, eventId = cartItem.EventSeat.EventId, seatId = cartItem.EventSeat.Id }),
 						Method = "DELETE"
 					}
 				);

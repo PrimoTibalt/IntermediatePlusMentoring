@@ -10,60 +10,65 @@ namespace DAL.Payments.Repository
 		public async Task<bool> CompletePayment(long id)
 		{
 			using var transaction = await _context.Database.BeginTransactionAsync();
-			try
+			var payment = await _collection.Include(p => p.Cart)
+					.ThenInclude(c => c.CartItems)
+					.ThenInclude(ci => ci.EventSeat)
+					.FirstOrDefaultAsync(p => p.Id == id);
+			var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
+			var notBookedSeatsMessages = new List<string>();
+			foreach (var seat in seats)
 			{
-				var payment = await _collection.Include(p => p.Cart)
-						.ThenInclude(c => c.CartItems)
-						.ThenInclude(ci => ci.EventSeat)
-						.FirstOrDefaultAsync(p => p.Id == id);
-				var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
-				foreach (var seat in seats)
-				{
-					seat.Status = SeatStatus.Sold.ToString().ToLowerInvariant();
-				}
-
-				var result = await _context.SaveChangesAsync();
-				if (result != seats.Count)
-					throw new DbUpdateException("Some seats were already sold. Check your cart and delete them before finishing a payment");
-
-				payment.Status = PaymentStatus.Completed.ToString().ToLowerInvariant();
-				await _context.SaveChangesAsync();
-				await transaction.CommitAsync();
-				return true;
+				if (seat.Status == (int)SeatStatus.Booked)
+					seat.Status = (int)SeatStatus.Sold;
+				else
+					notBookedSeatsMessages.Add($"Seat with id {seat.Id} has status other than {nameof(SeatStatus.Booked)}");
 			}
-			catch (Exception)
+
+			if (notBookedSeatsMessages.Count != 0)
 			{
 				await transaction.RollbackAsync();
-				throw;
+				throw new DbUpdateException(string.Join("\n", notBookedSeatsMessages));
 			}
+
+			var result = await _context.SaveChangesAsync();
+			if (result < seats.Count)
+				throw new DbUpdateException("Some seats were already sold. Check your cart and delete them before finishing a payment");
+
+			payment.Status = (int)PaymentStatus.Completed;
+			await _context.SaveChangesAsync();
+			await transaction.CommitAsync();
+			return true;
 		}
 
 		public async Task<bool> FailPayment(long id)
 		{
 			using var transaction = await _context.Database.BeginTransactionAsync();
-			try
+			var payment = await _collection.Include(p => p.Cart)
+					.ThenInclude(c => c.CartItems)
+					.ThenInclude(ci => ci.EventSeat)
+					.FirstOrDefaultAsync(p => p.Id == id);
+			var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
+			var notBookedOrAvailableSeatsMessages = new List<string>();
+			foreach (var seat in seats)
 			{
-				var payment = await _collection.Include(p => p.Cart)
-						.ThenInclude(c => c.CartItems)
-						.ThenInclude(ci => ci.EventSeat)
-						.FirstOrDefaultAsync(p => p.Id == id);
-				var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
-				foreach (var seat in seats)
-				{
-					seat.Status = SeatStatus.Available.ToString().ToLowerInvariant();
-				}
-
-				var result = await _context.SaveChangesAsync();
-				payment.Status = PaymentStatus.Failed.ToString().ToLowerInvariant();
-				await _context.SaveChangesAsync();
-				await transaction.CommitAsync();
-				return true;
+				if (seat.Status == (int)SeatStatus.Booked || seat.Status == (int)SeatStatus.Available)
+					seat.Status = (int)SeatStatus.Available;
+				else
+					notBookedOrAvailableSeatsMessages.Add(
+						$"Seat with id {seat.Id} has status other than {nameof(SeatStatus.Booked)} or {nameof(SeatStatus.Available)}");
 			}
-			catch (Exception)
+
+			if (notBookedOrAvailableSeatsMessages.Count != 0)
 			{
 				await transaction.RollbackAsync();
-				throw;
+				throw new DbUpdateException(string.Join("\n", notBookedOrAvailableSeatsMessages));
 			}
+
+			var result = await _context.SaveChangesAsync();
+			payment.Status = (int)PaymentStatus.Failed;
+			await _context.SaveChangesAsync();
+			await transaction.CommitAsync();
+			return true;
 		}
 	}
 }

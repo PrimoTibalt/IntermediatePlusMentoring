@@ -188,3 +188,110 @@ ALTER TABLE IF EXISTS public."Payments"
     ON DELETE NO ACTION;
 
 END;
+
+INSERT INTO public."Venues" ("Name", "Description", "Address") VALUES
+('Venue 1', 'Description for Venue 1', 'Address for Venue 1');
+
+INSERT INTO public."Events" ("VenueId", "Name", "Description", "StartDate", "EndDate")
+VALUES 
+    (1, 'Tokyo Marathon 2025', 'One of the largest marathons in the world, held annually in Tokyo.', '2025-03-01', '2025-03-01');
+
+-- Seed data for Sections
+DO $$
+DECLARE
+    section_id integer;
+BEGIN
+    FOR section_id IN 1..5 LOOP
+        INSERT INTO public."Sections" ("VenueId", "Name") VALUES (1, 'Section ' || section_id);
+    END LOOP;
+END $$;
+
+-- Seed data for Rows
+DO $$
+DECLARE
+    section_id integer;
+    row_number smallint;
+BEGIN
+    FOR section_id IN (SELECT "Id" FROM public."Sections") LOOP
+        FOR row_number IN 1..(3 + random() * 7)::smallint LOOP
+            INSERT INTO public."Rows" ("SectionId", "Number") VALUES (section_id, row_number);
+        END LOOP;
+    END LOOP;
+END $$;
+
+-- Seed data for Seats
+DO $$
+DECLARE
+    row_id integer;
+    seat_number integer;
+BEGIN
+    FOR row_id IN (SELECT "Id" FROM public."Rows") LOOP
+        FOR seat_number IN 1..(1 + random() * 105)::integer LOOP -- Random number of seats between 1 and 5
+            INSERT INTO public."Seats" ("RowId", "Number") VALUES (row_id, seat_number);
+        END LOOP;
+    END LOOP;
+END $$;
+
+-- Seed data for Price
+DO $$
+BEGIN
+    FOR i IN 1..100 LOOP
+        INSERT INTO public."Prices" ("Type", "Price")
+        VALUES 
+        (
+            CASE 
+                WHEN i % 3 = 0 THEN 'Child'
+                WHEN i % 3 = 1 THEN 'Adult'
+                ELSE 'Vip'
+            END,
+            CASE 
+                WHEN i % 3 = 0 THEN ('$' || round((random() * (8.99 - 5.00) + 5.00)::integer, 2))::money
+                WHEN i % 3 = 1 THEN ('$' || round((random() * (56.99 - 12.25) + 12.25)::integer, 2))::money
+                ELSE ('$' || round((random() * (300.00 - 120.00) + 120.00)::integer, 2))::money
+            END
+        );
+    END LOOP;
+END $$;
+
+-- Seed data for Events
+DO $$
+DECLARE
+    evt RECORD;
+    seat RECORD;
+BEGIN
+    FOR evt IN 
+        SELECT e."Id" AS "EventId", e."VenueId"
+        FROM public."Events" e
+    LOOP
+        FOR seat IN 
+            SELECT s."Id" AS "SeatId"
+            FROM public."Seats" s
+            JOIN public."Rows" r ON s."RowId" = r."Id"
+            JOIN public."Sections" sec ON r."SectionId" = sec."Id"
+            WHERE sec."VenueId" = evt."VenueId"
+        LOOP
+            INSERT INTO public."EventSeats" ("EventId", "SeatId", "PriceId", "Status")
+            VALUES 
+            (
+                evt."EventId",
+                seat."SeatId",
+                (random() * 99 + 1)::integer, -- Generates a random integer between 1 and 100
+                0
+            );
+        END LOOP;
+    END LOOP;
+END $$;
+
+DO $$
+DECLARE
+    i integer;
+BEGIN
+    FOR i IN 1..10 LOOP
+        INSERT INTO public."Users" ("Name", "Email")
+        VALUES 
+        (
+            'Dorry',
+            'user' || i+10 || '@example.com'
+        );
+    END LOOP;
+END $$;
