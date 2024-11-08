@@ -13,7 +13,7 @@
 ### 2. When would you prefer vertical scaling over horizontal?
 
 > When it is cheeper. <br>
-> When system was not designed to support vertical scailing. <br>
+> When system was not designed to support horizontal scailing. <br>
 
 ### 3. Does ASP.NET Core API support horizontal scailing? Explain your answer.
 

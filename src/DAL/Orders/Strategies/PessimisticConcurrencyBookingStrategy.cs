@@ -37,17 +37,17 @@ namespace DAL.Orders.Strategies
 
 			try
 			{
-				var seats = await connection.QueryAsync<SeatIdStatusPair>(
+				var seats = await connection.QueryAsync<(long Id, int Status)>(
 					seatsLockQuery,
 					new { CartId = id },
 					transaction);
-				if (seats.Any(s => s.Status != SeatStatusStrings.Available))
+				if (seats.Any(s => s.Status != (int)SeatStatus.Available))
 					return false;
 
 				await connection.ExecuteAsync(
-				bookSeatsQuery,
-				new { SeatIds = seats.Select(s => s.Id).ToList(), BookedStatus = SeatStatusStrings.Booked },
-				transaction);
+					bookSeatsQuery,
+					new { SeatIds = seats.Select(s => s.Id).ToList(), BookedStatus = (int)SeatStatus.Booked },
+					transaction);
 
 				await transaction.CommitAsync();
 
@@ -58,13 +58,6 @@ namespace DAL.Orders.Strategies
 				await transaction.RollbackAsync();
 				return false;
 			}
-		}
-
-		// local type
-		private record SeatIdStatusPair
-		{
-			public long Id { get; set; }
-			public string Status { get; set; }
 		}
 	}
 }

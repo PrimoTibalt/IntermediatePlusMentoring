@@ -1,5 +1,6 @@
 ﻿using DAL.Events;
 using DAL.Orders.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Orders.Strategies
 {
@@ -19,13 +20,12 @@ namespace DAL.Orders.Strategies
 				await _cartRepository.BeginTransaction();
 
 				var seats = (await _cartRepository.GetItemsWithEventSeat(id)).Select(ci => ci.EventSeat).ToList();
-				if (seats.Any(s => !string.Equals(s.Status, SeatStatus.Available.ToString(),
-					StringComparison.OrdinalIgnoreCase)))
+				if (seats.Any(s => s.Status != (int)SeatStatus.Available))
 					return false;
 
 				foreach (var seat in seats)
 				{
-					seat.Status = SeatStatusStrings.Booked;
+					seat.Status = (int)SeatStatus.Booked;
 				}
 
 				var updateCount = await _cartRepository.Save();
@@ -33,9 +33,16 @@ namespace DAL.Orders.Strategies
 				await _cartRepository.CommitTransaction();
 				return true;
 			}
-			catch (InvalidOperationException)
+			catch (InvalidOperationException ex) when (ex.InnerException is DbUpdateException)
 			{
 				return false;
+			}
+			catch (Exception ex)
+			{
+				// Better than nothing?
+				Console.WriteLine("Unexpected exception has occured.");
+				Console.WriteLine(ex.Message);
+				throw;
 			}
 		}
 	}

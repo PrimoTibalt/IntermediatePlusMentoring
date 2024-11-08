@@ -46,7 +46,7 @@ namespace OrderApplication.Handlers
             var seat = await _seatRepository.GetBy(request.EventId, request.SeatId);
             if (seat is null)
                 return Result<Unit>.Failure($"Seat with id '{request.SeatId}' for event id '{request.EventId}' doesn't exist.");
-            if (Enum.Parse<SeatStatus>(seat.Status, true) != SeatStatus.Available)
+            if (seat.Status != (int)SeatStatus.Available)
                 return Result<Unit>.Failure($"Can't add seat with id '{request.SeatId}' to cart because it is already booked or sold.");
 
             var cartItem = new CartItem

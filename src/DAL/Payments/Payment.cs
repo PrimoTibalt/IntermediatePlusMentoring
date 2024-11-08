@@ -7,6 +7,6 @@ namespace DAL.Payments
 		public long Id { get; set; }
 		public Guid CartId { get; set; }
 		public Cart Cart { get; set; }
-		public string Status { get; set; }
+		public int Status { get; set; }
 	}
 }

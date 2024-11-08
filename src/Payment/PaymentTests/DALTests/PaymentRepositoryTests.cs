@@ -2,6 +2,7 @@
 using DAL.Events;
 using DAL.Payments;
 using DAL.Payments.Repository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TestsCore;
 using TestsCore.Providers;
@@ -29,10 +30,10 @@ namespace PaymentTests.DALTests
 			var result = await repository.FailPayment(paymentId);
 
 			Assert.True(result);
-			Assert.Equal(PaymentStatus.Failed.ToString().ToLowerInvariant(), payment.Status);
+			Assert.Equal((int)PaymentStatus.Failed, payment.Status);
 			Assert.All(payment.Cart.CartItems, item =>
 			{
-				Assert.Equal(SeatStatus.Available.ToString().ToLowerInvariant(), item.EventSeat.Status);
+				Assert.Equal((int)SeatStatus.Available, item.EventSeat.Status);
 			});
 		}
 
@@ -52,10 +53,10 @@ namespace PaymentTests.DALTests
 			var result = await repository.CompletePayment(paymentId);
 
 			Assert.True(result);
-			Assert.Equal(PaymentStatus.Completed.ToString().ToLowerInvariant(), payment.Status);
+			Assert.Equal((int)PaymentStatus.Completed, payment.Status);
 			Assert.All(payment.Cart.CartItems, item =>
 			{
-				Assert.Equal(SeatStatus.Sold.ToString().ToLowerInvariant(), item.EventSeat.Status);
+				Assert.Equal((int)SeatStatus.Sold, item.EventSeat.Status);
 			});
 		}
 
@@ -63,13 +64,10 @@ namespace PaymentTests.DALTests
 		[InlineData(GetValuesSuites.ManyValues, null)]
 		[InlineData(GetValuesSuites.OneValue, SeatStatus.Sold)]
 		[InlineData(GetValuesSuites.ManyValues, SeatStatus.Sold)]
-		[InlineData(GetValuesSuites.OneValue, SeatStatus.Available)]
-		[InlineData(GetValuesSuites.ManyValues, SeatStatus.Available)]
-		// Functionality is not implemented for validating status.
-		public async Task FailPayment_ExistingValuesWithIncorrectStatus_BookedToAvailable(GetValuesSuites suite, SeatStatus? status)
+		public async Task FailPayment_ExistingValuesWithIncorrectStatus_Throws(GetValuesSuites suite, SeatStatus? status)
 		{
 			var payment = Suites.GetPayment(suite, status);
-			Dictionary<long, string> seatIdStatusMap = new();
+			Dictionary<long, int> seatIdStatusMap = new();
 			var paymentId = long.MaxValue;
 			payment.Id = paymentId;
 			var repository = serviceProvider.GetService<IPaymentRepository>();
@@ -80,16 +78,9 @@ namespace PaymentTests.DALTests
 				seatIdStatusMap.Add(item.EventSeat.Id, item.EventSeat.Status);
 			}
 
-			var result = await repository.FailPayment(paymentId);
-
-			Assert.True(result);
-			Assert.All(payment.Cart.CartItems, item =>
+			await Assert.ThrowsAsync<DbUpdateException>(async () =>
 			{
-				var oldStatus = seatIdStatusMap[item.EventSeat.Id];
-				if (oldStatus == SeatStatus.Sold.ToString().ToLowerInvariant())
-					Assert.Equal(oldStatus, item.EventSeat.Status);
-				else
-					Assert.Equal(SeatStatus.Available.ToString().ToLowerInvariant(), item.EventSeat.Status);
+				await repository.FailPayment(paymentId);
 			});
 		}
 
@@ -99,11 +90,10 @@ namespace PaymentTests.DALTests
 		[InlineData(GetValuesSuites.ManyValues, SeatStatus.Sold)]
 		[InlineData(GetValuesSuites.OneValue, SeatStatus.Available)]
 		[InlineData(GetValuesSuites.ManyValues, SeatStatus.Available)]
-		// Functionality is not implemented for validating status.
-		public async Task CompletePayment_ExistingValuesWithIncorrectStatus_ResultFalse_StatusRemains(GetValuesSuites suite, SeatStatus? status)
+		public async Task CompletePayment_ExistingValuesWithIncorrectStatus_Throws(GetValuesSuites suite, SeatStatus? status)
 		{
 			var payment = Suites.GetPayment(suite, status);
-			Dictionary<long, string> seatIdStatusMap = new();
+			Dictionary<long, int> seatIdStatusMap = new();
 			var paymentId = 1;
 			payment.Id = paymentId;
 			var repository = serviceProvider.GetService<IPaymentRepository>();
@@ -114,12 +104,9 @@ namespace PaymentTests.DALTests
 				seatIdStatusMap.Add(item.EventSeat.Id, item.EventSeat.Status);
 			}
 
-			var result = await repository.CompletePayment(paymentId);
-
-			Assert.False(result);
-			Assert.All(payment.Cart.CartItems, item =>
+			await Assert.ThrowsAsync<DbUpdateException>(async () =>
 			{
-				Assert.Equal(seatIdStatusMap[item.EventSeat.Id], item.EventSeat.Status);
+				await repository.CompletePayment(paymentId);
 			});
 		}
 	}

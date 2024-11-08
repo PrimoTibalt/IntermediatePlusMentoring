@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS public."EventSeats"
     "EventId" integer NOT NULL,
     "SeatId" integer NOT NULL,
     "PriceId" integer NOT NULL,
-    "Status" text NOT NULL,
+    "Status" int NOT NULL,
     "Version" smallint NOT NULL DEFAULT 0,
     CONSTRAINT "EventSeats_pkey" PRIMARY KEY ("Id"),
     CONSTRAINT "EventSeats_EventId_SeatId_UNIQUE" UNIQUE ("EventId", "SeatId")
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS public."Payments"
 (
     "Id" bigserial NOT NULL,
     "CartId" uuid NOT NULL,
-    "Status" text NOT NULL,
+    "Status" int NOT NULL,
     CONSTRAINT "Payments_pkey" PRIMARY KEY ("Id")
 );
 

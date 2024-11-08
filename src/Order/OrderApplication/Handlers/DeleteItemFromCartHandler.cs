@@ -30,9 +30,9 @@ namespace OrderApplication.Handlers
 			if (result == 0)
 				return Result<Unit>.Failure("Delete did not succeed");
 
-			if (cartItem.EventSeat.Status != SeatStatus.Sold.ToString().ToLowerInvariant())
+			if (cartItem.EventSeat.Status != (int)SeatStatus.Sold)
 			{
-				cartItem.EventSeat.Status = SeatStatus.Available.ToString().ToLowerInvariant();
+				cartItem.EventSeat.Status = (int)SeatStatus.Available;
 				await _cartItemsRepository.Save();
 			}
 

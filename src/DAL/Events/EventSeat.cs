@@ -11,6 +11,6 @@ namespace DAL.Events
 		public Event Event { get; set; }
 		public Seat Seat { get; set; }
 		public Price Price { get; set; }
-		public string Status { get; set; }
+		public int Status { get; set; }
 	}
 }

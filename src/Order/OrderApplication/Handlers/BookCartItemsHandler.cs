@@ -55,7 +55,7 @@ namespace OrderApplication.Handlers
 			var payment = new Payment
 			{
 				CartId = id,
-				Status = PaymentStatus.InProgress.ToString().ToLowerInvariant(),
+				Status = (int)PaymentStatus.InProgress,
 			};
 			await _paymentRepository.Create(payment);
 			return payment;
