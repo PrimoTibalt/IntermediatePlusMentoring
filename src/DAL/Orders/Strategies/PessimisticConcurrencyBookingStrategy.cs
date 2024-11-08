@@ -1,12 +1,12 @@
 ﻿using DAL.Events;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 
 namespace DAL.Orders.Strategies
 {
-	internal class PessimisticConcurrencyBookingStrategy : IExecutionStrategy<Guid>
+	internal class PessimisticConcurrencyBookingStrategy(OrderContext context) : IExecutionStrategy<Guid>
 	{
 		// Usually it seats in sproc on db side to synchronize changes
 		private const string seatsLockQuery = """
@@ -22,19 +22,12 @@ namespace DAL.Orders.Strategies
 			WHERE "Id" = ANY(@SeatIds)
 			""";
 
-		private readonly OrderContext _context;
-
-		public PessimisticConcurrencyBookingStrategy(OrderContext context)
-		{
-			_context = context;
-		}
+		private readonly OrderContext _context = context;
 
 		public async Task<bool> Execute(Guid id)
 		{
 			var connection = _context.Database.GetDbConnection();
-			connection.Open();
-			using var transaction = await connection.BeginTransactionAsync(IsolationLevel.RepeatableRead);
-
+			var transaction = _context.Database.CurrentTransaction.GetDbTransaction();
 			try
 			{
 				var seats = await connection.QueryAsync<(long Id, int Status)>(
@@ -49,11 +42,9 @@ namespace DAL.Orders.Strategies
 					new { SeatIds = seats.Select(s => s.Id).ToList(), BookedStatus = (int)SeatStatus.Booked },
 					transaction);
 
-				await transaction.CommitAsync();
-
 				return true;
 			}
-			catch (PostgresException)
+			catch
 			{
 				await transaction.RollbackAsync();
 				return false;

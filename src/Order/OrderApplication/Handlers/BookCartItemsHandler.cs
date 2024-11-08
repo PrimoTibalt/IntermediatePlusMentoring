@@ -5,6 +5,7 @@ using DAL.Infrastructure.Cache.Services;
 using DAL.Orders.Repository;
 using DAL.Payments;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Storage;
 using OrderApplication.Commands;
 using System.Data;
 
@@ -38,15 +39,16 @@ namespace OrderApplication.Handlers
 			if (cartItems == null)
 				return null;
 
-			var result = await _bookCartOperation.TryBookCart(request.Id, request.OptimisticExecution);
+			await _cartRepository.BeginTransaction();
 
+			var result = await _bookCartOperation.TryBookCart(request.Id, request.OptimisticExecution);
 			if (!result) return FailedUnavailableSeats(request.Id);
+			var payment = await CreatePayment(request.Id);
+
+			await _paymentRepository.Save();
+			await _cartRepository.CommitTransaction();
 
 			await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
-
-			var payment = await CreatePayment(request.Id);
-			await _paymentRepository.Save();
-
 			return Result<long?>.Success(payment.Id);
 		}
 
