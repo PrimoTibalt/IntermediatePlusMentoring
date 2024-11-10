@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrderApplication.Core;
 using OrderApplication.Queries;
+using Notifications.Infrastructure;
+using RabbitMQ.Client;
 
 namespace OrderApplication
 {
@@ -21,6 +23,11 @@ namespace OrderApplication
 			services.AddOrderRepositories();
 			services.AddInfrastructure();
 			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCartQuery).Assembly));
+			var factory = new ConnectionFactory
+			{
+				Uri = new(configuration.GetConnectionString("RabbitConnection"))
+			};
+			services.AddNotificationConnectionProvider(factory);
 		}
 	}
 }

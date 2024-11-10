@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\DAL.Infrastructure\DAL.Infrastructure.csproj" />
     <ProjectReference Include="..\..\DAL\DAL.csproj" />
 	  <ProjectReference Include="..\..\API.Abstraction\API.Abstraction.csproj" />
+	  <ProjectReference Include="..\..\Notifications\Notifications.Infrastructure\Notifications.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

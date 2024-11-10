@@ -3,8 +3,6 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Npgsql;
 using Polly;
-using Polly.Retry;
-using System.Net.Sockets;
 using Testcontainers.PostgreSql;
 
 namespace OrderTests
@@ -30,6 +28,15 @@ namespace OrderTests
 				.WithImage("redis:7.0")
 				.WithPortBinding(6380, 6379)
 				.WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
+				.WithCleanUp(true)
+				.WithAutoRemove(true)
+				.Build());
+			containers.Add(new ContainerBuilder()
+				.WithImage("rabbitmq:4.0")
+				.WithPortBinding(5673, 5672)
+				.WithEnvironment("RABBITMQ_DEFAULT_USER", "user")
+				.WithEnvironment("RABBITMQ_DEFAULT_PASS", "pass")
+				.WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5672))
 				.WithCleanUp(true)
 				.WithAutoRemove(true)
 				.Build());

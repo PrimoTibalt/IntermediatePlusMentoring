@@ -5,8 +5,10 @@ using DAL.Infrastructure.Cache.Services;
 using DAL.Orders.Repository;
 using DAL.Payments;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Storage;
+using Notifications.Infrastructure;
+using Notifications.Infrastructure.Publishers;
 using OrderApplication.Commands;
+using OrderApplication.Services;
 using System.Data;
 
 namespace OrderApplication.Handlers
@@ -17,17 +19,20 @@ namespace OrderApplication.Handlers
 		private readonly IGenericRepository<Payment, long> _paymentRepository;
 		private readonly ICacheService<EventSeat> _seatsCacheService;
 		private readonly IBookCartOperation _bookCartOperation;
+		private readonly INotificationsPublisher _notificationsPublisher;
 
 		public BookCartItemsHandler(IEventSeatRepository seatRepository,
 			ICartRepository cartRepository,
 			IGenericRepository<Payment, long> paymentRepository,
 			ICacheService<EventSeat> seatsCacheService,
-			IBookCartOperation bookCartOperation)
+			IBookCartOperation bookCartOperation,
+			INotificationsPublisher notificationsPublisher)
 		{
 			_cartRepository = cartRepository;
 			_paymentRepository = paymentRepository;
 			_seatsCacheService = seatsCacheService;
 			_bookCartOperation = bookCartOperation;
+			_notificationsPublisher = notificationsPublisher;
 		}
 
 		public async Task<Result<long?>> Handle(BookCartItemsCommand request, CancellationToken cancellationToken)
@@ -48,6 +53,8 @@ namespace OrderApplication.Handlers
 			await _paymentRepository.Save();
 			await _cartRepository.CommitTransaction();
 
+			await _notificationsPublisher.SendMessage(BookingNotificationProducer.Get(cartItems, payment.Id),
+				KnownQueueNames.Booking);
 			await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
 			return Result<long?>.Success(payment.Id);
 		}
