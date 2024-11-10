@@ -2,6 +2,7 @@ using DAL.Payments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PaymentApplication.Commands;
+using PaymentApplication.Entities;
 using PaymentApplication.Queries;
 
 namespace PaymentAPI.Controllers
@@ -18,7 +19,7 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpGet("{id:long}")]
-        [ProducesResponseType(typeof(Payment), 200)]
+        [ProducesResponseType(typeof(PaymentDetails), 200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetById(long id)
         {

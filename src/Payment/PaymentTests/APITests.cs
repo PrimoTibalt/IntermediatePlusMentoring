@@ -2,6 +2,7 @@ using DAL.Payments;
 using Microsoft.AspNetCore.Mvc;
 using PaymentAPI.Controllers;
 using PaymentApplication.Commands;
+using PaymentApplication.Entities;
 using PaymentApplication.Queries;
 using TestsCore;
 using TestsCore.Providers;
@@ -13,7 +14,7 @@ namespace PaymentTests
 		[Fact]
 		public async Task GetById_NullResult_NotFound()
 		{
-			var mediator = MediatorMockObjectBuilder.Get<GetPaymentQuery, Payment>(null);
+			var mediator = MediatorMockObjectBuilder.Get<GetPaymentQuery, PaymentDetails>(null);
 			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
 
 			var result = await controller.GetById(123);
@@ -26,7 +27,7 @@ namespace PaymentTests
 		public async Task GetById_WithResult_OkWithPayment()
 		{
 			var paymentId = 123;
-			var mediator = MediatorMockObjectBuilder.Get<GetPaymentQuery, Payment>(new Payment { Id = paymentId });
+			var mediator = MediatorMockObjectBuilder.Get<GetPaymentQuery, PaymentDetails>(new PaymentDetails { Id = paymentId });
 			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
 
 			var result = await controller.GetById(666);

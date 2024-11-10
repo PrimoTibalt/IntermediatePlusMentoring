@@ -1,10 +1,10 @@
-using DAL.Payments;
 using MediatR;
+using PaymentApplication.Entities;
 
 namespace PaymentApplication.Queries
 {
-    public class GetPaymentQuery : IRequest<Payment>
-    {
-        public long Id { get; set; }
-    }
+	public class GetPaymentQuery : IRequest<PaymentDetails>
+	{
+		public long Id { get; set; }
+	}
 }
