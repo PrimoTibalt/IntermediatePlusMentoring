@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\..\Notifications\Notifications.Infrastructure\Notifications.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@ COPY "Payment.sln" "Payment.sln"
 COPY "Payment/PaymentAPI/PaymentAPI.csproj" "Payment/PaymentAPI/PaymentAPI.csproj"
 COPY "Payment/PaymentApplication/PaymentApplication.csproj" "Payment/PaymentApplication/PaymentApplication.csproj"
 COPY "DAL/DAL.csproj" "DAL/DAL.csproj"
+COPY "Notifications/Notifications.Infrastructure/Notifications.Infrastructure.csproj" "Notifications/Notifications.Infrastructure/Notifications.Infrastructure.csproj"
 
 RUN dotnet restore "Payment.sln"
 # well, following step is a huge overkill but it's 2am I'm exhausted
