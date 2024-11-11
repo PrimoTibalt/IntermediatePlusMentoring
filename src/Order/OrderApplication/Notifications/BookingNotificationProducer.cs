@@ -23,7 +23,6 @@ namespace OrderApplication.Services
 				Id = Guid.NewGuid(),
 				Content = content,
 				Parameters = parameters,
-				Timestamp = DateTime.UtcNow,
 				Operation = "booking"
 			};
 		}

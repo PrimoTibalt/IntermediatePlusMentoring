@@ -53,7 +53,7 @@ namespace OrderApplication.Handlers
 			await _paymentRepository.Save();
 			await _cartRepository.CommitTransaction();
 
-			await _notificationsPublisher.SendMessage(BookingNotificationProducer.Get(cartItems, payment.Id),
+			await _notificationsPublisher.SendProtoSerializedMessage(BookingNotificationProducer.Get(cartItems, payment.Id),
 				KnownQueueNames.Booking);
 			await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
 			return Result<long?>.Success(payment.Id);

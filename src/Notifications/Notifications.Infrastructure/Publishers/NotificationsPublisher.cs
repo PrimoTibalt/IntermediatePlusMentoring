@@ -8,18 +8,16 @@ namespace Notifications.Infrastructure.Publishers
 	{
 		private readonly IConnectionProvider _connectionProvider = connectionProvider;
 
-		public async Task SendMessage<T>(T message, string queue)
+		public async Task SendProtoSerializedMessage<T>(T message, string queue)
 		{
-			await SendMessage(message, queue, queue);
+			await SendProtoSerializedMessage(message, queue, queue);
 		}
 
-		public async Task SendMessage<T>(T message, string queue, string routingKey)
+		public async Task SendProtoSerializedMessage<T>(T message, string queue, string routingKey)
 		{
 			const string exchangeName = "BasicExchange";
 			var connection = await _connectionProvider.GetConnection();
 			using var channel = await connection.CreateChannelAsync();
-			await channel.ExchangeDeclareAsync(exchangeName, ExchangeType.Direct);
-			await channel.QueueDeclareAsync(queue, false, false, false);
 
 			using var stream = new MemoryStream();
 			Serializer.Serialize(stream, message);

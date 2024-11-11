@@ -2,7 +2,7 @@
 {
 	public interface INotificationsPublisher
 	{
-		Task SendMessage<T>(T message, string queue);
-		Task SendMessage<T>(T message, string queue, string routingKey);
+		Task SendProtoSerializedMessage<T>(T message, string queue);
+		Task SendProtoSerializedMessage<T>(T message, string queue, string routingKey);
 	}
 }

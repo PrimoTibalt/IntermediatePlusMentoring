@@ -10,7 +10,7 @@ namespace API.Abstraction.Notifications
 		[ProtoMember(2)]
 		public string Operation { get; set; }
 		[ProtoMember(3)]
-		public DateTime Timestamp { get; set; }
+		public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 		[ProtoMember(4)]
 		public IDictionary<string, string> Parameters { get; set; }
 		[ProtoMember(5)]
