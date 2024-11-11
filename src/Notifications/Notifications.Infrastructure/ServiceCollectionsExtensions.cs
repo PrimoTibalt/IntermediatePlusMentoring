@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Notifications.Infrastructure.Provider;
+using Notifications.Infrastructure.Providers;
 using Notifications.Infrastructure.Publishers;
 using RabbitMQ.Client;
 
@@ -12,6 +13,7 @@ namespace Notifications.Infrastructure
 		{
 			services.TryAddSingleton(factory);
 			services.TryAddSingleton<IConnectionProvider, ConnectionProvider>();
+			services.TryAddSingleton<IChannelProvider, ChannelProvider>();
 			services.TryAddScoped<INotificationsPublisher, NotificationsPublisher>();
 		}
 	}

@@ -28,6 +28,15 @@ services:
       - 5400:5432
     container_name: mentoring_database
 
+  notifications:
+    image: notificationsapp
+    build:
+      dockerfile: ./NotificationsDockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=database;Port=5432;User Id=postgres;Password=postgres;Database=postgres;
+      - ConnectionStrings__RabbitConnection=amqp://user:pass@rabbitmq:5672/
+    container_name: mentoring_notifications
+
   ##pgadmin:
     ##image: dpage/pgadmin4
     ##environment:

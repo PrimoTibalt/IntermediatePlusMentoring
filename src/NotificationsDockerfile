@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /App
+EXPOSE 8080
+
+COPY "Notifications/NotificationsHandler/NotificationsHandler.sln" "Notifications/NotificationsHandler/NotificationsHandler.sln"
+COPY "Notifications/NotificationsHandler/NotificationsHandler.csproj" "Notifications/NotificationsHandler/NotificationsHandler.csproj"
+COPY "Notifications/Notifications.Infrastructure/Notifications.Infrastructure.csproj" "Notifications/Notifications.Infrastructure/Notifications.Infrastructure.csproj"
+COPY "DAL/DAL.csproj" "DAL/DAL.csproj"
+RUN dotnet restore "Notifications/NotificationsHandler/NotificationsHandler.sln"
+
+COPY . .
+RUN dotnet publish Notifications/NotificationsHandler/NotificationsHandler.sln -c Release -o out
+
+FROM build-env
+WORKDIR /App
+COPY --from=build-env /App/out .
+ENTRYPOINT ["dotnet", "NotificationsHandler.dll"]
