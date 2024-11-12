@@ -1,32 +1,34 @@
-﻿using API.Abstraction.Notifications;
-using Microsoft.Extensions.Hosting;
-using Notifications.Infrastructure;
-using Notifications.Infrastructure.Provider;
+﻿using Microsoft.Extensions.Hosting;
 using Notifications.Infrastructure.Providers;
-using ProtoBuf;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace NotificationsHandler
 {
-	public class QueueSubscriberService(IChannelProvider channelProvider) : BackgroundService
+	public abstract class QueueSubscriberService(IChannelProvider channelProvider) : BackgroundService
 	{
 		private readonly IChannelProvider _channelProvider = channelProvider;
+		protected abstract string QueueName { get; }
+		protected abstract AsyncEventHandler<BasicDeliverEventArgs> AsyncEventHandler { get; }
+		protected abstract IDictionary<string, string> knownBookingParameterToContentStringsMap { get; }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			var channel = await _channelProvider.GetChannel();
 
 			var consumer = new AsyncEventingBasicConsumer(channel);
-			consumer.ReceivedAsync += async (message, arguments) =>
-			{
-				var notification = Serializer.Deserialize<Notification>(arguments.Body);
-				Console.WriteLine(notification.Operation);
-				Console.WriteLine(notification.Timestamp);
-				await Task.CompletedTask;
-			};
+			consumer.ReceivedAsync += AsyncEventHandler;
+			await channel.BasicConsumeAsync(QueueName, true, consumer, cancellationToken: stoppingToken);
+		}
 
-			await channel.BasicConsumeAsync(KnownQueueNames.Booking, true, consumer, cancellationToken: stoppingToken);
+		protected virtual void AppendExistingParameters(StringBuilder body, IDictionary<string, string> parameters)
+		{
+			foreach (var (key, contentString) in knownBookingParameterToContentStringsMap)
+			{
+				if (parameters.TryGetValue(key, out var value))
+					body.AppendLine(string.Format(contentString, value));
+			}
 		}
 	}
 }

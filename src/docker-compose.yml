@@ -35,7 +35,11 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Server=database;Port=5432;User Id=postgres;Password=postgres;Database=postgres;
       - ConnectionStrings__RabbitConnection=amqp://user:pass@rabbitmq:5672/
+      ## - ResendApiToken=
     container_name: mentoring_notifications
+    depends_on:
+      - database
+      - rabbitmq
 
   ##pgadmin:
     ##image: dpage/pgadmin4

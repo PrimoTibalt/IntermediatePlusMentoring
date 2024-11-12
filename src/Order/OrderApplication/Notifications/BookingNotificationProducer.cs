@@ -1,5 +1,6 @@
 ﻿using API.Abstraction.Notifications;
 using DAL.Orders;
+using Notifications.Infrastructure.Models;
 
 namespace OrderApplication.Services
 {
@@ -9,13 +10,13 @@ namespace OrderApplication.Services
 		{
 			var content = new Dictionary<string, string>
 			{
-				{ "email", $"anton.shheglov.{paymentId}@gmail.com" }
+				{ NotificationContentKeys.Email, $"anton.shheglov.{paymentId}@gmail.com" },
+				{ NotificationContentKeys.PaymentId, paymentId.ToString() }
 			};
 
 			var parameters = new Dictionary<string, string>
 			{
-				{ "paymentId", paymentId.ToString() },
-				{ "amount", cartItems.Sum(ci => ci.Price?.Sum ?? ci.EventSeat.Price?.Sum).ToString() }
+				{ "amount", cartItems.Sum(ci => ci.Price?.Sum ?? ci.EventSeat.Price?.Sum).ToString() },
 			};
 
 			return new()

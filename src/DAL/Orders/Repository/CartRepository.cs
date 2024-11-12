@@ -34,6 +34,8 @@ namespace DAL.Orders.Repository
 				.ThenInclude(ci => ci.EventSeat)
 				.ThenInclude(es => es.Seat)
 				.ThenInclude(s => s.Row)
+				.Include(c => c.CartItems)
+				.ThenInclude(ci => ci.Price)
 				.FirstOrDefaultAsync(c => c.Id == id);
 			if (cart is null) return null;
 			return [.. cart.CartItems];

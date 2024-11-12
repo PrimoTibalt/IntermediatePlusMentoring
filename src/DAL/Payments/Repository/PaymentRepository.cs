@@ -3,9 +3,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Payments.Repository
 {
-	internal class PaymentRepository : GenericRepository<Payment, long, PaymentContext>, IPaymentRepository
+	internal class PaymentRepository(PaymentContext context) :
+		GenericRepository<Payment, long, PaymentContext>(context),
+		IPaymentRepository
 	{
-		public PaymentRepository(PaymentContext context) : base(context) { }
+		public async Task<Payment> GetPaymentWithRelatedInfo(long id)
+		{
+			var payment = await _collection
+				.Include(p => p.Cart)
+				.ThenInclude(p => p.User)
+
+				.Include(p => p.Cart)
+				.ThenInclude(c => c.CartItems)
+				.ThenInclude(ci => ci.EventSeat)
+				.ThenInclude(es => es.Event)
+
+				.Include(p => p.Cart)
+				.ThenInclude(c => c.CartItems)
+				.ThenInclude(ci => ci.Price)
+
+				.FirstOrDefaultAsync(p => p.Id == id);
+
+			return payment;
+		}
 
 		public async Task<bool> CompletePayment(long id)
 		{

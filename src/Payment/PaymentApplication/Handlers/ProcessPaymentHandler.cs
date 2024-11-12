@@ -30,12 +30,12 @@ namespace PaymentApplication.Handlers
 			if (request.Complete)
 			{
 				queueName = KnownQueueNames.PaymentCompleted;
-				task = (paymentId) => _paymentRepository.CompletePayment(paymentId);
+				task = _paymentRepository.CompletePayment;
 			}
 			else
 			{
 				queueName = KnownQueueNames.PaymentFailed;
-				task = (paymentId) => _paymentRepository.FailPayment(paymentId);
+				task = _paymentRepository.FailPayment;
 			}
 
 			bool result;
@@ -50,8 +50,12 @@ namespace PaymentApplication.Handlers
 
 			if (result)
 			{
-				var notification = PaymentProcessedNotificationProducer.Get(request.Id, request.Complete);
-				await _notificationsPublisher.SendProtoSerializedMessage(notification, queueName);
+				try
+				{
+					var details = await _paymentRepository.GetPaymentWithRelatedInfo(request.Id);
+					var notification = PaymentProcessedNotificationProducer.Get(details, request.Complete);
+					await _notificationsPublisher.SendProtoSerializedMessage(notification, queueName);
+				} catch { }
 			}
 
 			return result;

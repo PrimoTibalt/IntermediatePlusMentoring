@@ -10,12 +10,11 @@ namespace Notifications.Infrastructure.Publishers
 
 		public async Task SendProtoSerializedMessage<T>(T message, string queue)
 		{
-			await SendProtoSerializedMessage(message, queue, queue);
+			await SendProtoSerializedMessage(message, queue, queue, KnownQueueExchanges.Map[queue]);
 		}
 
-		public async Task SendProtoSerializedMessage<T>(T message, string queue, string routingKey)
+		public async Task SendProtoSerializedMessage<T>(T message, string queue, string routingKey, string exchange)
 		{
-			const string exchangeName = "BasicExchange";
 			var connection = await _connectionProvider.GetConnection();
 			using var channel = await connection.CreateChannelAsync();
 
@@ -26,7 +25,7 @@ namespace Notifications.Infrastructure.Publishers
 			{
 				DeliveryMode = DeliveryModes.Persistent
 			};
-			await channel.BasicPublishAsync(exchangeName, routingKey, true, props, stream.ToArray());
+			await channel.BasicPublishAsync(exchange, routingKey, true, props, stream.ToArray());
 		}
 	}
 }

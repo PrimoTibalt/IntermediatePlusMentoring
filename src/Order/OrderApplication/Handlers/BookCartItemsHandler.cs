@@ -21,8 +21,7 @@ namespace OrderApplication.Handlers
 		private readonly IBookCartOperation _bookCartOperation;
 		private readonly INotificationsPublisher _notificationsPublisher;
 
-		public BookCartItemsHandler(IEventSeatRepository seatRepository,
-			ICartRepository cartRepository,
+		public BookCartItemsHandler(ICartRepository cartRepository,
 			IGenericRepository<Payment, long> paymentRepository,
 			ICacheService<EventSeat> seatsCacheService,
 			IBookCartOperation bookCartOperation,

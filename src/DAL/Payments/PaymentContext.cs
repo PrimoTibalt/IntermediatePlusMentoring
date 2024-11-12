@@ -13,5 +13,7 @@ namespace DAL.Payments
 		public DbSet<CartItem> CartItems { get; set; }
 		public DbSet<Price> Prices { get; set; }
 		public DbSet<EventSeat> EventSeats { get; set; }
+		public DbSet<User> Users { get; set; }
+		public DbSet<Event> Events { get; set; }
 	}
 }

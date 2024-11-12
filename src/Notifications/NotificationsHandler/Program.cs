@@ -2,7 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Notifications.Infrastructure;
+using NotificationsHandler.Providers;
+using NotificationsHandler.QueuesServices;
 using RabbitMQ.Client;
+using Resend;
 
 namespace NotificationsHandler
 {
@@ -18,7 +21,17 @@ namespace NotificationsHandler
 						Uri = new(builder.Configuration.GetConnectionString("RabbitConnection"))
 					};
 					services.AddNotificationConnectionProvider(factory);
-					services.AddHostedService<QueueSubscriberService>();
+					services.AddOptions();
+					services.AddHttpClient<ResendClient>();
+					services.Configure<ResendClientOptions>(o =>
+					{
+						o.ApiToken = builder.Configuration["ResendApiToken"];
+					});
+					services.AddTransient<IResend, ResendClient>();
+					services.AddTransient<INotificationProvider, EmailProvider>();
+					services.AddHostedService<BookingSubscriberService>();
+					services.AddHostedService<PaymentFailSubscriberService>();
+					services.AddHostedService<PaymentCompleteSubscriberService>();
 				})
 				.Build();
 

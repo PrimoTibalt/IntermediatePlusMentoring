@@ -3,7 +3,7 @@
 	public static class KnownQueueNames
 	{
 		public const string Booking = "booking";
-		public const string PaymentCompleted = "complete";
-		public const string PaymentFailed = "fail";
+		public const string PaymentCompleted = "paymentComplete";
+		public const string PaymentFailed = "paymentFail";
 	}
 }
