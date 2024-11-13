@@ -38,24 +38,40 @@ namespace NotificationsHandler.QueuesServices
 				Body = body.ToString()
 			};
 
+			var anySent = await Send(entity);
+			var status = anySent ? NotificationStatus.Completed : NotificationStatus.Failed;
+			await UpdatePersistenceEntity(notification.Id, status);
+		}
+
+		private async Task<bool> Send(Message message)
+		{
 			var anySent = false;
 			foreach (var provider in _providers)
 			{
 				try
 				{
-					await provider.Send(entity);
+					await resiliencePipeline.ExecuteAsync(async (token) =>
+					{
+						await provider.Send(message);
+					});
 					anySent = true;
 				}
-				catch
+				catch (Exception ex)
 				{
 					Console.WriteLine($"Failed to send notification using '{provider.GetType()}' provider.");
+					Console.WriteLine(ex.GetType().FullName);
+					Console.WriteLine(ex.Message);
 				}
 			}
 
-			var status = anySent ? NotificationStatus.Completed : NotificationStatus.Failed;
+			return anySent;
+		}
+
+		private async Task UpdatePersistenceEntity(Guid notificationId, NotificationStatus status)
+		{
 			try
 			{
-				var persistentEntity = await _repository.GetById(notification.Id);
+				var persistentEntity = await _repository.GetById(notificationId);
 				persistentEntity.Status = (int) status;
 				persistentEntity.Timestamp = DateTime.UtcNow;
 				_repository.Update(persistentEntity);
@@ -63,7 +79,7 @@ namespace NotificationsHandler.QueuesServices
 			}
 			catch
 			{
-				Console.WriteLine($"Failed to update notification '{notification.Id}' to status {status}.");
+				Console.WriteLine($"Failed to update notification '{notificationId}' to status {status}.");
 			}
 		}
 	}

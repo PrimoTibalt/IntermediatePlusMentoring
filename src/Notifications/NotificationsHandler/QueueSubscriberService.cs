@@ -1,14 +1,32 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Notifications.Infrastructure.Providers;
+using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Net.Sockets;
 using System.Text;
 
 namespace NotificationsHandler
 {
-	public abstract class QueueSubscriberService(IChannelProvider channelProvider) : BackgroundService
+	public abstract class QueueSubscriberService : BackgroundService
 	{
-		private readonly IChannelProvider _channelProvider = channelProvider;
+		private readonly IChannelProvider _channelProvider;
+		protected readonly ResiliencePipeline resiliencePipeline;
+
+		public QueueSubscriberService(IChannelProvider channelProvider)
+		{
+			_channelProvider = channelProvider;
+			resiliencePipeline = new ResiliencePipelineBuilder()
+				.AddRetry(new()
+				{
+					Delay = TimeSpan.FromSeconds(5),
+					ShouldHandle = new PredicateBuilder()
+						.Handle<SocketException>()
+						.Handle<HttpRequestException>()
+				})
+				.Build();
+		}
+
 		protected abstract string QueueName { get; }
 		protected abstract AsyncEventHandler<BasicDeliverEventArgs> AsyncEventHandler { get; }
 		protected abstract IDictionary<string, string> knownBookingParameterToContentStringsMap { get; }
