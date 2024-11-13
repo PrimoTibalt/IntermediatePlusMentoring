@@ -15,6 +15,7 @@ namespace Notifications.Infrastructure
 			services.TryAddSingleton<IConnectionProvider, ConnectionProvider>();
 			services.TryAddSingleton<IChannelProvider, ChannelProvider>();
 			services.TryAddScoped<INotificationsPublisher, NotificationsPublisher>();
+			services.TryAddScoped<IPersistentNotificationPublisher, PersistentNotificationPublisher>();
 		}
 	}
 }

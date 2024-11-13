@@ -2,6 +2,13 @@
 -- Please log an issue at https://github.com/pgadmin-org/pgadmin4/issues/new/choose if you find any bugs, including reproduction steps.
 BEGIN;
 
+CREATE TABLE IF NOT EXISTS public."Notifications"
+(
+    "Id" uuid NOT NULL,
+    "Status" int NOT NULL,
+    "Data" bytea,
+    "Timestamp" timestamp NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS public."Events"
 (

@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DAL;
+using DAL.Notifications;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Notifications.Infrastructure;
@@ -16,6 +19,11 @@ namespace NotificationsHandler
 			var host = Host.CreateDefaultBuilder(args)
 				.ConfigureServices((builder, services) =>
 				{
+					services.AddDbContext<NotificationContext>(options =>
+					{
+						options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+					});
+					services.AddNotificationRepositories();
 					var factory = new ConnectionFactory
 					{
 						Uri = new(builder.Configuration.GetConnectionString("RabbitConnection"))

@@ -19,13 +19,13 @@ namespace OrderApplication.Handlers
 		private readonly IGenericRepository<Payment, long> _paymentRepository;
 		private readonly ICacheService<EventSeat> _seatsCacheService;
 		private readonly IBookCartOperation _bookCartOperation;
-		private readonly INotificationsPublisher _notificationsPublisher;
+		private readonly IPersistentNotificationPublisher _notificationsPublisher;
 
 		public BookCartItemsHandler(ICartRepository cartRepository,
 			IGenericRepository<Payment, long> paymentRepository,
 			ICacheService<EventSeat> seatsCacheService,
 			IBookCartOperation bookCartOperation,
-			INotificationsPublisher notificationsPublisher)
+			IPersistentNotificationPublisher notificationsPublisher)
 		{
 			_cartRepository = cartRepository;
 			_paymentRepository = paymentRepository;
@@ -52,9 +52,17 @@ namespace OrderApplication.Handlers
 			await _paymentRepository.Save();
 			await _cartRepository.CommitTransaction();
 
-			await _notificationsPublisher.SendProtoSerializedMessage(BookingNotificationProducer.Get(cartItems, payment.Id),
-				KnownQueueNames.Booking);
-			await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
+			try
+			{
+				var notification = BookingNotificationProducer.Get(cartItems, payment.Id);
+				await _notificationsPublisher.PersistentPublish(notification, KnownQueueNames.Booking);
+				await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
+			}
+			catch
+			{
+				// logging
+			}
+
 			return Result<long?>.Success(payment.Id);
 		}
 

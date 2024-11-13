@@ -1,4 +1,5 @@
 ﻿using DAL.Events;
+using DAL.Notifications;
 using DAL.Payments;
 using DAL.Venues;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace DAL.Orders
 	{
 		public OrderContext(DbContextOptions options) : base(options) { }
 
+		public DbSet<NotificationEntity> Notifications { get; set; }
 		public DbSet<Cart> Carts { get; set; }
 		public DbSet<CartItem> CartItems { get; set; }
 		public DbSet<User> Users { get; set; }

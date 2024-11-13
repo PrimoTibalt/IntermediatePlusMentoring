@@ -11,9 +11,9 @@ namespace PaymentApplication.Handlers
 	public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentCommand, bool>
 	{
 		private readonly IPaymentRepository _paymentRepository;
-		private readonly INotificationsPublisher _notificationsPublisher;
+		private readonly IPersistentNotificationPublisher _notificationsPublisher;
 
-		public ProcessPaymentHandler(IPaymentRepository paymentRepository, INotificationsPublisher notificationsPublisher)
+		public ProcessPaymentHandler(IPaymentRepository paymentRepository, IPersistentNotificationPublisher notificationsPublisher)
 		{
 			_paymentRepository = paymentRepository;
 			_notificationsPublisher = notificationsPublisher;
@@ -54,8 +54,12 @@ namespace PaymentApplication.Handlers
 				{
 					var details = await _paymentRepository.GetPaymentWithRelatedInfo(request.Id);
 					var notification = PaymentProcessedNotificationProducer.Get(details, request.Complete);
-					await _notificationsPublisher.SendProtoSerializedMessage(notification, queueName);
-				} catch { }
+					await _notificationsPublisher.PersistentPublish(notification, queueName);
+				}
+				catch 
+				{
+					// logging
+				}
 			}
 
 			return result;
