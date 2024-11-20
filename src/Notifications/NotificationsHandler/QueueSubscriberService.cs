@@ -29,7 +29,7 @@ namespace NotificationsHandler
 
 		protected abstract string QueueName { get; }
 		protected abstract AsyncEventHandler<BasicDeliverEventArgs> AsyncEventHandler { get; }
-		protected abstract IDictionary<string, string> knownBookingParameterToContentStringsMap { get; }
+		protected abstract IDictionary<string, string> knownParametersToContentStringsMap { get; }
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
@@ -37,12 +37,13 @@ namespace NotificationsHandler
 
 			var consumer = new AsyncEventingBasicConsumer(channel);
 			consumer.ReceivedAsync += AsyncEventHandler;
+
 			await channel.BasicConsumeAsync(QueueName, true, consumer, cancellationToken: stoppingToken);
 		}
 
 		protected virtual void AppendExistingParameters(StringBuilder body, IDictionary<string, string> parameters)
 		{
-			foreach (var (key, contentString) in knownBookingParameterToContentStringsMap)
+			foreach (var (key, contentString) in knownParametersToContentStringsMap)
 			{
 				if (parameters.TryGetValue(key, out var value))
 					body.AppendLine(string.Format(contentString, value));

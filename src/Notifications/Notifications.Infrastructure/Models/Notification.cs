@@ -15,5 +15,7 @@ namespace API.Abstraction.Notifications
 		public IDictionary<string, string> Parameters { get; set; }
 		[ProtoMember(5)]
 		public IDictionary<string, string> Content { get; set; }
+		[ProtoMember(6)]
+		public string Subject { get; set; }
 	}
 }

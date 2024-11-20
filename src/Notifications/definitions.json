@@ -14,86 +14,22 @@
 	],
 	"queues": [
 		{
-			"name": "booking",
+			"name": "notifications",
 			"vhost": "/",
 			"durable": true,
 			"auto_delete": false,
 			"arguments": {
 				"x-queue-type": "classic"
 			}
-		},
-		{
-			"name": "paymentComplete",
-			"vhost": "/",
-			"durable": true,
-			"auto_delete": false,
-			"arguments": {
-				"x-queue-type": "classic"
-			}
-		},
-		{
-			"name": "paymentFail",
-			"vhost": "/",
-			"durable": true,
-			"auto_delete": false,
-			"arguments": {
-				"x-queue-type": "classic"
-			}
-		}
-	],
-	"exchanges": [
-		{
-			"name": "BookingExchange",
-			"vhost": "/",
-			"type": "direct",
-			"durable": true,
-			"auto_delete": false,
-			"internal": false,
-			"arguments": {}
-		},
-		{
-			"name": "PaymentCompleteExchange",
-			"vhost": "/",
-			"type": "direct",
-			"durable": true,
-			"auto_delete": false,
-			"internal": false,
-			"arguments": {}
-		},
-		{
-			"name": "PaymentFailExchange",
-			"vhost": "/",
-			"type": "direct",
-			"durable": true,
-			"auto_delete": false,
-			"internal": false,
-			"arguments": {}
 		}
 	],
 	"bindings": [
 		{
-			"source": "BookingExchange",
+			"source": "",
 			"vhost": "/",
-			"destination": "booking",
+			"destination": "notifications",
 			"destination_type": "queue",
-			"routing_key": "booking",
-			"arguments": {}
-		},
-		{
-			"source": "PaymentCompleteExchange",
-			"vhost": "/",
-			"destination": "paymentComplete",
-			"destination_type": "queue",
-			"routing_key": "paymentComplete",
-			"arguments": {}
-		},
-		{
-			"source": "PaymentFailExchange",
-			"vhost": "/",
-			"destination": "paymentFail",
-			"destination_type": "queue",
-			"routing_key": "paymentFail",
-			"arguments": {}
+			"routing_key": "notifications"
 		}
 	],
 	"permissions": [

@@ -9,18 +9,15 @@ namespace Notifications.Infrastructure.Publishers
 
 		public async Task SendMessage(byte[] message, string queue)
 		{
-			await SendMessage(message, queue, queue, KnownQueueExchanges.Map[queue]);
+			await SendMessage(message, queue, KnownQueueExchanges.Map[queue]);
 		}
 
-		private async Task SendMessage(byte[] message, string queue, string routingKey, string exchange)
+		private async Task SendMessage(byte[] message, string routingKey, string exchange)
 		{
 			var connection = await _connectionProvider.GetConnection();
 			using var channel = await connection.CreateChannelAsync();
 
-			var props = new BasicProperties
-			{
-				DeliveryMode = DeliveryModes.Persistent
-			};
+			var props = new BasicProperties();
 			await channel.BasicPublishAsync(exchange, routingKey, true, props, message);
 		}
 	}

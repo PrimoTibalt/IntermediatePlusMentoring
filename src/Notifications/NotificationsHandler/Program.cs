@@ -37,9 +37,7 @@ namespace NotificationsHandler
 					});
 					services.AddTransient<IResend, ResendClient>();
 					services.AddTransient<INotificationProvider, EmailProvider>();
-					services.AddHostedService<BookingSubscriberService>();
-					services.AddHostedService<PaymentFailSubscriberService>();
-					services.AddHostedService<PaymentCompleteSubscriberService>();
+					services.AddHostedService<NotificationQueueSubscriberService>();
 				})
 				.Build();
 

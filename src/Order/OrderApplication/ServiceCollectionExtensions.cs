@@ -8,6 +8,9 @@ using OrderApplication.Core;
 using OrderApplication.Queries;
 using Notifications.Infrastructure;
 using RabbitMQ.Client;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Notifications.Infrastructure.Services;
+using OrderApplication.Notifications;
 
 namespace OrderApplication
 {
@@ -28,6 +31,7 @@ namespace OrderApplication
 				Uri = new(configuration.GetConnectionString("RabbitConnection"))
 			};
 			services.AddNotificationConnectionProvider(factory);
+			services.TryAddScoped<INotificationService<(IList<CartItem> CartItems, long PaymentId)>, BookingNotificationService>();
 		}
 	}
 }

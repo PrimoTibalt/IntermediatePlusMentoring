@@ -1,6 +1,8 @@
 ﻿using API.Abstraction.Notifications;
 using DAL;
 using DAL.Notifications;
+using Microsoft.Extensions.Logging;
+using Notifications.Infrastructure;
 using Notifications.Infrastructure.Providers;
 using ProtoBuf;
 using RabbitMQ.Client.Events;
@@ -8,14 +10,16 @@ using System.Text;
 
 namespace NotificationsHandler.QueuesServices
 {
-	internal abstract class BaseQueueSubscriberService(IChannelProvider channelProvider,
+	internal class NotificationQueueSubscriberService(IChannelProvider channelProvider,
 		IEnumerable<INotificationProvider> providers,
-		IGenericRepository<NotificationEntity, Guid> repository) : QueueSubscriberService(channelProvider)
+		IGenericRepository<NotificationEntity, Guid> repository,
+		ILogger<NotificationQueueSubscriberService> logger) : QueueSubscriberService(channelProvider)
 	{
-		protected readonly IEnumerable<INotificationProvider> _providers = providers;
 		private readonly IGenericRepository<NotificationEntity, Guid> _repository = repository;
+		private readonly ILogger _logger = logger;
+		protected readonly IEnumerable<INotificationProvider> _providers = providers;
 
-		protected override IDictionary<string, string> knownBookingParameterToContentStringsMap => new Dictionary<string, string>()
+		protected override IDictionary<string, string> knownParametersToContentStringsMap => new Dictionary<string, string>()
 		{
 			{ "amount", "Total amount is {0}$." },
 			{ "event", "Contains tickets to events {0}." }
@@ -23,18 +27,18 @@ namespace NotificationsHandler.QueuesServices
 
 		protected override AsyncEventHandler<BasicDeliverEventArgs> AsyncEventHandler => ProcessMessage;
 
-		protected abstract string HeadingOfMessageBody { get; }
+		protected override string QueueName => KnownQueueNames.Notifications;
 
 		private async Task ProcessMessage(object message, BasicDeliverEventArgs ea)
 		{
 			var notification = Serializer.Deserialize<Notification>(ea.Body);
-			var body = new StringBuilder(HeadingOfMessageBody);
+			var body = new StringBuilder(notification.Operation);
 			AppendExistingParameters(body, notification.Parameters);
-			body.AppendLine($"Created at {notification.Timestamp.ToString("dd-MMM-yyyy H:mm")}");
+			body.AppendLine($"Created at {notification.Timestamp.ToString("dd-MMM-yyyy H:mm")}.");
 			var entity = new Message
 			{
 				To = "anton.shheglov.1@gmail.com", // notification.Content[NotificationContentKeys.Email],
-				Subject = notification.Operation,
+				Subject = notification.Subject,
 				Body = body.ToString()
 			};
 
@@ -56,11 +60,9 @@ namespace NotificationsHandler.QueuesServices
 					});
 					anySent = true;
 				}
-				catch (Exception ex)
+				catch (Exception e)
 				{
-					Console.WriteLine($"Failed to send notification using '{provider.GetType()}' provider.");
-					Console.WriteLine(ex.GetType().FullName);
-					Console.WriteLine(ex.Message);
+					_logger.LogError(e, "Failed to send notification using '{providerType}' provider.", new { providerType = provider.GetType() });
 				}
 			}
 

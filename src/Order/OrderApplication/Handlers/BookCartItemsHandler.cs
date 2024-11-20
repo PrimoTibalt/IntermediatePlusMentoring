@@ -2,37 +2,31 @@ using API.Abstraction.Helpers;
 using DAL;
 using DAL.Events;
 using DAL.Infrastructure.Cache.Services;
+using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Payments;
 using MediatR;
-using Notifications.Infrastructure;
-using Notifications.Infrastructure.Publishers;
+using Microsoft.Extensions.Logging;
+using Notifications.Infrastructure.Services;
 using OrderApplication.Commands;
-using OrderApplication.Services;
 using System.Data;
 
 namespace OrderApplication.Handlers
 {
-	public class BookCartItemsHandler : IRequestHandler<BookCartItemsCommand, Result<long?>>
+	public class BookCartItemsHandler(ICartRepository cartRepository,
+		IGenericRepository<Payment, long> paymentRepository,
+		ICacheService<EventSeat> seatsCacheService,
+		IBookCartOperation bookCartOperation,
+		INotificationService<(IList<CartItem> CartItems, long PaymentId)> notificationService,
+		ILogger<BookCartItemsHandler> logger)
+		: IRequestHandler<BookCartItemsCommand, Result<long?>>
 	{
-		private readonly ICartRepository _cartRepository;
-		private readonly IGenericRepository<Payment, long> _paymentRepository;
-		private readonly ICacheService<EventSeat> _seatsCacheService;
-		private readonly IBookCartOperation _bookCartOperation;
-		private readonly IPersistentNotificationPublisher _notificationsPublisher;
-
-		public BookCartItemsHandler(ICartRepository cartRepository,
-			IGenericRepository<Payment, long> paymentRepository,
-			ICacheService<EventSeat> seatsCacheService,
-			IBookCartOperation bookCartOperation,
-			IPersistentNotificationPublisher notificationsPublisher)
-		{
-			_cartRepository = cartRepository;
-			_paymentRepository = paymentRepository;
-			_seatsCacheService = seatsCacheService;
-			_bookCartOperation = bookCartOperation;
-			_notificationsPublisher = notificationsPublisher;
-		}
+		private readonly ICartRepository _cartRepository = cartRepository;
+		private readonly IGenericRepository<Payment, long> _paymentRepository = paymentRepository;
+		private readonly ICacheService<EventSeat> _seatsCacheService = seatsCacheService;
+		private readonly IBookCartOperation _bookCartOperation = bookCartOperation;
+		private readonly INotificationService<(IList<CartItem> CartItems, long PaymentId)> _notificationService = notificationService;
+		private readonly ILogger _logger = logger;
 
 		public async Task<Result<long?>> Handle(BookCartItemsCommand request, CancellationToken cancellationToken)
 		{
@@ -54,15 +48,14 @@ namespace OrderApplication.Handlers
 
 			try
 			{
-				var notification = BookingNotificationProducer.Get(cartItems, payment.Id);
-				await _notificationsPublisher.PersistentPublish(notification, KnownQueueNames.Booking);
 				await _seatsCacheService.Clean(cartItems.Select(ci => ci.EventSeat).ToList());
 			}
-			catch
+			catch (Exception e)
 			{
-				// logging
+				_logger.LogError(e, "Could not clean seats cache.");
 			}
 
+			await _notificationService.SendNotification(new(cartItems, payment.Id));
 			return Result<long?>.Success(payment.Id);
 		}
 

@@ -1,12 +1,13 @@
 ﻿using API.Abstraction.Notifications;
 using DAL.Payments;
+using Notifications.Infrastructure;
 using Notifications.Infrastructure.Models;
 
 namespace PaymentApplication.Notifications
 {
 	public static class PaymentProcessedNotificationProducer
 	{
-		public static Notification Get(Payment payment, bool complete)
+		public static Notification Get(Payment payment)
 		{
 			var content = new Dictionary<string, string>()
 			{
@@ -22,12 +23,14 @@ namespace PaymentApplication.Notifications
 				{ "amount", amount.ToString() }
 			};
 
+			var complete = payment.Status == (int)PaymentStatus.Completed;
 			return new()
 			{
 				Id = Guid.NewGuid(),
 				Content = content,
 				Parameters = parameters,
-				Operation = complete ? "payment operation was completed" : "payment operation was failed"
+				Subject = complete ? "payment operation was completed" : "payment operation was failed",
+				Operation = complete ? KnownOperationNotifications.PaymentComplete : KnownOperationNotifications.PaymentFailed,
 			};
 		}
 	}

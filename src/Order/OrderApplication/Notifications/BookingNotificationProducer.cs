@@ -1,5 +1,6 @@
 ﻿using API.Abstraction.Notifications;
 using DAL.Orders;
+using Notifications.Infrastructure;
 using Notifications.Infrastructure.Models;
 
 namespace OrderApplication.Services
@@ -24,7 +25,8 @@ namespace OrderApplication.Services
 				Id = Guid.NewGuid(),
 				Content = content,
 				Parameters = parameters,
-				Operation = "booking"
+				Operation = string.Format(KnownOperationNotifications.Booking, paymentId),
+				Subject = "A payment was created"
 			};
 		}
 	}

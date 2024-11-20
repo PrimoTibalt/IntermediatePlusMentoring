@@ -3,9 +3,12 @@ using DAL.Payments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Notifications.Infrastructure;
+using Notifications.Infrastructure.Services;
 using PaymentApplication.Core;
 using PaymentApplication.Handlers;
+using PaymentApplication.Notifications;
 using RabbitMQ.Client;
 
 namespace PaymentApplication
@@ -25,6 +28,7 @@ namespace PaymentApplication
 				Uri = new(configuration.GetConnectionString("RabbitConnection"))
 			};
 			services.AddNotificationConnectionProvider(factory);
+			services.TryAddScoped<INotificationService<long>, PaymentNotificationService>();
 			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetPaymentHandler).Assembly));
 		}
 	}

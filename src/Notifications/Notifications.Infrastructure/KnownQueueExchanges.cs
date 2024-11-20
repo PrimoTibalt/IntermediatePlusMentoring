@@ -4,9 +4,7 @@
 	{
 		public static IDictionary<string, string> Map => new Dictionary<string, string>
 		{
-			{ KnownQueueNames.Booking, "BookingExchange" },
-			{ KnownQueueNames.PaymentCompleted, "PaymentCompleteExchange" },
-			{ KnownQueueNames.PaymentFailed, "PaymentFailExchange" }
+			{ KnownQueueNames.Notifications, string.Empty },
 		};
 	}
 }
