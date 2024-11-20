@@ -10,18 +10,11 @@ namespace DAL.Payments.Repository
 		public async Task<Payment> GetPaymentWithRelatedInfo(long id)
 		{
 			var payment = await _collection
-				.Include(p => p.Cart)
-				.ThenInclude(p => p.User)
-
-				.Include(p => p.Cart)
-				.ThenInclude(c => c.CartItems)
-				.ThenInclude(ci => ci.EventSeat)
-				.ThenInclude(es => es.Event)
-
-				.Include(p => p.Cart)
-				.ThenInclude(c => c.CartItems)
-				.ThenInclude(ci => ci.Price)
-
+				.Include(p => p.Cart.User)
+				.Include(p => p.Cart.CartItems)
+					.ThenInclude(ci => ci.EventSeat.Event)
+				.Include(p => p.Cart.CartItems)
+					.ThenInclude(ci => ci.Price)
 				.FirstOrDefaultAsync(p => p.Id == id);
 
 			return payment;
