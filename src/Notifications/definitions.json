@@ -1,0 +1,44 @@
+{
+	"vhosts": [
+		{
+			"name": "/"
+		}
+	],
+	"users": [
+		{
+			"name": "user",
+			"password": "pass",
+			"hashing_algorithm": "rabbit_password_hashing_sha256",
+			"tags": "administrator"
+		}
+	],
+	"queues": [
+		{
+			"name": "notifications",
+			"vhost": "/",
+			"durable": true,
+			"auto_delete": false,
+			"arguments": {
+				"x-queue-type": "classic"
+			}
+		}
+	],
+	"bindings": [
+		{
+			"source": "",
+			"vhost": "/",
+			"destination": "notifications",
+			"destination_type": "queue",
+			"routing_key": "notifications"
+		}
+	],
+	"permissions": [
+		{
+			"user": "user",
+			"vhost": "/",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		}
+	]
+}

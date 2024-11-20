@@ -1,4 +1,5 @@
 ﻿using DAL.Events.Repository;
+using DAL.Notifications;
 using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Orders.Strategies;
@@ -33,11 +34,18 @@ namespace DAL
 			services.TryAddScoped<OptimisticConcurrencyBookingStrategy>();
 			services.TryAddScoped<PessimisticConcurrencyBookingStrategy>();
 			services.TryAddScoped<IBookCartOperation, BookCartOperation>();
+			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, OrderContext>>();
 		}
 
 		public static void AddPaymentRepositories(this IServiceCollection services)
 		{
 			services.TryAddScoped<IPaymentRepository, PaymentRepository>();
+			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, PaymentContext>>();
+		}
+
+		public static void AddNotificationRepositories(this IServiceCollection services)
+		{
+			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, NotificationContext>>();
 		}
 	}
 }
