@@ -1,0 +1,62 @@
+services:
+  redis:
+    image: redis:7
+    ports:
+      - 6379:6379
+    container_name: test_cache
+
+  tests:
+    image: loadimpact/k6:latest
+    command: ["run", "--out", "influxdb=http://influxdb:8086", "/scripts/eventApp.seats.loadTest.js"]
+    volumes:
+     - ./eventApp.seats.loadTest.js:/scripts/eventApp.seats.loadTest.js
+    container_name: test_load
+    depends_on:
+      - events
+      - influxdb
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - 8086:8086
+    environment:
+      - INFLUXDB_DB=k6
+  
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/
+
+  database:
+    image: postgres:17.0
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./../init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mentoring:/var/lib/postgresql/pgdata
+    ports:
+      - 5400:5432
+    container_name: test_database
+
+  events:
+    image: eventapp
+    build:
+      dockerfile: ./../EventsDockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=database;Port=5432;User Id=postgres;Password=postgres;Database=postgres;
+      - ConnectionStrings__RedisConnection=redis
+    ports:
+      - 8081:8080
+    container_name: cache_events
+    depends_on:
+      - database
+      - redis
+
+volumes:
+  mentoring:
