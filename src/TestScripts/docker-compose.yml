@@ -47,7 +47,8 @@ services:
   events:
     image: eventapp
     build:
-      dockerfile: ./../EventsDockerfile
+      dockerfile: ./EventsDockerfile
+      context: ./../
     environment:
       - ConnectionStrings__DefaultConnection=Server=database;Port=5432;User Id=postgres;Password=postgres;Database=postgres;
       - ConnectionStrings__RedisConnection=redis
