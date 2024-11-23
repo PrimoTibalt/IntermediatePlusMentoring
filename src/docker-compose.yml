@@ -1,8 +1,6 @@
 services:
   redis:
     image: redis:7
-    ##build:
-    ##  dockerfile: ./RedisDockerfile
     ports:
       - 6379:6379
     container_name: mentoring_cache
@@ -41,13 +39,13 @@ services:
       - database
       - rabbitmq
 
-  ##pgadmin:
-    ##image: dpage/pgadmin4
-    ##environment:
-      ##- PGADMIN_DEFAULT_EMAIL=postgres@postgres.com
-      ##- PGADMIN_DEFAULT_PASSWORD=postgres
-    ##ports:
-      ##- 5555:80
+##  pgadmin:
+##    image: dpage/pgadmin4
+##    environment:
+##      - PGADMIN_DEFAULT_EMAIL=postgres@postgres.com
+##      - PGADMIN_DEFAULT_PASSWORD=postgres
+##    ports:
+##      - 5555:80
 
   venues:
     image: venueapp
