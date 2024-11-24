@@ -18,11 +18,13 @@ namespace EventAPI.Controllers
 		private readonly IMediator _mediator;
 		private readonly LinkGenerator _linkGenerator;
 		private readonly IDistributedCache _cache;
+		private readonly bool _isCachingEnabled;
 
 		public EventsController(IMediator mediator, LinkGenerator linkGenerator, IDistributedCache cache)
 		{
 			_mediator = mediator;
 			_linkGenerator = linkGenerator;
+			_isCachingEnabled = !string.Equals(Environment.GetEnvironmentVariable("CACHING_DISABLED"), "true", StringComparison.OrdinalIgnoreCase);
 			_cache = cache;
 		}
 
@@ -31,11 +33,8 @@ namespace EventAPI.Controllers
 		[ResponseCache(Duration = 15, Location = ResponseCacheLocation.Client)]
 		public async Task<IActionResult> GetAll(CancellationToken token)
 		{
-			var result = await _cache.GetOrCreate(EventCacheKeysTemplates.AllEventsCacheKey, async () =>
-				{
-					return await _mediator.Send(new GetAllEventsQuery(), token);
-				},
-				token);
+			var getResult = async () => await _mediator.Send(new GetAllEventsQuery(), token);
+			var result = await (_isCachingEnabled ? _cache.GetOrCreate(EventCacheKeysTemplates.AllEventsCacheKey, getResult, token) : getResult());
 
 			var resource = new Resource<IList<Event>>
 			{
@@ -52,12 +51,8 @@ namespace EventAPI.Controllers
 		public async Task<IActionResult> GetSectionSeats(int eventId, int sectionId)
 		{
 			var cacheKey = string.Format(EventCacheKeysTemplates.EventAppEventSeatsByEventIdSectionIdCacheTemplate, eventId, sectionId);
-			var result = await _cache.GetOrCreate(cacheKey, async () =>
-				{
-					return await _mediator.Send(new GetEventSectionSeatsQuery { EventId = eventId, SectionId = sectionId });
-				},
-				new(),
-				CancellationToken.None);
+			var getResult = async () => await _mediator.Send(new GetEventSectionSeatsQuery { EventId = eventId, SectionId = sectionId });
+			var result = await (_isCachingEnabled ? _cache.GetOrCreate(cacheKey, getResult, new(), CancellationToken.None) : getResult());
 
 			if (result is null) return NotFound();
 		
