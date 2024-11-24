@@ -7,7 +7,7 @@ services:
 
   tests:
     image: loadimpact/k6:latest
-    command: ["run", "--out", "influxdb=http://influxdb:8086", "/scripts/eventApp.seats.loadTest.js"]
+    command: ["run", "--out", "influxdb=http://influxdb:8086", "--env", "SCENARIO=one_hundred", "/scripts/eventApp.seats.loadTest.js"]
     volumes:
      - ./eventApp.seats.loadTest.js:/scripts/eventApp.seats.loadTest.js
     container_name: test_load
