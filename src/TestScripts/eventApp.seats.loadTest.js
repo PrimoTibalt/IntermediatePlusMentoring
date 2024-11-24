@@ -37,8 +37,17 @@ const { SCENARIO } = __ENV;
 let scenariosOpts;
 if (SCENARIO) {
 	const selectedScenario = scenarios[SCENARIO];
-	selectedScenario.startTime = '0s';
+	selectedScenario.startTime = '1m';
 	scenariosOpts = {
+		warm_up: {
+			executor: 'ramping-vus',
+			startVUs: 0,
+			stages: [
+				{ duration: '10s', target: selectedScenario.vus >= 10 ? selectedScenario.vus / 10 : selectedScenario.vus },
+				{ duration: '50s', target: selectedScenario.vus }
+			],
+			startTime: '0s'
+		},
 		[SCENARIO] : selectedScenario
 	};
 } else {
