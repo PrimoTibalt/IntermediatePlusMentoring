@@ -1,10 +1,33 @@
 ﻿using DAL.Events;
+using DAL.Orders.Repository;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OrderApplication.Cache;
 
 namespace DAL.Infrastructure.Cache.Services
 {
-	internal sealed class EventSeatCacheService(ICacheRepository _cacheRepository) : ICacheService<EventSeat>
+	internal sealed class EventSeatCacheService(IServiceScopeFactory _scopeFactory, ICacheRepository _cacheRepository, ILogger<EventSeatCacheService> _logger) : ICacheService<EventSeat>
 	{
+		public Task Clean(Guid id)
+		{
+			_ = Task.Run(async () =>
+			{
+				await using var scope = _scopeFactory.CreateAsyncScope();
+				var cartRepository = scope.ServiceProvider.GetRequiredService<ICartRepository>();
+				var cartItems = await cartRepository.GetItemsWithEventSeat(id);
+				try
+				{
+					await Clean(cartItems.Select(ci => ci.EventSeat).ToList());
+				}
+				catch (Exception e)
+				{
+					_logger.LogError(e, "Could not clean seats cache.");
+				}
+			});
+
+			return Task.CompletedTask;
+		}
+
 		public async Task Clean(IList<EventSeat> entities)
 		{
 			if (entities.Any(s => s?.Seat?.Row is null))

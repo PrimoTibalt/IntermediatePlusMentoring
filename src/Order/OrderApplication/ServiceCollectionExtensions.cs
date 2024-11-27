@@ -31,7 +31,7 @@ namespace OrderApplication
 				Uri = new(configuration.GetConnectionString("RabbitConnection"))
 			};
 			services.AddNotificationConnectionProvider(factory);
-			services.TryAddScoped<INotificationService<(IList<CartItem> CartItems, long PaymentId)>, BookingNotificationService>();
+			services.TryAddScoped<INotificationService<long>, BookingNotificationService>();
 		}
 	}
 }

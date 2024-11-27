@@ -7,14 +7,19 @@ namespace DAL.Payments.Repository
 		GenericRepository<Payment, long, PaymentContext>(context),
 		IPaymentRepository
 	{
-		public async Task<Payment> GetPaymentWithRelatedInfo(long id)
+		public static IQueryable<Payment> IncludeRelatedInfo(DbSet<Payment> payment)
 		{
-			var payment = await _collection
+			return payment
 				.Include(p => p.Cart.User)
 				.Include(p => p.Cart.CartItems)
 					.ThenInclude(ci => ci.EventSeat.Event)
 				.Include(p => p.Cart.CartItems)
-					.ThenInclude(ci => ci.Price)
+					.ThenInclude(ci => ci.Price);
+		}
+
+		public async Task<Payment> GetPaymentWithRelatedInfo(long id)
+		{
+			var payment = await IncludeRelatedInfo(_collection)
 				.FirstOrDefaultAsync(p => p.Id == id);
 
 			return payment;
@@ -23,10 +28,10 @@ namespace DAL.Payments.Repository
 		public async Task<bool> CompletePayment(long id)
 		{
 			using var transaction = await _context.Database.BeginTransactionAsync();
-			var payment = await _collection.Include(p => p.Cart)
-					.ThenInclude(c => c.CartItems)
-					.ThenInclude(ci => ci.EventSeat)
-					.FirstOrDefaultAsync(p => p.Id == id);
+			var payment = await _collection
+				.Include(p => p.Cart.CartItems)
+				.ThenInclude(ci => ci.EventSeat)
+				.FirstOrDefaultAsync(p => p.Id == id);
 			var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
 			var notBookedSeatsMessages = new List<string>();
 			foreach (var seat in seats)
@@ -56,10 +61,10 @@ namespace DAL.Payments.Repository
 		public async Task<bool> FailPayment(long id)
 		{
 			using var transaction = await _context.Database.BeginTransactionAsync();
-			var payment = await _collection.Include(p => p.Cart)
-					.ThenInclude(c => c.CartItems)
-					.ThenInclude(ci => ci.EventSeat)
-					.FirstOrDefaultAsync(p => p.Id == id);
+			var payment = await _collection
+				.Include(p => p.Cart.CartItems)
+				.ThenInclude(ci => ci.EventSeat)
+				.FirstOrDefaultAsync(p => p.Id == id);
 			var seats = payment.Cart.CartItems.Select(ci => ci.EventSeat).ToList();
 			var notBookedOrAvailableSeatsMessages = new List<string>();
 			foreach (var seat in seats)
