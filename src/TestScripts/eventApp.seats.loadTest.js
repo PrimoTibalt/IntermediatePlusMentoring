@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { sleep, check } from 'k6';
+import { sleep } from 'k6';
 
 const scenarios = {
 	one: {
@@ -37,7 +37,7 @@ const { SCENARIO } = __ENV;
 let scenariosOpts;
 if (SCENARIO) {
 	const selectedScenario = scenarios[SCENARIO];
-	selectedScenario.startTime = '1m';
+	selectedScenario.startTime = '1m11s';
 	scenariosOpts = {
 		warm_up: {
 			executor: 'ramping-vus',
@@ -46,7 +46,7 @@ if (SCENARIO) {
 				{ duration: '10s', target: selectedScenario.vus >= 10 ? selectedScenario.vus / 10 : selectedScenario.vus },
 				{ duration: '50s', target: selectedScenario.vus }
 			],
-			startTime: '0s'
+			startTime: '10s'
 		},
 		[SCENARIO] : selectedScenario
 	};
@@ -65,7 +65,6 @@ const eventsAppUrl = 'http://events:8080/events';
 export default function() {
 	const eventId = Math.floor(Math.random() * 3) + 1;
 	const sectionId = (eventId-1) * 5 + Math.floor(Math.random() * 5) + 1;
-	const res = http.get(eventsAppUrl + `/${eventId}/sections/${sectionId}/seats`);
-	check(res, {'status is 200': (r) => r.status === 200});
+	http.get(eventsAppUrl + `/${eventId}/sections/${sectionId}/seats`, { responseCallback: http.expectedStatuses(200) });
 	sleep(1);
 }
