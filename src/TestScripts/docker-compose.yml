@@ -1,13 +1,11 @@
 services:
   redis:
     image: redis:7
-    ports:
-      - 6379:6379
     container_name: test_cache
 
   tests:
     image: loadimpact/k6:latest
-    command: ["run", "--out", "influxdb=http://influxdb:8086", "--env", "SCENARIO=one_hundred", "/scripts/eventApp.seats.loadTest.js"]
+    command: ["run", "--out", "influxdb=http://influxdb:8086", "--env", "SCENARIO=ten", "/scripts/eventApp.seats.loadTest.js"]
     volumes:
      - ./eventApp.seats.loadTest.js:/scripts/eventApp.seats.loadTest.js
     container_name: test_load
@@ -17,8 +15,6 @@ services:
 
   influxdb:
     image: influxdb:1.8
-    ports:
-      - 8086:8086
     environment:
       - INFLUXDB_DB=k6
   
@@ -40,8 +36,6 @@ services:
     volumes:
       - ./../init.sql:/docker-entrypoint-initdb.d/init.sql
       - mentoring:/var/lib/postgresql/pgdata
-    ports:
-      - 5400:5432
     container_name: test_database
 
   events:
@@ -53,9 +47,7 @@ services:
       - ConnectionStrings__DefaultConnection=Server=database;Port=5432;User Id=postgres;Password=postgres;Database=postgres;
       - ConnectionStrings__RedisConnection=redis
       - CACHING_DISABLED=false
-    ports:
-      - 8081:8080
-    container_name: cache_events
+    container_name: test_eventapp
     depends_on:
       - database
       - redis
