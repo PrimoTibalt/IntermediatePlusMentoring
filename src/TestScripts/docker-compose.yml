@@ -4,8 +4,8 @@ services:
     container_name: test_cache
 
   tests:
-    image: loadimpact/k6:latest
-    command: ["run", "--out", "influxdb=http://influxdb:8086", "--env", "SCENARIO=ten", "/scripts/eventApp.seats.loadTest.js"]
+    image: grafana/k6:latest
+    command: ["run", "--out", "influxdb=http://influxdb:8086", "--env", "SCENARIO=one_thousand", "/scripts/eventApp.seats.loadTest.js"]
     volumes:
      - ./eventApp.seats.loadTest.js:/scripts/eventApp.seats.loadTest.js
     container_name: test_load
@@ -14,7 +14,7 @@ services:
       - influxdb
 
   influxdb:
-    image: influxdb:1.8
+    image: influxdb:1.11
     environment:
       - INFLUXDB_DB=k6
   
