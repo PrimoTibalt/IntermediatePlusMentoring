@@ -13,7 +13,7 @@ namespace EventApplication
 		public static void AddEventApplication(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-			services.AddDbContext<EventContext>(options =>
+			services.AddDbContextPool<EventContext>(options =>
 			{
 				options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 			});
