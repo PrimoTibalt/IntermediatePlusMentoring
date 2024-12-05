@@ -9,7 +9,6 @@ namespace API.Abstraction.Cache
 		{
 			if (entity is null) return null;
 
-			ValidateType<T>();
 			using var memoryStream = new MemoryStream();
 			Serializer.Serialize(memoryStream, entity);
 			return memoryStream.ToArray();
@@ -21,7 +20,6 @@ namespace API.Abstraction.Cache
 			if (bytes is null) return false;
 			try
 			{
-				ValidateType<T>();
 				using var memoryStream = new MemoryStream(bytes);
 				var result = Serializer.Deserialize<T>(memoryStream);
 				entity = result;
@@ -31,22 +29,6 @@ namespace API.Abstraction.Cache
 			{
 				return false;
 			}
-		}
-
-		private static void ValidateType<T>()
-		{
-			if (typeof(T).IsGenericType)
-			{
-				var types = typeof(T).GetGenericArguments();
-				if (types.Any(type => type.GetCustomAttribute<ProtoContractAttribute>() == null))
-					throw new NotImplementedException();
-
-				return;
-			}
-
-			var hasContract = typeof(T).GetCustomAttribute<ProtoContractAttribute>() != null;
-			if (!hasContract)
-				throw new NotImplementedException();
 		}
 	}
 }
