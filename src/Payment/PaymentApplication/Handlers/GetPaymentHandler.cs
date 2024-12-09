@@ -8,10 +8,10 @@ namespace PaymentApplication.Handlers
 {
 	public class GetPaymentHandler : IRequestHandler<GetPaymentQuery, PaymentDetails>
 	{
-		private readonly IPaymentRepository _repository;
+		private readonly IDapperPaymentRepository _repository;
 		private readonly IMapper _mapper;
 
-		public GetPaymentHandler(IPaymentRepository repository, IMapper mapper)
+		public GetPaymentHandler(IDapperPaymentRepository repository, IMapper mapper)
 		{
 			_repository = repository;
 			_mapper = mapper;

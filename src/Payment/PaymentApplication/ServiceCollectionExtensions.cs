@@ -1,14 +1,18 @@
 using DAL;
 using DAL.Payments;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Notifications.Infrastructure;
 using Notifications.Infrastructure.Services;
+using PaymentApplication.Commands;
 using PaymentApplication.Core;
+using PaymentApplication.Entities;
 using PaymentApplication.Handlers;
 using PaymentApplication.Notifications;
+using PaymentApplication.Queries;
 using RabbitMQ.Client;
 
 namespace PaymentApplication
@@ -21,15 +25,17 @@ namespace PaymentApplication
 			{
 				options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 			});
-			services.AddPaymentRepositories();
-			services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+			services.AddPaymentRepositories(configuration);
+			services.AddAutoMapper(config => config.AddProfile(new MappingProfiles()));
 			var factory = new ConnectionFactory
 			{
 				Uri = new(configuration.GetConnectionString("RabbitConnection"))
 			};
 			services.AddNotificationConnectionProvider(factory);
 			services.TryAddScoped<INotificationService<long>, PaymentNotificationService>();
-			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetPaymentHandler).Assembly));
+			services.TryAddTransient<IMediator, Mediator>();
+			services.TryAddTransient<IRequestHandler<GetPaymentQuery, PaymentDetails>, GetPaymentHandler>();
+			services.TryAddTransient<IRequestHandler<ProcessPaymentCommand, bool>, ProcessPaymentHandler>();
 		}
 	}
 }
