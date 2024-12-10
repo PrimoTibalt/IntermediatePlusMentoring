@@ -26,5 +26,6 @@ app.Lifetime.ApplicationStarted.Register(() =>
 app.Run();
 
 [JsonSerializable(typeof(PaymentDetails))]
+[JsonSerializable(typeof(string))]
 internal partial class AppJsonOptionsContext : JsonSerializerContext
 { }

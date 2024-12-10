@@ -15,8 +15,8 @@ namespace PaymentApplication.Notifications
 		protected override async Task<Notification> GetNotification(long input)
 		{
 			using var scope = serviceScopeFactory.CreateScope();
-			var paymentRepository = scope.ServiceProvider.GetRequiredService<IPaymentRepository>();
-			var payment = await paymentRepository.GetPaymentWithRelatedInfo(input);
+			var paymentRepository = scope.ServiceProvider.GetRequiredService<IDapperPaymentRepository>();
+			var payment = await paymentRepository.GetPaymentSummary(input);
 			return PaymentProcessedNotificationProducer.Get(payment);
 		}
 	}

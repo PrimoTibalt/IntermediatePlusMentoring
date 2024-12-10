@@ -16,7 +16,7 @@ namespace PaymentAPI.Endpoints
 				return Results.Ok(result);
 			});
 
-			group.MapPost("/failed", static async (long id, bool complete, IMediator mediator)
+			group.MapPost("/failed", static async (long id, IMediator mediator)
 				=> await OperateOnPayment(id, false, mediator));
 
 			group.MapPost("/complete", static async (long id, IMediator mediator)

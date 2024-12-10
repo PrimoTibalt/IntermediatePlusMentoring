@@ -1,9 +1,13 @@
 ﻿using API.Abstraction.Notifications;
 using DAL;
 using DAL.Notifications;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using ProtoBuf;
+using System.Data;
 
 namespace Notifications.Infrastructure.Publishers
 {
@@ -12,6 +16,10 @@ namespace Notifications.Infrastructure.Publishers
 		ILogger<PersistentNotificationPublisher> logger)
 		: IPersistentNotificationPublisher
 	{
+		private const string insertNotificationEntityCommand = """
+			INSERT INTO public."Notifications" ("Id", "Timestamp", "Status", "Data")
+			VALUES (@Id, @CreatedAt, @Status, @Data);
+			""";
 		private readonly INotificationsPublisher _publisher = publisher;
 		private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 		private readonly ILogger _logger = logger;
@@ -23,6 +31,11 @@ namespace Notifications.Infrastructure.Publishers
 			using var stream = new MemoryStream();
 			Serializer.Serialize(stream, notification);
 
+			var parameters = new DynamicParameters();
+			parameters.Add("Id", notification.Id, DbType.Guid);
+			parameters.Add("CreatedAt", notification.Timestamp, DbType.DateTime);
+			parameters.Add("Status", (int)NotificationStatus.InProgress, DbType.Int32);
+			parameters.Add("Data", stream.ToArray(), DbType.Binary);
 			var notificationEntity = new NotificationEntity
 			{
 				Id = notification.Id,
@@ -33,9 +46,10 @@ namespace Notifications.Infrastructure.Publishers
 			try
 			{
 				using var scope = _scopeFactory.CreateScope();
-				var notificationEntityRepository = scope.ServiceProvider.GetRequiredService<IGenericRepository<NotificationEntity, Guid>>();
-				await notificationEntityRepository.Create(notificationEntity);
-				await notificationEntityRepository.Save();
+				var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+				using var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection"));
+				await connection.OpenAsync();
+				await connection.ExecuteAsync(insertNotificationEntityCommand, parameters, commandType: CommandType.Text);
 				await _publisher.SendMessage(notificationEntity.Data, queue);
 			}
 			catch (Exception e)

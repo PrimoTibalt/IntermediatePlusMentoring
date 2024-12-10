@@ -7,12 +7,12 @@ using PaymentApplication.Commands;
 
 namespace PaymentApplication.Handlers
 {
-	public class ProcessPaymentHandler(IPaymentRepository paymentRepository,
+	public class ProcessPaymentHandler(IDapperPaymentRepository paymentRepository,
 		INotificationService<long> notificationService,
 		ILogger<ProcessPaymentHandler> logger)
 		: IRequestHandler<ProcessPaymentCommand, bool>
 	{
-		private readonly IPaymentRepository _paymentRepository = paymentRepository;
+		private readonly IDapperPaymentRepository _paymentRepository = paymentRepository;
 		private readonly INotificationService<long> _notificationService = notificationService;
 		private readonly ILogger _logger = logger;
 
@@ -22,7 +22,7 @@ namespace PaymentApplication.Handlers
 			if (payment is null || payment.Status != (int)PaymentStatus.InProgress)
 				return false;
 
-			Func<long, Task<bool>> task = request.Complete ? 
+			Func<long, Task<bool>> task = request.Complete ?
 				_paymentRepository.CompletePayment :
 				_paymentRepository.FailPayment;
 
@@ -31,8 +31,9 @@ namespace PaymentApplication.Handlers
 			{
 				result = await task(request.Id);
 			}
-			catch
+			catch (Exception ex)
 			{
+				_logger.LogError(ex, "Operation on payment with id '{Id}' failed.", request.Id);
 				result = false;
 			}
 
