@@ -19,7 +19,7 @@ namespace PaymentApplication
 	{
 		public static void AddPaymentApplication(this IServiceCollection services, IConfiguration configuration)
 		{
-			services.AddPaymentRepositories(configuration);
+			services.AddPaymentRepositories();
 			var factory = new ConnectionFactory
 			{
 				Uri = new(configuration.GetConnectionString("RabbitConnection"))

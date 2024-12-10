@@ -37,9 +37,9 @@ namespace DAL
 			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, OrderContext>>();
 		}
 
-		public static void AddPaymentRepositories(this IServiceCollection services, IConfiguration config)
+		public static void AddPaymentRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<IDapperPaymentRepository>(serviceProvider => new DapperPaymentRepository(config));
+			services.TryAddScoped<IDapperPaymentRepository, DapperPaymentRepository>();
 		}
 
 		public static void AddNotificationRepositories(this IServiceCollection services)
