@@ -28,8 +28,9 @@ namespace PaymentAPI.Endpoints
 			try
 			{
 				var result = await mediator.Send(new ProcessPaymentCommand { Id = id, Complete = completePayment });
-				if (result) return Results.Ok();
-				else return TypedResults.BadRequest($"Payment with id '{id}' doesn't exist or operation can't be performed on it.");
+				if (result is null) return TypedResults.BadRequest($"Payment with id '{id}' doesn't exist or operation can't be performed on it.");
+				if (result.Success) return Results.Ok();
+				else return TypedResults.BadRequest("Unable to finish operation, check status of tickets.");
 			}
 			catch (Exception e)
 			{

@@ -1,13 +1,12 @@
 ﻿using API.Abstraction.Notifications;
-using DAL;
 using DAL.Notifications;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using ProtoBuf;
 using System.Data;
+using System.Text.Json;
 
 namespace Notifications.Infrastructure.Publishers
 {
@@ -24,12 +23,13 @@ namespace Notifications.Infrastructure.Publishers
 		private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 		private readonly ILogger _logger = logger;
 
+		[DapperAot]
 		public async Task PersistentPublish(Notification notification, string queue)
 		{
 			_ = notification ?? throw new ArgumentNullException(nameof(notification));
 
 			using var stream = new MemoryStream();
-			Serializer.Serialize(stream, notification);
+			JsonSerializer.Serialize(stream, notification, NotificationSerializationContext.Default.Notification);
 
 			var parameters = new DynamicParameters();
 			parameters.Add("Id", notification.Id, DbType.Guid);

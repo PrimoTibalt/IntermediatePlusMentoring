@@ -3,7 +3,6 @@ using DAL.Notifications;
 using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Orders.Strategies;
-using DAL.Payments;
 using DAL.Payments.Repository;
 using DAL.Venues.Repository;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +40,6 @@ namespace DAL
 		public static void AddPaymentRepositories(this IServiceCollection services, IConfiguration config)
 		{
 			services.TryAddScoped<IDapperPaymentRepository>(serviceProvider => new DapperPaymentRepository(config));
-			services.TryAddScoped<Payments.Repository.IPaymentRepository, Payments.Repository.PaymentRepository>();
-			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, PaymentContext>>();
 		}
 
 		public static void AddNotificationRepositories(this IServiceCollection services)

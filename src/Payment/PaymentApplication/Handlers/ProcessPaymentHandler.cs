@@ -7,20 +7,27 @@ using PaymentApplication.Commands;
 
 namespace PaymentApplication.Handlers
 {
-	public class ProcessPaymentHandler(IDapperPaymentRepository paymentRepository,
-		INotificationService<long> notificationService,
-		ILogger<ProcessPaymentHandler> logger)
-		: IRequestHandler<ProcessPaymentCommand, bool>
+	public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>
 	{
-		private readonly IDapperPaymentRepository _paymentRepository = paymentRepository;
-		private readonly INotificationService<long> _notificationService = notificationService;
-		private readonly ILogger _logger = logger;
+		private readonly IDapperPaymentRepository _paymentRepository;
+		private readonly INotificationService<long> _notificationService;
+		private readonly ILogger _logger;
 
-		public async Task<bool> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
+		public ProcessPaymentHandler(
+			IDapperPaymentRepository paymentRepository,
+			INotificationService<long> notificationService,
+			ILogger<ProcessPaymentHandler> logger)
+		{
+			_paymentRepository = paymentRepository;
+			_notificationService = notificationService;
+			_logger = logger;
+		}
+
+		public async Task<ProcessPaymentResult> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
 		{
 			var payment = await _paymentRepository.GetById(request.Id);
 			if (payment is null || payment.Status != (int)PaymentStatus.InProgress)
-				return false;
+				return null;
 
 			Func<long, Task<bool>> task = request.Complete ?
 				_paymentRepository.CompletePayment :
@@ -42,7 +49,7 @@ namespace PaymentApplication.Handlers
 				await _notificationService.SendNotification(request.Id);
 			}
 
-			return result;
+			return new() { Success = result };
 		}
 	}
 }

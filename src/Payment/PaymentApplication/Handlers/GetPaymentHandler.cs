@@ -1,4 +1,4 @@
-using AutoMapper;
+using DAL.Payments;
 using DAL.Payments.Repository;
 using MediatR;
 using PaymentApplication.Entities;
@@ -9,18 +9,22 @@ namespace PaymentApplication.Handlers
 	public class GetPaymentHandler : IRequestHandler<GetPaymentQuery, PaymentDetails>
 	{
 		private readonly IDapperPaymentRepository _repository;
-		private readonly IMapper _mapper;
 
-		public GetPaymentHandler(IDapperPaymentRepository repository, IMapper mapper)
+		public GetPaymentHandler(IDapperPaymentRepository repository)
 		{
 			_repository = repository;
-			_mapper = mapper;
 		}
 
 		public async Task<PaymentDetails> Handle(GetPaymentQuery request, CancellationToken cancellationToken)
 		{
 			var payment = await _repository.GetById(request.Id);
-			return _mapper.Map<PaymentDetails>(payment);
+			var paymentDetails = new PaymentDetails
+			{
+				Id = payment.Id,
+				CartId = payment.CartId,
+				Status = (PaymentStatus) payment.Status
+			};
+			return paymentDetails;
 		}
 	}
 }
