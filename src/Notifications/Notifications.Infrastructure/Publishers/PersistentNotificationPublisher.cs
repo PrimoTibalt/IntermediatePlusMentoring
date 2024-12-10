@@ -1,15 +1,17 @@
-﻿using API.Abstraction.Notifications;
-using DAL.Notifications;
+﻿using DAL.Notifications;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Notifications.Infrastructure.Models;
 using Npgsql;
+using RegisterServicesSourceGenerator;
 using System.Data;
 using System.Text.Json;
 
 namespace Notifications.Infrastructure.Publishers
 {
+	[RegisterService<IPersistentNotificationPublisher>(LifeTime.Scoped)]
 	internal class PersistentNotificationPublisher(INotificationsPublisher publisher,
 		IServiceScopeFactory scopeFactory,
 		ILogger<PersistentNotificationPublisher> logger)

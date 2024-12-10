@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace API.Abstraction.Notifications
+namespace Notifications.Infrastructure.Models
 {
 	[ProtoContract]
 	public class Notification

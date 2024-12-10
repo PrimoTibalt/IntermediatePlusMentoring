@@ -4,9 +4,11 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Notifications.Infrastructure.Services;
 using PaymentApplication.Commands;
+using RegisterServicesSourceGenerator;
 
 namespace PaymentApplication.Handlers
 {
+	[RegisterService<IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>>(LifeTime.Transient)]
 	public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>
 	{
 		private readonly IDapperPaymentRepository _paymentRepository;

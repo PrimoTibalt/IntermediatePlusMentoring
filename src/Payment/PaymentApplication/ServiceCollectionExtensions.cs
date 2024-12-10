@@ -5,12 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Notifications.Infrastructure;
-using Notifications.Infrastructure.Services;
-using PaymentApplication.Commands;
-using PaymentApplication.Entities;
-using PaymentApplication.Handlers;
-using PaymentApplication.Notifications;
-using PaymentApplication.Queries;
 using RabbitMQ.Client;
 
 namespace PaymentApplication
@@ -24,11 +18,9 @@ namespace PaymentApplication
 			{
 				Uri = new(configuration.GetConnectionString("RabbitConnection"))
 			};
+			services.Register();
 			services.AddNotificationConnectionProvider(factory);
-			services.TryAddScoped<INotificationService<long>, PaymentNotificationService>();
 			services.TryAddTransient<IMediator, Mediator>();
-			services.TryAddTransient<IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>, ProcessPaymentHandler>();
-			services.TryAddTransient<IRequestHandler<GetPaymentQuery, PaymentDetails>, GetPaymentHandler>();
 		}
 	}
 }

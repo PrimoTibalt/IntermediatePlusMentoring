@@ -3,9 +3,11 @@ using DAL.Payments.Repository;
 using MediatR;
 using PaymentApplication.Entities;
 using PaymentApplication.Queries;
+using RegisterServicesSourceGenerator;
 
 namespace PaymentApplication.Handlers
 {
+	[RegisterService<IRequestHandler<GetPaymentQuery, PaymentDetails>>(LifeTime.Transient)]
 	public class GetPaymentHandler : IRequestHandler<GetPaymentQuery, PaymentDetails>
 	{
 		private readonly IDapperPaymentRepository _repository;

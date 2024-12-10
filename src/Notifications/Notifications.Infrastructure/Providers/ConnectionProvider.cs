@@ -1,7 +1,9 @@
 ﻿using RabbitMQ.Client;
+using RegisterServicesSourceGenerator;
 
 namespace Notifications.Infrastructure.Provider
 {
+	[RegisterService<IConnectionProvider>(LifeTime.Singleton)]
 	internal class ConnectionProvider : IConnectionProvider
 	{
 		private readonly Lazy<Task<IConnection>> connection;
