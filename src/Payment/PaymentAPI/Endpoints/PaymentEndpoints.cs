@@ -9,18 +9,22 @@ namespace PaymentAPI.Endpoints
 		public static void RegisterPaymentEndpoint(this IEndpointRouteBuilder builder)
 		{
 			var group = builder.MapGroup("/payments/{id:long}");
-			group.MapGet("", static async (long id, IMediator mediator) =>
-			{
+			group.MapGet("", GetPaymentById);
+
+			group.MapPost("/failed", CompletePayment);
+
+			group.MapPost("/complete", FailPayment);
+		}
+
+		public static Task<IResult> CompletePayment(long id, IMediator mediator) => OperateOnPayment(id, true, mediator);
+
+		public static Task<IResult> FailPayment(long id, IMediator mediator) => OperateOnPayment(id, false, mediator);
+
+		public static async Task<IResult> GetPaymentById(long id, IMediator mediator)
+		{
 				var result = await mediator.Send(new GetPaymentQuery { Id = id });
 				if (result is null) return TypedResults.NotFound($"Payment with id '{id}' was not found.");
 				return Results.Ok(result);
-			});
-
-			group.MapPost("/failed", static async (long id, IMediator mediator)
-				=> await OperateOnPayment(id, false, mediator));
-
-			group.MapPost("/complete", static async (long id, IMediator mediator)
-				=> await OperateOnPayment(id, true, mediator));
 		}
 
 		private static async Task<IResult> OperateOnPayment(long id, bool completePayment, IMediator mediator)
