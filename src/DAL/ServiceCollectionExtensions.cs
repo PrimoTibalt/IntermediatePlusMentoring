@@ -3,8 +3,9 @@ using DAL.Notifications;
 using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Orders.Strategies;
-using DAL.Payments;
+using DAL.Payments.Repository;
 using DAL.Venues.Repository;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -29,7 +30,7 @@ namespace DAL
 			services.TryAddScoped<ICartRepository, CartRepository>();
 			services.TryAddScoped<ICartItemRepository, CartItemRepository>();
 			services.TryAddScoped<Orders.Repository.IEventSeatRepository, Orders.Repository.EventSeatRepository>();
-			services.TryAddScoped<IPaymentRepository, PaymentRepository>();
+			services.TryAddScoped<Orders.Repository.IPaymentRepository, Orders.Repository.PaymentRepository>();
 			services.TryAddScoped<OptimisticConcurrencyBookingStrategy>();
 			services.TryAddScoped<PessimisticConcurrencyBookingStrategy>();
 			services.TryAddScoped<IBookCartOperation, BookCartOperation>();
@@ -38,8 +39,7 @@ namespace DAL
 
 		public static void AddPaymentRepositories(this IServiceCollection services)
 		{
-			services.TryAddScoped<Payments.Repository.IPaymentRepository, Payments.Repository.PaymentRepository>();
-			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, PaymentContext>>();
+			services.TryAddScoped<IDapperPaymentRepository, DapperPaymentRepository>();
 		}
 
 		public static void AddNotificationRepositories(this IServiceCollection services)

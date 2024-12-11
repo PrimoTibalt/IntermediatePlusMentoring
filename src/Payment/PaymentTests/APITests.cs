@@ -1,11 +1,9 @@
-using DAL.Payments;
-using Microsoft.AspNetCore.Mvc;
-using PaymentAPI.Controllers;
+using Microsoft.AspNetCore.Http.HttpResults;
+using PaymentAPI.Endpoints;
 using PaymentApplication.Commands;
 using PaymentApplication.Entities;
 using PaymentApplication.Queries;
 using TestsCore;
-using TestsCore.Providers;
 
 namespace PaymentTests
 {
@@ -15,12 +13,11 @@ namespace PaymentTests
 		public async Task GetById_NullResult_NotFound()
 		{
 			var mediator = MediatorMockObjectBuilder.Get<GetPaymentQuery, PaymentDetails>(null);
-			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
 
-			var result = await controller.GetById(123);
+			var result = await PaymentEndpoints.GetPaymentById(123, mediator);
 
 			Assert.NotNull(result);
-			Assert.IsType<NotFoundObjectResult>(result);
+			Assert.IsType<NotFound<string>>(result);
 		}
 
 		[Fact]
@@ -28,10 +25,9 @@ namespace PaymentTests
 		{
 			var paymentId = 123;
 			var mediator = MediatorMockObjectBuilder.Get<GetPaymentQuery, PaymentDetails>(new PaymentDetails { Id = paymentId });
-			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
 
-			var result = await controller.GetById(666);
-			var payment = (result as OkObjectResult)?.Value as Payment;
+			var result = await PaymentEndpoints.GetPaymentById(666, mediator);
+			var payment = (result as Ok<PaymentDetails>)?.Value;
 
 			Assert.NotNull(payment);
 			Assert.Equal(paymentId, payment.Id);
@@ -40,23 +36,21 @@ namespace PaymentTests
 		[Fact]
 		public async Task Fail_SuccessResult_Ok()
 		{
-			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(true);
-			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
+			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, ProcessPaymentResult>(new() { Success = true });
 
-			var result = await controller.Fail(123);
+			var result = await PaymentEndpoints.FailPayment(123, mediator);
 
 			Assert.NotNull(result);
-			Assert.IsType<OkResult>(result);
+			Assert.IsType<Ok>(result);
 		}
 
 		[Fact]
 		public async Task Fail_FailedResult_BadRequestWithMessage()
 		{
-			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(false);
-			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
+			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, ProcessPaymentResult>(new() { Success = false });
 
-			var result =  await controller.Fail(123);
-			var message = (result as BadRequestObjectResult).Value as string;
+			var result =  await PaymentEndpoints.FailPayment(123, mediator);
+			var message = (result as BadRequest<string>).Value;
 
 			Assert.NotNull(message);
 			Assert.NotEmpty(message);
@@ -65,23 +59,21 @@ namespace PaymentTests
 		[Fact]
 		public async Task Complete_SuccessResult_Ok()
 		{
-			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(true);
-			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
+			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, ProcessPaymentResult>(new() { Success = true });
 
-			var result = await controller.Complete(123);
+			var result = await PaymentEndpoints.CompletePayment(123, mediator);
 
 			Assert.NotNull(result);
-			Assert.IsType<OkResult>(result);
+			Assert.IsType<Ok>(result);
 		}
 
 		[Fact]
 		public async Task Complete_FailedResult_BadRequestWithMessage()
 		{
-			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, bool>(false);
-			var controller = ControllerProvider.Get<PaymentController>(mediator, false);
+			var mediator = MediatorMockObjectBuilder.Get<ProcessPaymentCommand, ProcessPaymentResult>(new() { Success = false });
 
-			var result = await controller.Complete(123);
-			var message = (result as BadRequestObjectResult).Value as string;
+			var result = await PaymentEndpoints.CompletePayment(123, mediator);
+			var message = (result as BadRequest<string>).Value;
 
 			Assert.NotNull(message);
 			Assert.NotEmpty(message);

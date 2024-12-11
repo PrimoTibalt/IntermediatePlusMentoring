@@ -1,26 +1,23 @@
-﻿using API.Abstraction.Notifications;
-using DAL.Payments;
+﻿using DAL.Payments;
 using Notifications.Infrastructure;
 using Notifications.Infrastructure.Models;
 
-namespace PaymentApplication.Notifications
+namespace PaymentApplication.NotificationsSending
 {
 	public static class PaymentProcessedNotificationProducer
 	{
-		public static Notification Get(Payment payment)
+		public static Notification Get(PaymentSummary payment)
 		{
 			var content = new Dictionary<string, string>()
 			{
-				{ "email", payment.Cart.User.Email },
+				{ "email", payment.UserEmail },
 				{ NotificationContentKeys.PaymentId, payment.Id.ToString() }
 			};
 
-			var events = new HashSet<string>(payment.Cart.CartItems.Select(ci => ci.EventSeat.Event.Name));
-			var amount = payment.Cart.CartItems.Sum(ci => ci.Price.Sum);
 			var parameters = new Dictionary<string, string>()
 			{
-				{ "event", string.Join(",\n", events) },
-				{ "amount", amount.ToString() }
+				{ "event", string.Join(",\n", payment.Events) },
+				{ "amount", payment.Amount.ToString() }
 			};
 
 			var complete = payment.Status == (int)PaymentStatus.Completed;

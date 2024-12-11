@@ -4,9 +4,9 @@ using DAL.Notifications;
 using Microsoft.Extensions.Logging;
 using Notifications.Infrastructure;
 using Notifications.Infrastructure.Providers;
-using ProtoBuf;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json;
 
 namespace NotificationsHandler.QueuesServices
 {
@@ -31,7 +31,8 @@ namespace NotificationsHandler.QueuesServices
 
 		private async Task ProcessMessage(object message, BasicDeliverEventArgs ea)
 		{
-			var notification = Serializer.Deserialize<Notification>(ea.Body);
+			using var stream = new MemoryStream(ea.Body.ToArray(), false);
+			var notification = JsonSerializer.Deserialize<Notification>(stream);
 			var body = new StringBuilder(notification.Operation);
 			AppendExistingParameters(body, notification.Parameters);
 			body.AppendLine($"Created at {notification.Timestamp.ToString("dd-MMM-yyyy H:mm")}.");

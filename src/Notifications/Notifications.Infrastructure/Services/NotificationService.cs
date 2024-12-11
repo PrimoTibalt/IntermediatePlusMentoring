@@ -1,5 +1,5 @@
-﻿using API.Abstraction.Notifications;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Notifications.Infrastructure.Models;
 using Notifications.Infrastructure.Publishers;
 
 namespace Notifications.Infrastructure.Services
