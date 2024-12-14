@@ -1,4 +1,4 @@
-﻿using API.Abstraction.Notifications;
+﻿using Notifications.Infrastructure.Models;
 
 namespace Notifications.Infrastructure.Publishers
 {

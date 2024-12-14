@@ -1,12 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PublishAot>true</PublishAot>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\PaymentApplication\PaymentApplication.csproj" />
+		<ProjectReference Include="..\PaymentApplication\PaymentApplication.csproj" />
 	</ItemGroup>
 
+	<PropertyGroup>
+		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+	</PropertyGroup>
 </Project>

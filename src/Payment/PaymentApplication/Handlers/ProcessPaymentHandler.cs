@@ -4,25 +4,34 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Notifications.Infrastructure.Services;
 using PaymentApplication.Commands;
+using RegisterServicesSourceGenerator;
 
 namespace PaymentApplication.Handlers
 {
-	public class ProcessPaymentHandler(IPaymentRepository paymentRepository,
-		INotificationService<long> notificationService,
-		ILogger<ProcessPaymentHandler> logger)
-		: IRequestHandler<ProcessPaymentCommand, bool>
+	[RegisterService<IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>>(LifeTime.Transient)]
+	public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>
 	{
-		private readonly IPaymentRepository _paymentRepository = paymentRepository;
-		private readonly INotificationService<long> _notificationService = notificationService;
-		private readonly ILogger _logger = logger;
+		private readonly IDapperPaymentRepository _paymentRepository;
+		private readonly INotificationService<long> _notificationService;
+		private readonly ILogger _logger;
 
-		public async Task<bool> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
+		public ProcessPaymentHandler(
+			IDapperPaymentRepository paymentRepository,
+			INotificationService<long> notificationService,
+			ILogger<ProcessPaymentHandler> logger)
+		{
+			_paymentRepository = paymentRepository;
+			_notificationService = notificationService;
+			_logger = logger;
+		}
+
+		public async Task<ProcessPaymentResult> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
 		{
 			var payment = await _paymentRepository.GetById(request.Id);
 			if (payment is null || payment.Status != (int)PaymentStatus.InProgress)
-				return false;
+				return null;
 
-			Func<long, Task<bool>> task = request.Complete ? 
+			Func<long, Task<bool>> task = request.Complete ?
 				_paymentRepository.CompletePayment :
 				_paymentRepository.FailPayment;
 
@@ -31,8 +40,9 @@ namespace PaymentApplication.Handlers
 			{
 				result = await task(request.Id);
 			}
-			catch
+			catch (Exception ex)
 			{
+				_logger.LogError(ex, "Operation on payment with id '{Id}' failed.", request.Id);
 				result = false;
 			}
 
@@ -41,7 +51,7 @@ namespace PaymentApplication.Handlers
 				await _notificationService.SendNotification(request.Id);
 			}
 
-			return result;
+			return new() { Success = result };
 		}
 	}
 }

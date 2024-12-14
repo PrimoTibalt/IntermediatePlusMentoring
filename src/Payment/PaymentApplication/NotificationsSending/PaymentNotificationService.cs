@@ -1,12 +1,14 @@
-﻿using API.Abstraction.Notifications;
-using DAL.Payments.Repository;
+﻿using DAL.Payments.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Notifications.Infrastructure.Models;
 using Notifications.Infrastructure.Publishers;
 using Notifications.Infrastructure.Services;
+using RegisterServicesSourceGenerator;
 
-namespace PaymentApplication.Notifications
+namespace PaymentApplication.NotificationsSending
 {
+	[RegisterService<INotificationService<long>>(LifeTime.Scoped)]
 	public class PaymentNotificationService(IPersistentNotificationPublisher publisher,
 		IServiceScopeFactory serviceScopeFactory,
 		ILogger<PaymentNotificationService> logger)
@@ -15,8 +17,8 @@ namespace PaymentApplication.Notifications
 		protected override async Task<Notification> GetNotification(long input)
 		{
 			using var scope = serviceScopeFactory.CreateScope();
-			var paymentRepository = scope.ServiceProvider.GetRequiredService<IPaymentRepository>();
-			var payment = await paymentRepository.GetPaymentWithRelatedInfo(input);
+			var paymentRepository = scope.ServiceProvider.GetRequiredService<IDapperPaymentRepository>();
+			var payment = await paymentRepository.GetPaymentSummary(input);
 			return PaymentProcessedNotificationProducer.Get(payment);
 		}
 	}
