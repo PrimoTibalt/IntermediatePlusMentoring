@@ -1,5 +1,4 @@
 ﻿using DAL;
-using DAL.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +18,7 @@ namespace NotificationsHandler
 			var host = Host.CreateDefaultBuilder(args)
 				.ConfigureServices((builder, services) =>
 				{
-					services.AddDbContext<NotificationContext>(options =>
-					{
-						options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-					});
+					services.AddNotificationContext(builder.Configuration);
 					services.AddNotificationRepositories();
 					var factory = new ConnectionFactory
 					{

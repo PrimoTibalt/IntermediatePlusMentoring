@@ -1,8 +1,8 @@
-﻿using API.Abstraction.Notifications;
-using DAL;
-using DAL.Notifications;
+﻿using DAL.Abstraction;
+using Entities.Notifications;
 using Microsoft.Extensions.Logging;
 using Notifications.Infrastructure;
+using Notifications.Infrastructure.Models;
 using Notifications.Infrastructure.Providers;
 using RabbitMQ.Client.Events;
 using System.Text;

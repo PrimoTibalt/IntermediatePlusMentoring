@@ -88,5 +88,13 @@ namespace DAL
 		{
 			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, NotificationContext>>();
 		}
+
+		public static void AddNotificationContext(this IServiceCollection services, IConfiguration config)
+		{
+			services.AddDbContext<NotificationContext>(options =>
+			{
+				options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
+			});
+		}
 	}
 }

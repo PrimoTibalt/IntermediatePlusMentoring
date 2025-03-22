@@ -12,9 +12,9 @@ namespace PaymentAPI.Endpoints
 			var group = builder.MapGroup("/payments/{id:long}");
 			group.MapGet("", GetPaymentById);
 
-			group.MapPost("/failed", CompletePayment);
+			group.MapPost("/failed", FailPayment);
 
-			group.MapPost("/complete", FailPayment);
+			group.MapPost("/complete", CompletePayment);
 		}
 
 		public static Task<IResult> CompletePayment(long id, IMediator mediator, INotificationService<long> notificationService) 
