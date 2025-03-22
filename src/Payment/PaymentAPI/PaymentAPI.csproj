@@ -8,6 +8,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\DAL\DAL.csproj" />
+		<ProjectReference Include="..\..\Notifications.Payments\Notifications.Payments.csproj" />
+		<ProjectReference Include="..\..\Notifications\Notifications.Infrastructure\Notifications.Infrastructure.csproj" />
 		<ProjectReference Include="..\PaymentApplication\PaymentApplication.csproj" />
 	</ItemGroup>
 

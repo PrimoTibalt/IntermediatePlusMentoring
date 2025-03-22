@@ -4,7 +4,7 @@ using RegisterServicesSourceGenerator;
 namespace Notifications.Infrastructure.Provider
 {
 	[RegisterService<IConnectionProvider>(LifeTime.Singleton)]
-	internal class ConnectionProvider : IConnectionProvider
+	internal sealed class ConnectionProvider : IConnectionProvider
 	{
 		private Lazy<Task<IConnection>> connection;
 		private readonly ConnectionFactory _factory;

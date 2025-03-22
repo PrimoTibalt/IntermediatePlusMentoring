@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Venues
 {
-	public sealed class VenueContext : DbContext
+	internal sealed class VenueContext : DbContext
 	{
 		public VenueContext(DbContextOptions options) : base(options)
 		{

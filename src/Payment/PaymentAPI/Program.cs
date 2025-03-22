@@ -1,9 +1,13 @@
 using System.Diagnostics;
 using System.Text.Json.Serialization;
+using DAL;
 using Dapper;
+using Notifications.Infrastructure;
+using Notifications.Payments;
 using PaymentAPI.Endpoints;
 using PaymentApplication;
 using PaymentApplication.Entities;
+using RabbitMQ.Client;
 
 [module: DapperAot]
 
@@ -13,8 +17,15 @@ builder.Services.ConfigureHttpJsonOptions(config =>
 {
 	config.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonOptionsContext.Default);
 });
-builder.Services.AddPaymentApplication(builder.Configuration);
-
+builder.Services.AddPaymentContext(builder.Configuration);
+builder.Services.AddPaymentRepositories();
+builder.Services.AddPaymentApplication();
+var factory = new ConnectionFactory
+{
+	Uri = new(builder.Configuration.GetConnectionString("RabbitConnection"))
+};
+builder.Services.AddNotificationConnectionProvider(factory);
+builder.Services.AddPaymentNotifications();
 var app = builder.Build();
 
 app.RegisterPaymentEndpoint();

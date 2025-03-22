@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Notifications.Infrastructure.Services;
 using PaymentApplication.Commands;
 using PaymentApplication.Queries;
 
@@ -16,9 +17,11 @@ namespace PaymentAPI.Endpoints
 			group.MapPost("/complete", FailPayment);
 		}
 
-		public static Task<IResult> CompletePayment(long id, IMediator mediator) => OperateOnPayment(id, true, mediator);
+		public static Task<IResult> CompletePayment(long id, IMediator mediator, INotificationService<long> notificationService) 
+			=> OperateOnPayment(id, true, mediator, notificationService);
 
-		public static Task<IResult> FailPayment(long id, IMediator mediator) => OperateOnPayment(id, false, mediator);
+		public static Task<IResult> FailPayment(long id, IMediator mediator, INotificationService<long> notificationService)
+			=> OperateOnPayment(id, false, mediator, notificationService);
 
 		public static async Task<IResult> GetPaymentById(long id, IMediator mediator)
 		{
@@ -27,14 +30,21 @@ namespace PaymentAPI.Endpoints
 				return Results.Ok(result);
 		}
 
-		private static async Task<IResult> OperateOnPayment(long id, bool completePayment, IMediator mediator)
+		private static async Task<IResult> OperateOnPayment(long id, bool completePayment, IMediator mediator, INotificationService<long> notificationService)
 		{
 			try
 			{
 				var result = await mediator.Send(new ProcessPaymentCommand { Id = id, Complete = completePayment });
 				if (result is null) return TypedResults.BadRequest($"Payment with id '{id}' doesn't exist or operation can't be performed on it.");
-				if (result.Success) return Results.Ok();
-				else return TypedResults.BadRequest("Unable to finish operation, check status of tickets.");
+				if (result.Success)
+				{
+					await notificationService.SendNotification(id);
+					return Results.Ok();
+				}
+				else
+				{
+					return TypedResults.BadRequest("Unable to finish operation, check status of tickets.");
+				}
 			}
 			catch (Exception e)
 			{

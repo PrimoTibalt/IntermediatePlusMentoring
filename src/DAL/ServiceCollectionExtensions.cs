@@ -5,6 +5,7 @@ using DAL.Notifications;
 using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Orders.Strategies;
+using DAL.Payments;
 using DAL.Payments.Repository;
 using DAL.Venues;
 using DAL.Venues.Repository;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OrderApplication.Repository;
+using PaymentApplication.Repository;
 using VenueApplication.Repository;
 
 namespace DAL
@@ -72,6 +74,14 @@ namespace DAL
 		public static void AddPaymentRepositories(this IServiceCollection services)
 		{
 			services.TryAddScoped<IDapperPaymentRepository, DapperPaymentRepository>();
+		}
+
+		public static void AddPaymentContext(this IServiceCollection services, IConfiguration config)
+		{
+			services.AddDbContext<PaymentContext>(options =>
+			{
+				options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
+			});
 		}
 
 		public static void AddNotificationRepositories(this IServiceCollection services)

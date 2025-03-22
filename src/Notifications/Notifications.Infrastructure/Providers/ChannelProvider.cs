@@ -5,7 +5,7 @@ using RegisterServicesSourceGenerator;
 namespace Notifications.Infrastructure.Providers
 {
 	[RegisterService<IChannelProvider>(LifeTime.Singleton)]
-	public class ChannelProvider(IConnectionProvider connectionProvider) : IChannelProvider
+	internal sealed class ChannelProvider(IConnectionProvider connectionProvider) : IChannelProvider
 	{
 		private readonly Lazy<Task<IChannel>> channel = new(async () =>
 		{

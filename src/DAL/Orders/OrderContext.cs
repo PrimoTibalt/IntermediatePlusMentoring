@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Orders
 {
-	public sealed class OrderContext : DbContext
+	internal sealed class OrderContext : DbContext
 	{
 		public OrderContext(DbContextOptions options) : base(options) { }
 

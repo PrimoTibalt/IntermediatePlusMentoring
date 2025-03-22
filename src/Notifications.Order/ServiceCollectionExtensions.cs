@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Notifications.Infrastructure;
+using Notifications.Infrastructure.Services;
 using Notifications.Order.Booking;
-using OrderApplication.Notifications;
 using RabbitMQ.Client;
 
 namespace Notifications.Order

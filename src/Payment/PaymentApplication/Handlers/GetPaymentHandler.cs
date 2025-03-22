@@ -1,8 +1,8 @@
-using DAL.Payments;
-using DAL.Payments.Repository;
+using Entities.Payments;
 using MediatR;
 using PaymentApplication.Entities;
 using PaymentApplication.Queries;
+using PaymentApplication.Repository;
 using RegisterServicesSourceGenerator;
 
 namespace PaymentApplication.Handlers

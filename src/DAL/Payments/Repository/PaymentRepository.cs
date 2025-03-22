@@ -2,6 +2,7 @@ using DAL.Abstraction;
 using Entities.Events;
 using Entities.Payments;
 using Microsoft.EntityFrameworkCore;
+using PaymentApplication.Repository;
 
 namespace DAL.Payments.Repository;
 

@@ -1,4 +1,4 @@
-﻿using DAL.Payments;
+﻿using Entities.Payments;
 using Notifications.Infrastructure;
 using Notifications.Infrastructure.Models;
 

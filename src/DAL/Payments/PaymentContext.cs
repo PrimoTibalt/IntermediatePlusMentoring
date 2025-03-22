@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Payments
 {
-	public sealed class PaymentContext : DbContext
+	internal sealed class PaymentContext : DbContext
 	{
 		public PaymentContext(DbContextOptions options) : base(options) { }
 

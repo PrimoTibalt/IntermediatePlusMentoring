@@ -1,9 +1,9 @@
-﻿using DAL.Payments.Repository;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Notifications.Infrastructure.Models;
 using Notifications.Infrastructure.Publishers;
 using Notifications.Infrastructure.Services;
+using PaymentApplication.Repository;
 using RegisterServicesSourceGenerator;
 
 namespace PaymentApplication.NotificationsSending

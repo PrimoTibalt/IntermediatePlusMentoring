@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Data;
 using Entities.Payments;
+using PaymentApplication.Repository;
 
 namespace DAL.Payments.Repository
 {

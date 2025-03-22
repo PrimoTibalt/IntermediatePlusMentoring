@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Events
 {
-	public sealed class EventContext : DbContext
+	internal sealed class EventContext : DbContext
 	{
 		public EventContext(DbContextOptions options) : base(options) { }
 

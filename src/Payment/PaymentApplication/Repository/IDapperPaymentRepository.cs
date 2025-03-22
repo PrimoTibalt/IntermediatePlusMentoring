@@ -1,6 +1,6 @@
 ﻿using Entities.Payments;
 
-namespace DAL.Payments.Repository
+namespace PaymentApplication.Repository
 {
 	public interface IDapperPaymentRepository
 	{

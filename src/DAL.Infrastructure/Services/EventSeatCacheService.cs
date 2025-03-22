@@ -1,5 +1,4 @@
-﻿using Cache.Infrastructure;
-using Entities.Events;
+﻿using Entities.Events;
 
 namespace Cache.Infrastructure.Services
 {

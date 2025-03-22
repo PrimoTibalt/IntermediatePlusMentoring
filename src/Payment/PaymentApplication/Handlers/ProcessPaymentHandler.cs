@@ -1,9 +1,8 @@
-using DAL.Payments;
-using DAL.Payments.Repository;
+using Entities.Payments;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Notifications.Infrastructure.Services;
 using PaymentApplication.Commands;
+using PaymentApplication.Repository;
 using RegisterServicesSourceGenerator;
 
 namespace PaymentApplication.Handlers
@@ -12,16 +11,13 @@ namespace PaymentApplication.Handlers
 	public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>
 	{
 		private readonly IDapperPaymentRepository _paymentRepository;
-		private readonly INotificationService<long> _notificationService;
 		private readonly ILogger _logger;
 
 		public ProcessPaymentHandler(
 			IDapperPaymentRepository paymentRepository,
-			INotificationService<long> notificationService,
 			ILogger<ProcessPaymentHandler> logger)
 		{
 			_paymentRepository = paymentRepository;
-			_notificationService = notificationService;
 			_logger = logger;
 		}
 
@@ -44,11 +40,6 @@ namespace PaymentApplication.Handlers
 			{
 				_logger.LogError(ex, "Operation on payment with id '{Id}' failed.", request.Id);
 				result = false;
-			}
-
-			if (result)
-			{
-				await _notificationService.SendNotification(request.Id);
 			}
 
 			return new() { Success = result };

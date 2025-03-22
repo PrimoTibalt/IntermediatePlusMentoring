@@ -3,10 +3,10 @@ using Cache.Infrastructure.Services;
 using Entities.Events;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Notifications.Infrastructure.Services;
 using OrderAPI.DTOs;
 using OrderApplication.Commands;
 using OrderApplication.Entities;
-using OrderApplication.Notifications;
 using OrderApplication.Queries;
 using OrderApplication.Repository;
 
@@ -20,15 +20,17 @@ namespace OrderAPI.Controllers
 		private readonly LinkGenerator _linkGenerator;
 		private readonly ICacheService<EventSeat> _cacheService;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly INotificationService<long> _notificationService;
 		private readonly ILogger _logger;
 
-		public CartsController(IMediator mediator, LinkGenerator linkGenerator, ICacheService<EventSeat> cacheService, IServiceProvider serviceProvider, ILogger<CartsController> logger)
+		public CartsController(IMediator mediator, LinkGenerator linkGenerator, ICacheService<EventSeat> cacheService, IServiceProvider serviceProvider, ILogger<CartsController> logger, INotificationService<long> notificationService)
 		{
 			_mediator = mediator;
 			_linkGenerator = linkGenerator;
 			_cacheService = cacheService;
 			_serviceProvider = serviceProvider;
 			_logger = logger;
+			_notificationService = notificationService;
 		}
 
 		[HttpGet("{id:guid}")]
@@ -67,23 +69,21 @@ namespace OrderAPI.Controllers
 			if (result.Error) return BadRequest(result.ErrorMessage);
 			_ = Task.Run(async () =>
 			{
-				using var scope = _serviceProvider.CreateAsyncScope();
 				try
 				{
-					var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService<long>>();
-					await notificationService.SendNotification(result.Value.Value);
+					await _notificationService.SendNotification(result.Value.Value);
 				}
 				catch (Exception ex)
 				{
 					_logger.LogError(ex, "Unable to send notification");
 				}
 
+				using var scope = _serviceProvider.CreateAsyncScope();
 				try
 				{
-					var cacheService = scope.ServiceProvider.GetRequiredService<ICacheService<EventSeat>>();
 					var cartRepository = scope.ServiceProvider.GetRequiredService<ICartRepository>();
 					var cartItems = await cartRepository.GetItemsWithEventSeat(id);
-					await cacheService.CleanAsync([.. cartItems.Select(ci => ci.EventSeat)]);
+					await _cacheService.CleanAsync([.. cartItems.Select(ci => ci.EventSeat)]);
 				}
 				catch (Exception ex)
 				{
