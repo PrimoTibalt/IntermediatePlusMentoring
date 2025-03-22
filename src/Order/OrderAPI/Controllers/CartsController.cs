@@ -1,10 +1,14 @@
 using API.Abstraction.Helpers;
+using Cache.Infrastructure.Services;
+using Entities.Events;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.DTOs;
 using OrderApplication.Commands;
 using OrderApplication.Entities;
+using OrderApplication.Notifications;
 using OrderApplication.Queries;
+using OrderApplication.Repository;
 
 namespace OrderAPI.Controllers
 {
@@ -14,11 +18,17 @@ namespace OrderAPI.Controllers
 	{
 		private readonly IMediator _mediator;
 		private readonly LinkGenerator _linkGenerator;
+		private readonly ICacheService<EventSeat> _cacheService;
+		private readonly IServiceProvider _serviceProvider;
+		private readonly ILogger _logger;
 
-		public CartsController(IMediator mediator, LinkGenerator linkGenerator)
+		public CartsController(IMediator mediator, LinkGenerator linkGenerator, ICacheService<EventSeat> cacheService, IServiceProvider serviceProvider, ILogger<CartsController> logger)
 		{
 			_mediator = mediator;
 			_linkGenerator = linkGenerator;
+			_cacheService = cacheService;
+			_serviceProvider = serviceProvider;
+			_logger = logger;
 		}
 
 		[HttpGet("{id:guid}")]
@@ -55,6 +65,31 @@ namespace OrderAPI.Controllers
 			var result = await _mediator.Send(new BookCartItemsCommand { Id = id, OptimisticExecution = optimisticExecution });
 			if (result is null) return NotFound($"Cart with id '{id}' doesn't exist.");
 			if (result.Error) return BadRequest(result.ErrorMessage);
+			_ = Task.Run(async () =>
+			{
+				using var scope = _serviceProvider.CreateAsyncScope();
+				try
+				{
+					var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService<long>>();
+					await notificationService.SendNotification(result.Value.Value);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Unable to send notification");
+				}
+
+				try
+				{
+					var cacheService = scope.ServiceProvider.GetRequiredService<ICacheService<EventSeat>>();
+					var cartRepository = scope.ServiceProvider.GetRequiredService<ICartRepository>();
+					var cartItems = await cartRepository.GetItemsWithEventSeat(id);
+					await cacheService.CleanAsync([.. cartItems.Select(ci => ci.EventSeat)]);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Unable to clean event seats' cache");
+				}
+			});
 
 			var resource = new Resource<string>
 			{
@@ -89,6 +124,7 @@ namespace OrderAPI.Controllers
 			else
 				resource.Value = "Deleted.";
 
+			await _cacheService.CleanAsync([result.Value]);
 			resource.Links = [
 				new Link
 				{

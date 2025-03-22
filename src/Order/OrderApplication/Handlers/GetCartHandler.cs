@@ -1,8 +1,8 @@
 using AutoMapper;
-using DAL.Orders.Repository;
 using MediatR;
 using OrderApplication.Entities;
 using OrderApplication.Queries;
+using OrderApplication.Repository;
 
 namespace OrderApplication.Handlers
 {

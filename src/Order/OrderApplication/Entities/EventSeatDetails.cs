@@ -1,4 +1,4 @@
-﻿using DAL.Events;
+﻿using Entities.Events;
 
 namespace OrderApplication.Entities
 {

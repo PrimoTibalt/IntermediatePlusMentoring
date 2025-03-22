@@ -1,9 +1,8 @@
-﻿using API.Abstraction.Notifications;
-using DAL.Orders;
+﻿using Entities.Orders;
 using Notifications.Infrastructure;
 using Notifications.Infrastructure.Models;
 
-namespace OrderApplication.Services
+namespace Notifications.Order.Booking
 {
 	internal static class BookingNotificationProducer
 	{

@@ -1,4 +1,4 @@
-﻿namespace DAL.Orders.Repository
+﻿namespace OrderApplication.Repository
 {
 	public interface IBookCartOperation
 	{

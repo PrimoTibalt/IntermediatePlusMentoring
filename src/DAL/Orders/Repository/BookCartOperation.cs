@@ -1,5 +1,6 @@
 ﻿using DAL.Orders.Strategies;
 using Microsoft.Extensions.DependencyInjection;
+using OrderApplication.Repository;
 
 namespace DAL.Orders.Repository
 {

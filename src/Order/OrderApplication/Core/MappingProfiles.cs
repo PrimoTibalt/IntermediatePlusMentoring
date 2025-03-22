@@ -1,6 +1,6 @@
 using AutoMapper;
-using DAL.Events;
-using DAL.Orders;
+using Entities.Events;
+using Entities.Orders;
 using OrderApplication.Entities;
 
 namespace OrderApplication.Core

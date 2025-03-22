@@ -1,4 +1,4 @@
-﻿namespace Notifications.Infrastructure.Services
+﻿namespace OrderApplication.Notifications
 {
 	public interface INotificationService<TInput>
 	{

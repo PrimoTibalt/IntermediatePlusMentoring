@@ -1,7 +1,9 @@
 ﻿using Entities.Venues;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Events
 {
+	[Table("Events")]
 	public sealed class Event
 	{
 		public int Id { get; set; }

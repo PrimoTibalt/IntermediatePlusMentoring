@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Notifications.Infrastructure.Models;
 using Notifications.Infrastructure.Publishers;
+using OrderApplication.Notifications;
 
 namespace Notifications.Infrastructure.Services
 {

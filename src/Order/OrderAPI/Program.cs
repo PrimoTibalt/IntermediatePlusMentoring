@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
+using Cache.Infrastructure;
+using DAL;
+using Notifications.Order;
 using OrderApplication;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +11,12 @@ builder.Services.AddControllers()
 	{
 		cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 	});
-builder.Services.AddOrderApplication(builder.Configuration);
+
+builder.Services.AddOrderContext(builder.Configuration);
+builder.Services.AddOrderRepositories();
+builder.Services.AddOrderApplication();
+builder.Services.AddCaching(builder.Configuration);
+builder.Services.AddBookingNotificationService(builder.Configuration);
 
 var app = builder.Build();
 app.MapControllers();

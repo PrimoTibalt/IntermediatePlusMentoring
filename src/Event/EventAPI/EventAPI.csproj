@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\API.Abstraction\API.Abstraction.csproj" />
+    <ProjectReference Include="..\..\DAL.Infrastructure\Cache.Infrastructure.csproj" />
     <ProjectReference Include="..\EventApplication\EventApplication.csproj" />
   </ItemGroup>
 

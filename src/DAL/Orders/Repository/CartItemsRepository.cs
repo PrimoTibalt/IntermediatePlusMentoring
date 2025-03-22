@@ -1,6 +1,7 @@
 using DAL.Abstraction;
 using Entities.Orders;
 using Microsoft.EntityFrameworkCore;
+using OrderApplication.Repository;
 
 namespace DAL.Orders.Repository
 {

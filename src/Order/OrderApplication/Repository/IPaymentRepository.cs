@@ -1,7 +1,7 @@
 using DAL.Abstraction;
 using Entities.Payments;
 
-namespace DAL.Orders.Repository;
+namespace OrderApplication.Repository;
 
 public interface IPaymentRepository : IGenericRepository<Payment, long>
 {

@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using OrderApplication.Repository;
 using VenueApplication.Repository;
 
 namespace DAL
@@ -52,12 +53,20 @@ namespace DAL
 		{
 			services.TryAddScoped<ICartRepository, CartRepository>();
 			services.TryAddScoped<ICartItemRepository, CartItemRepository>();
-			services.TryAddScoped<Orders.Repository.IEventSeatRepository, Orders.Repository.EventSeatRepository>();
-			services.TryAddScoped<Orders.Repository.IPaymentRepository, Orders.Repository.PaymentRepository>();
+			services.TryAddScoped<OrderApplication.Repository.IEventSeatRepository, Orders.Repository.EventSeatRepository>();
+			services.TryAddScoped<OrderApplication.Repository.IPaymentRepository, Orders.Repository.PaymentRepository>();
 			services.TryAddScoped<OptimisticConcurrencyBookingStrategy>();
 			services.TryAddScoped<PessimisticConcurrencyBookingStrategy>();
 			services.TryAddScoped<IBookCartOperation, BookCartOperation>();
 			services.TryAddScoped<IGenericRepository<NotificationEntity, Guid>, GenericRepository<NotificationEntity, Guid, OrderContext>>();
+		}
+
+		public static void AddOrderContext(this IServiceCollection services, IConfiguration config)
+		{
+			services.AddDbContext<OrderContext>(options =>
+			{
+				options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
+			});
 		}
 
 		public static void AddPaymentRepositories(this IServiceCollection services)

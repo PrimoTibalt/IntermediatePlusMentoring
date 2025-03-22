@@ -1,17 +1,15 @@
-﻿using DAL.Infrastructure.Cache;
-using DAL.Infrastructure.Cache.Services;
+﻿using Cache.Infrastructure.Services;
 using Entities.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using OrderApplication.Cache;
 using StackExchange.Redis;
 
-namespace DAL.Infrastructure
+namespace Cache.Infrastructure
 {
 	public static class ServiceCollectionExtension
 	{
-		public static void AddInfrastructure(this IServiceCollection services, IConfiguration config)
+		public static void AddCaching(this IServiceCollection services, IConfiguration config)
 		{
 			services.TryAddScoped<ICacheRepository, CacheRepository>();
 			services.TryAddScoped<ICacheService<EventSeat>, EventSeatCacheService>();

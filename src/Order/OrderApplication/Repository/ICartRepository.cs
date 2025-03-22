@@ -2,7 +2,7 @@ using DAL.Abstraction;
 using Entities.Orders;
 using System.Data;
 
-namespace DAL.Orders.Repository
+namespace OrderApplication.Repository
 {
 	public interface ICartRepository : IGenericRepository<Cart, Guid>
 	{

@@ -1,26 +1,19 @@
 using API.Abstraction.Helpers;
-using DAL.Events;
-using DAL.Infrastructure.Cache.Services;
-using DAL.Orders.Repository;
-using DAL.Payments;
+using Entities.Payments;
 using MediatR;
-using Notifications.Infrastructure.Services;
 using OrderApplication.Commands;
+using OrderApplication.Repository;
 
 namespace OrderApplication.Handlers
 {
 	public class BookCartItemsHandler(ICartRepository cartRepository,
 		IPaymentRepository paymentRepository,
-		ICacheService<EventSeat> seatsCacheService,
-		IBookCartOperation bookCartOperation,
-		INotificationService<long> notificationService)
+		IBookCartOperation bookCartOperation)
 		: IRequestHandler<BookCartItemsCommand, Result<long?>>
 	{
 		private readonly ICartRepository _cartRepository = cartRepository;
 		private readonly IPaymentRepository _paymentRepository = paymentRepository;
-		private readonly ICacheService<EventSeat> _seatsCacheService = seatsCacheService;
 		private readonly IBookCartOperation _bookCartOperation = bookCartOperation;
-		private readonly INotificationService<long> _notificationService = notificationService;
 
 		public async Task<Result<long?>> Handle(BookCartItemsCommand request, CancellationToken cancellationToken)
 		{
@@ -33,8 +26,6 @@ namespace OrderApplication.Handlers
 			await _paymentRepository.Save();
 			await _cartRepository.CommitTransaction();
 
-			await _seatsCacheService.Clean(request.Id);
-			await _notificationService.SendNotification(payment.Id);
 			return Result<long?>.Success(payment.Id);
 		}
 

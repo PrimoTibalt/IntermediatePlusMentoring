@@ -12,6 +12,8 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\API.Abstraction\API.Abstraction.csproj" />
+	  <ProjectReference Include="..\..\DAL.Infrastructure\Cache.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\Notifications.Order\Notifications.Order.csproj" />
 	  <ProjectReference Include="..\OrderApplication\OrderApplication.csproj" />
 	</ItemGroup>
 

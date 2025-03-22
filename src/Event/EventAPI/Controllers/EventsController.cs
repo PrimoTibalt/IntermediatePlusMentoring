@@ -1,6 +1,6 @@
 ﻿using API.Abstraction.Cache;
 using API.Abstraction.Helpers;
-using Entities.Infrastructure.Cache;
+using Cache.Infrastructure;
 using EventAPI.DistributedCacheModels;
 using EventApplication.Queries;
 using MediatR;

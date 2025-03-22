@@ -1,4 +1,4 @@
-﻿namespace DAL.Infrastructure.Cache
+﻿namespace Cache.Infrastructure
 {
 	public interface ICacheRepository
 	{

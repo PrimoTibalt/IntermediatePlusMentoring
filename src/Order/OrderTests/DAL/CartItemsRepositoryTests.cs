@@ -1,7 +1,8 @@
 ﻿using DAL;
 using DAL.Orders;
-using DAL.Orders.Repository;
+using Entities.Orders;
 using Microsoft.Extensions.DependencyInjection;
+using OrderApplication.Repository;
 using TestsCore.Providers;
 
 namespace OrderTests.DAL

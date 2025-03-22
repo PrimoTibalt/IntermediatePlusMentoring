@@ -1,5 +1,3 @@
-using DAL.Orders;
-
 namespace OrderApplication.Entities
 {
 	public class CartDetails

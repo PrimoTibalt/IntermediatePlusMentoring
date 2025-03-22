@@ -6,16 +6,30 @@ namespace Notifications.Infrastructure.Provider
 	[RegisterService<IConnectionProvider>(LifeTime.Singleton)]
 	internal class ConnectionProvider : IConnectionProvider
 	{
-		private readonly Lazy<Task<IConnection>> connection;
+		private Lazy<Task<IConnection>> connection;
+		private readonly ConnectionFactory _factory;
 
 		public ConnectionProvider(ConnectionFactory factory)
 		{
-			connection = new(async () => await factory.CreateConnectionAsync());
+			_factory = factory;
+			connection = GetNewConnection();
 		}
 
 		public async Task<IConnection> GetConnection()
 		{
-			return await connection.Value;
+			try
+			{
+				return await connection.Value;
+			}
+			catch
+			{
+				connection = GetNewConnection();
+				await Task.Delay(1000);
+				return await connection.Value;
+			}
 		}
+
+		private Lazy<Task<IConnection>> GetNewConnection() =>
+			new(async () => await _factory.CreateConnectionAsync());
 	}
 }

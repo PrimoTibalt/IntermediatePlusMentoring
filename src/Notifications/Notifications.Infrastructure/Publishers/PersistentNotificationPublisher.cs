@@ -1,5 +1,5 @@
-﻿using DAL.Notifications;
-using Dapper;
+﻿using Dapper;
+using Entities.Notifications;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

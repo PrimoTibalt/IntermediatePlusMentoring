@@ -1,4 +1,5 @@
 using API.Abstraction.Helpers;
+using Entities.Events;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.Controllers;
@@ -145,13 +146,13 @@ namespace OrderTests.API
 		public async Task DeleteFromCart_ResultError_OkWithMessage()
 		{
 			var guid = Guid.NewGuid();
-			var errorResult = new Result<Unit>
+			var errorResult = new Result<EventSeat>
 			{
 				Error = false,
 				ErrorMessage = "Message",
-				Value = Unit.Value
+				Value = new EventSeat()
 			};
-			var mediator = MediatorMockObjectBuilder.Get<DeleteItemFromCartCommand, Result<Unit>>(errorResult);
+			var mediator = MediatorMockObjectBuilder.Get<DeleteItemFromCartCommand, Result<EventSeat>>(errorResult);
 			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.DeleteFromCart(guid, default, default);
@@ -166,13 +167,13 @@ namespace OrderTests.API
 		public async Task DeleteFromCart_ResultSuccess_OkWithMessage()
 		{
 			var guid = Guid.NewGuid();
-			var errorResult = new Result<Unit>
+			var errorResult = new Result<EventSeat>
 			{
 				Error = true,
 				ErrorMessage = "Message",
-				Value = Unit.Value
+				Value = null
 			};
-			var mediator = MediatorMockObjectBuilder.Get<DeleteItemFromCartCommand, Result<Unit>>(errorResult);
+			var mediator = MediatorMockObjectBuilder.Get<DeleteItemFromCartCommand, Result<EventSeat>>(errorResult);
 			var controller = ControllerProvider.Get<CartsController>(mediator);
 
 			var result = await controller.DeleteFromCart(guid, default, default);

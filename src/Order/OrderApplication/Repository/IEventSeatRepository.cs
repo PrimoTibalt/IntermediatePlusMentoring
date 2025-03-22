@@ -1,7 +1,7 @@
 using DAL.Abstraction;
 using Entities.Events;
 
-namespace DAL.Orders.Repository
+namespace OrderApplication.Repository
 {
 	public interface IEventSeatRepository : IGenericRepository<EventSeat, long>
 	{
