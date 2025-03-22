@@ -1,4 +1,4 @@
-﻿namespace OrderApplication.Cache
+﻿namespace DAL.Infrastructure.Cache
 {
 	public interface ICacheRepository
 	{

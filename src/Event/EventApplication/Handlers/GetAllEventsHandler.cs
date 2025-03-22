@@ -1,6 +1,6 @@
-using DAL.Events;
-using DAL.Events.Repository;
+using Entities.Events;
 using EventApplication.Queries;
+using EventApplication.Repositories;
 using MediatR;
 
 namespace EventApplication.Handlers
@@ -16,7 +16,7 @@ namespace EventApplication.Handlers
 
 		public async Task<IList<Event>> Handle(GetAllEventsQuery request, CancellationToken cancellationToken)
 		{
-			return await _repository.GetAll();
+			return await _repository.GetAll(cancellationToken);
 		}
 	}
 }

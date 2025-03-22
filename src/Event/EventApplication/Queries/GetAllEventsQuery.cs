@@ -1,4 +1,4 @@
-using DAL.Events;
+using Entities.Events;
 using MediatR;
 
 namespace EventApplication.Queries

@@ -1,8 +1,7 @@
-﻿using DAL.Events;
-using DAL.Orders.Repository;
+﻿using DAL.Orders.Repository;
+using Entities.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OrderApplication.Cache;
 
 namespace DAL.Infrastructure.Cache.Services
 {
@@ -17,7 +16,7 @@ namespace DAL.Infrastructure.Cache.Services
 				var cartItems = await cartRepository.GetItemsWithEventSeat(id);
 				try
 				{
-					await Clean(cartItems.Select(ci => ci.EventSeat).ToList());
+					await Clean([.. cartItems.Select(ci => ci.EventSeat)]);
 				}
 				catch (Exception e)
 				{

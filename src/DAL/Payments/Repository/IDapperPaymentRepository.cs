@@ -1,4 +1,6 @@
-﻿namespace DAL.Payments.Repository
+﻿using Entities.Payments;
+
+namespace DAL.Payments.Repository
 {
 	public interface IDapperPaymentRepository
 	{

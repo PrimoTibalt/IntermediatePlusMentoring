@@ -1,7 +1,8 @@
-﻿using DAL.Events;
-using DAL.Notifications;
-using DAL.Payments;
-using DAL.Venues;
+﻿using Entities.Events;
+using Entities.Notifications;
+using Entities.Orders;
+using Entities.Payments;
+using Entities.Venues;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Orders

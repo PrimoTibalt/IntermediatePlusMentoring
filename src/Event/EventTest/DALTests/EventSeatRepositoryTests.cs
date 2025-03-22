@@ -1,6 +1,7 @@
 ﻿using DAL;
 using DAL.Events;
-using DAL.Events.Repository;
+using Entities.Events;
+using EventApplication.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using TestsCore.Providers;
 

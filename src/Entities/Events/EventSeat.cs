@@ -1,6 +1,6 @@
-﻿using DAL.Venues;
+﻿using Entities.Venues;
 
-namespace DAL.Events
+namespace Entities.Events
 {
 	public sealed class EventSeat
 	{

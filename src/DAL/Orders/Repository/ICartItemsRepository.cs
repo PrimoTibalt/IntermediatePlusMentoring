@@ -1,3 +1,6 @@
+using DAL.Abstraction;
+using Entities.Orders;
+
 namespace DAL.Orders.Repository
 {
 	public interface ICartItemRepository : IGenericRepository<CartItem, long>

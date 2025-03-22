@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using DAL.Infrastructure.Cache;
+using StackExchange.Redis;
 
 namespace OrderApplication.Cache
 {

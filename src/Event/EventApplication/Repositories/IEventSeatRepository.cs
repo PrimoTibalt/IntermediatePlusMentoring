@@ -1,4 +1,7 @@
-namespace DAL.Events.Repository
+using DAL.Abstraction;
+using Entities.Events;
+
+namespace EventApplication.Repositories
 {
     public interface IEventSeatRepository : IGenericRepository<EventSeat, long>
     {

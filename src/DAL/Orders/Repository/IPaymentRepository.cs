@@ -1,4 +1,5 @@
-using DAL.Payments;
+using DAL.Abstraction;
+using Entities.Payments;
 
 namespace DAL.Orders.Repository;
 

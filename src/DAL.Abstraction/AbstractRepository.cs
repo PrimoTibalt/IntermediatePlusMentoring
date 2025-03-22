@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DAL
+namespace DAL.Abstraction
 {
-	abstract class AbstractRepository<TEntity> : ISaveUpdateRepository<TEntity> where TEntity : class
+	public abstract class AbstractRepository<TEntity> : ISaveUpdateRepository<TEntity> where TEntity : class
 	{
 		protected readonly DbContext _context;
 

@@ -1,3 +1,5 @@
+using DAL.Abstraction;
+using Entities.Orders;
 using System.Data;
 
 namespace DAL.Orders.Repository

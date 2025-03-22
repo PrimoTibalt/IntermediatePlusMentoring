@@ -1,3 +1,4 @@
+using DAL;
 using EventApplication;
 using System.Text.Json.Serialization;
 
@@ -7,7 +8,10 @@ builder.Services.AddControllers().AddJsonOptions(cfg =>
 {
 	cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
-builder.Services.AddEventApplication(builder.Configuration);
+
+builder.Services.AddEventsContext(builder.Configuration);
+builder.Services.AddEventsRepositories();
+builder.Services.AddEventApplication();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
 	options.ConfigurationOptions = new()
@@ -16,6 +20,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 		EndPoints = { builder.Configuration.GetConnectionString("RedisConnection") }
 	};
 });
+
 var app = builder.Build();
 app.MapControllers();
 app.Run();

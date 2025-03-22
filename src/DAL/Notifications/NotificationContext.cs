@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities.Notifications;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Notifications
 {

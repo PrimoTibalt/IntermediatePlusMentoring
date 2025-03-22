@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DAL
+namespace DAL.Abstraction
 {
-	internal class GenericRepository<TEntity, TKey, TContext> : AbstractRepository<TEntity>, IGenericRepository<TEntity, TKey>
+	public class GenericRepository<TEntity, TKey, TContext> : AbstractRepository<TEntity>, IGenericRepository<TEntity, TKey>
 		where TEntity : class
 		where TKey : struct
 		where TContext : DbContext

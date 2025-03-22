@@ -1,4 +1,4 @@
-﻿using DAL.Events;
+﻿using Entities.Events;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

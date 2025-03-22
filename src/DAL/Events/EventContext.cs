@@ -1,4 +1,5 @@
-﻿using DAL.Venues;
+﻿using Entities.Events;
+using Entities.Venues;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Events

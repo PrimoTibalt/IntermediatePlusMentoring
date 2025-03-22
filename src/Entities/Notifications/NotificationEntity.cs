@@ -1,4 +1,4 @@
-﻿namespace DAL.Notifications
+﻿namespace Entities.Notifications
 {
 	public class NotificationEntity
 	{

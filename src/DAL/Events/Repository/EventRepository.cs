@@ -1,5 +1,8 @@
-﻿using DAL.Venues;
+﻿using Entities.Venues;
+using EventApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Entities.Events;
+using DAL.Abstraction;
 
 namespace DAL.Events.Repository
 {

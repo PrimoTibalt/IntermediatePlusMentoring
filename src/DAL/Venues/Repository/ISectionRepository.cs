@@ -1,4 +1,7 @@
-﻿namespace DAL.Venues.Repository
+﻿using DAL.Abstraction;
+using Entities.Venues;
+
+namespace DAL.Venues.Repository
 {
 	public interface ISectionRepository : IGenericRepository<Section, int>
 	{

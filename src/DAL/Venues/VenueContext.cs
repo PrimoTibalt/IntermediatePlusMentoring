@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities.Venues;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Venues
 {

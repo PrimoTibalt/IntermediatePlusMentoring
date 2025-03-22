@@ -1,6 +1,8 @@
-﻿using DAL.Venues;
+﻿using DAL.Abstraction;
+using Entities.Events;
+using Entities.Venues;
 
-namespace DAL.Events.Repository
+namespace EventApplication.Repositories
 {
 	public interface IEventRepository : IGenericRepository<Event, int>
 	{

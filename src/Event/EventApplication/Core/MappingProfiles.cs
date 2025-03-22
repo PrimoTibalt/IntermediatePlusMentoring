@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using DAL.Events;
-using DAL.Venues;
+using Entities.Events;
+using Entities.Venues;
 using EventApplication.Entities;
 
 namespace EventApplication.Core

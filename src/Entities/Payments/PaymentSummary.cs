@@ -1,4 +1,4 @@
-﻿namespace DAL.Payments
+﻿namespace Entities.Payments
 {
 	public class PaymentSummary
 	{

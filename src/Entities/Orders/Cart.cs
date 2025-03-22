@@ -1,4 +1,4 @@
-﻿namespace DAL.Orders
+﻿namespace Entities.Orders
 {
 	public sealed class Cart
 	{

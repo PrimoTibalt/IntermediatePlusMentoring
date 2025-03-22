@@ -1,3 +1,6 @@
+using DAL.Abstraction;
+using Entities.Events;
+using EventApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Events.Repository

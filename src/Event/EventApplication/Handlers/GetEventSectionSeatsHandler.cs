@@ -1,7 +1,7 @@
 using AutoMapper;
-using DAL.Events.Repository;
 using EventApplication.Entities;
 using EventApplication.Queries;
+using EventApplication.Repositories;
 using MediatR;
 
 namespace EventApplication.Handlers

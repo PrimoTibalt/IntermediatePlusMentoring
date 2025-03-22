@@ -1,5 +1,5 @@
 using API.Abstraction.Helpers;
-using DAL.Events;
+using Entities.Events;
 using EventAPI.Controllers;
 using EventApplication.Entities;
 using EventApplication.Queries;

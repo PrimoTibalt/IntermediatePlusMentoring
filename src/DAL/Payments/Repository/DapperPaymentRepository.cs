@@ -1,8 +1,9 @@
-﻿using DAL.Events;
+﻿using Entities.Events;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Data;
+using Entities.Payments;
 
 namespace DAL.Payments.Repository
 {

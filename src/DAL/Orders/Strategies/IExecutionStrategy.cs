@@ -1,7 +1,6 @@
-﻿namespace DAL.Orders.Strategies
+﻿namespace DAL.Orders.Strategies;
+
+public interface IExecutionStrategy<TKey>
 {
-	public interface IExecutionStrategy<TKey>
-	{
-		Task<bool> Execute(TKey id);
-	}
+	Task<bool> Execute(TKey id);
 }

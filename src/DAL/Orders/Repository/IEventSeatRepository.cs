@@ -1,4 +1,5 @@
-using DAL.Events;
+using DAL.Abstraction;
+using Entities.Events;
 
 namespace DAL.Orders.Repository
 {

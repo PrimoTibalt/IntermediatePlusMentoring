@@ -1,5 +1,5 @@
-﻿using DAL.Events;
-using DAL.Orders.Repository;
+﻿using DAL.Orders.Repository;
+using Entities.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Orders.Strategies

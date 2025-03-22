@@ -1,4 +1,4 @@
-﻿namespace DAL.Venues
+﻿namespace Entities.Venues
 {
 	public sealed class Venue
 	{

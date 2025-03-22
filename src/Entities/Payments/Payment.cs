@@ -1,6 +1,6 @@
-﻿using DAL.Orders;
+﻿using Entities.Orders;
 
-namespace DAL.Payments
+namespace Entities.Payments
 {
 	public sealed class Payment
 	{

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DAL.Abstraction;
+using Entities.Venues;
 
 namespace DAL.Venues.Repository
 {

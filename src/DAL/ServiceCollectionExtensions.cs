@@ -1,10 +1,15 @@
-﻿using DAL.Events.Repository;
+﻿using DAL.Abstraction;
+using DAL.Events;
+using DAL.Events.Repository;
 using DAL.Notifications;
 using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Orders.Strategies;
 using DAL.Payments.Repository;
 using DAL.Venues.Repository;
+using Entities.Notifications;
+using EventApplication.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -22,7 +27,15 @@ namespace DAL
 		public static void AddEventsRepositories(this IServiceCollection services)
 		{
 			services.TryAddScoped<IEventRepository, EventRepository>();
-			services.TryAddScoped<Events.Repository.IEventSeatRepository, Events.Repository.EventSeatRepository>();
+			services.TryAddScoped<EventApplication.Repositories.IEventSeatRepository, Events.Repository.EventSeatRepository>();
+		}
+
+		public static void AddEventsContext(this IServiceCollection services, IConfiguration config)
+		{
+			services.AddDbContextPool<EventContext>(options =>
+			{
+				options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
+			});
 		}
 
 		public static void AddOrderRepositories(this IServiceCollection services)

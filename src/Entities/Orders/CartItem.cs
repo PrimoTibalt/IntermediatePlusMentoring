@@ -1,6 +1,6 @@
-﻿using DAL.Events;
+﻿using Entities.Events;
 
-namespace DAL.Orders
+namespace Entities.Orders
 {
 	public sealed class CartItem
 	{

@@ -1,4 +1,4 @@
-﻿namespace DAL
+﻿namespace DAL.Abstraction
 {
 	public interface ISaveUpdateRepository<TEntity> where TEntity : class
 	{
