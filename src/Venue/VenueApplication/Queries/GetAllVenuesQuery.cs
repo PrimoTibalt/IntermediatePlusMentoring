@@ -1,4 +1,4 @@
-using DAL.Venues;
+using Entities.Venues;
 using MediatR;
 
 namespace VenueApplication.Queries

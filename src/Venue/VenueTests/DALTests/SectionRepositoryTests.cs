@@ -1,8 +1,9 @@
 ﻿using DAL;
 using DAL.Venues;
-using DAL.Venues.Repository;
+using Entities.Venues;
 using Microsoft.Extensions.DependencyInjection;
 using TestsCore.Providers;
+using VenueApplication.Repository;
 
 namespace VenueTests.DALTests
 {

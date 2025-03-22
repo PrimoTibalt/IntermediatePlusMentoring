@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DAL.Venues;
+using Entities.Venues;
 using VenueApplication.Entities;
 
 namespace VenueApplication.Core

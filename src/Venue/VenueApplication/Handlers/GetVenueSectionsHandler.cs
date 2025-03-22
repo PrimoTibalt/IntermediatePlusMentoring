@@ -1,8 +1,8 @@
 using AutoMapper;
-using DAL.Venues.Repository;
 using MediatR;
 using VenueApplication.Entities;
 using VenueApplication.Queries;
+using VenueApplication.Repository;
 
 namespace VenueApplication.Handlers
 {

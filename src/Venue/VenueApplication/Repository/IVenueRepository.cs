@@ -1,7 +1,7 @@
 ﻿using DAL.Abstraction;
 using Entities.Venues;
 
-namespace DAL.Venues.Repository
+namespace VenueApplication.Repository
 {
 	public interface IVenueRepository : IGenericRepository<Venue, int>
 	{

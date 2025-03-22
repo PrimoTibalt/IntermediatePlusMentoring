@@ -1,5 +1,6 @@
 using API.Abstraction.Helpers;
 using DAL.Venues;
+using Entities.Venues;
 using Microsoft.AspNetCore.Mvc;
 using TestsCore;
 using TestsCore.Providers;

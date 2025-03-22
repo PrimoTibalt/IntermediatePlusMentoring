@@ -6,6 +6,7 @@ using DAL.Orders;
 using DAL.Orders.Repository;
 using DAL.Orders.Strategies;
 using DAL.Payments.Repository;
+using DAL.Venues;
 using DAL.Venues.Repository;
 using Entities.Notifications;
 using EventApplication.Repositories;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using VenueApplication.Repository;
 
 namespace DAL
 {
@@ -22,6 +24,14 @@ namespace DAL
 		{
 			services.TryAddScoped<IVenueRepository, VenueRepository>();
 			services.TryAddScoped<ISectionRepository, SectionRepository>();
+		}
+
+		public static void AddVenuesContext(this IServiceCollection services, IConfiguration config)
+		{
+			services.AddDbContext<VenueContext>(options =>
+			{
+				options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
+			});
 		}
 
 		public static void AddEventsRepositories(this IServiceCollection services)

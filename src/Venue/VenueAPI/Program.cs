@@ -1,3 +1,4 @@
+using DAL;
 using System.Text.Json.Serialization;
 using VenueApplication;
 
@@ -8,7 +9,10 @@ builder.Services.AddControllers()
 	{
 		options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 	});
-builder.Services.AddVenueApplicaiton(builder.Configuration);
+
+builder.Services.AddVenuesContext(builder.Configuration);
+builder.Services.AddVenuesRepositories();
+builder.Services.AddVenueApplicaiton();
 
 var app = builder.Build();
 app.MapControllers();

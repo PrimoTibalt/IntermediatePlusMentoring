@@ -1,9 +1,9 @@
-﻿using DAL.Venues;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using API.Abstraction.Helpers;
 using VenueApplication.Queries;
 using VenueApplication.Entities;
+using Entities.Venues;
 
 namespace VenueAPI.Controllers
 {

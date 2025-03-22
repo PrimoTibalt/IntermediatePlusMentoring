@@ -1,7 +1,7 @@
-using DAL.Venues;
-using DAL.Venues.Repository;
+using Entities.Venues;
 using MediatR;
 using VenueApplication.Queries;
+using VenueApplication.Repository;
 
 namespace VenueApplication.Handlers
 {
